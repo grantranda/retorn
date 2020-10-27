@@ -53,7 +53,7 @@ public class Retorn implements Application {
                 0, 1, 3,
                 3, 1, 2,
         };
-        Model model = new Model(new Mesh(vertices, textureCoordinates, indices), new Texture(GL11.GL_TEXTURE_1D, "pal.png")); // TODO: Move to /textures
+        Model model = new Model(new Mesh(vertices, textureCoordinates, indices), new Texture(GL11.GL_TEXTURE_1D, "textures/pal.png"));
 
         models = new Model[]{model};
     }

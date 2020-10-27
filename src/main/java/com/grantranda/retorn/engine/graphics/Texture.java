@@ -1,9 +1,13 @@
 package com.grantranda.retorn.engine.graphics;
 
+import com.grantranda.retorn.app.Main;
 import org.lwjgl.system.MemoryStack;
 
+import java.io.File;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+import java.nio.file.Paths;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
@@ -60,7 +64,9 @@ public class Texture {
             IntBuffer y = stack.mallocInt(1);
             IntBuffer channels = stack.mallocInt(1);
 
-            buffer = stbi_load(path, x, y, channels, 4);
+            File file = new File(getClass().getClassLoader().getResource(path).getFile());
+
+            buffer = stbi_load(file.getAbsolutePath(), x, y, channels, 4);
             if (buffer == null) {
                 throw new RuntimeException("Unable to load texture '" + path + "':\n" + stbi_failure_reason());
             }
