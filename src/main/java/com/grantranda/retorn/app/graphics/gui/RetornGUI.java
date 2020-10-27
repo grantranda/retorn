@@ -37,6 +37,7 @@ public class RetornGUI implements GUI {
 
     private Button hideMenuButton;
     private Button showMenuButton;
+    private Button updateButton;
 
     private Parameter maxIterationsParam;
     private Parameter scaleParam;
@@ -147,6 +148,10 @@ public class RetornGUI implements GUI {
             maxIterations = 100;
         }
         shader.setUniform1i("max_iterations", maxIterations);
+    }
+
+    private void updateParameters() {
+        
     }
 
     @Override
@@ -289,6 +294,13 @@ public class RetornGUI implements GUI {
 
         ColorSelector colorSelector = new ColorSelector();
         rightTop.getChildren().add(colorSelector);
+
+        // Update
+        updateButton = new Button("Update");
+        updateButton.setOnAction(event -> {
+
+        });
+        rightTop.getChildren().add(updateButton);
 
         fpsDisplay = new Label("FPS: " + window.getFpsCounter().getFps());
         fpsDisplay.setAlignment(Pos.BOTTOM_LEFT);
