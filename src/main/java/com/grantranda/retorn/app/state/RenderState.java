@@ -13,4 +13,28 @@ public class RenderState {
     public RenderState() {
 
     }
+
+    public int getMaxIterations() {
+        return maxIterations;
+    }
+
+    public void setMaxIterations(int maxIterations) {
+        this.maxIterations = maxIterations;
+    }
+
+    public double getScale() {
+        return scale;
+    }
+
+    public void setScale(double scale) {
+        this.scale = scale;
+    }
+
+    public Vector3d getPosition() {
+        return position;
+    }
+
+    public void setPosition(Vector3d position) {
+        this.position = position;
+    }
 }

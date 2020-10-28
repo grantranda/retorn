@@ -8,4 +8,20 @@ public class ApplicationState {
     public ApplicationState() {
 
     }
+
+    public DisplayState getDisplayState() {
+        return displayState;
+    }
+
+    public void setDisplayState(DisplayState displayState) {
+        this.displayState = displayState;
+    }
+
+    public RenderState getRenderState() {
+        return renderState;
+    }
+
+    public void setRenderState(RenderState renderState) {
+        this.renderState = renderState;
+    }
 }
