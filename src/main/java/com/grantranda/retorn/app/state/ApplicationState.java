@@ -6,7 +6,12 @@ public class ApplicationState {
     private RenderState renderState;
 
     public ApplicationState() {
+        this(new DisplayState(), new RenderState());
+    }
 
+    public ApplicationState(DisplayState displayState, RenderState renderState) {
+        setDisplayState(displayState);
+        setRenderState(renderState);
     }
 
     public DisplayState getDisplayState() {
