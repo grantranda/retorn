@@ -3,6 +3,7 @@ package com.grantranda.retorn.app;
 import com.grantranda.retorn.app.graphics.RetornRenderer;
 import com.grantranda.retorn.app.graphics.gui.RetornGUI;
 import com.grantranda.retorn.app.input.RetornInputHandler;
+import com.grantranda.retorn.app.state.ApplicationState;
 import com.grantranda.retorn.engine.graphics.Camera;
 import com.grantranda.retorn.engine.graphics.Model;
 import com.grantranda.retorn.engine.graphics.Texture;
@@ -19,11 +20,20 @@ public class Retorn implements Application {
     private final Camera camera = new Camera();
     private final RetornGUI gui = new RetornGUI();
     private final RetornInputHandler inputHandler = new RetornInputHandler(gui);
+    private ApplicationState state = new ApplicationState();
 
     private Model[] models;
 
     public Retorn(String[] args) {
 
+    }
+
+    public ApplicationState getState() {
+        return state;
+    }
+
+    public void setState(ApplicationState state) {
+        this.state = state;
     }
 
     @Override
