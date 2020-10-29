@@ -20,7 +20,7 @@ public class Retorn implements Application {
     private final Camera camera = new Camera();
     private final RetornGUI gui = new RetornGUI();
     private final RetornInputHandler inputHandler = new RetornInputHandler(gui);
-    private ApplicationState state = new ApplicationState();
+    private final ApplicationState state = new ApplicationState();
 
     private Model[] models;
 
@@ -32,10 +32,6 @@ public class Retorn implements Application {
         return state;
     }
 
-    public void setState(ApplicationState state) {
-        this.state = state;
-    }
-
     @Override
     public GUI getGui() {
         return gui;
@@ -44,7 +40,7 @@ public class Retorn implements Application {
     @Override
     public void initialize(Window window) {
         renderer.initialize(window);
-        gui.initialize(window);
+        gui.initialize(window, state);
 
         // Create models
         float[] vertices = new float[]{

@@ -1,6 +1,8 @@
 package com.grantranda.retorn.app.state;
 
-public class ApplicationState {
+import com.grantranda.retorn.engine.state.State;
+
+public class ApplicationState implements State {
 
     private DisplayState displayState;
     private RenderState renderState;
@@ -28,5 +30,10 @@ public class ApplicationState {
 
     public void setRenderState(RenderState renderState) {
         this.renderState = renderState;
+    }
+
+    @Override
+    public void reset() {
+
     }
 }
