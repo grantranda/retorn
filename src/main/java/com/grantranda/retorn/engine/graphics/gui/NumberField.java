@@ -2,60 +2,44 @@ package com.grantranda.retorn.engine.graphics.gui;
 
 import lwjgui.scene.control.TextField;
 
-// TODO: Make abstract and use generics. Extend using wrapper classes to create NumberFieldi & NumberFieldd
-public class NumberField extends TextField {
+public abstract class NumberField<T extends Number & Comparable<T>> extends TextField {
 
-    private final double min;
-    private final double max;
-    private double number;
+    protected final T min;
+    protected final T max;
+    protected T number;
 
-    public NumberField() {
-        this(0);
-    }
-
-    public NumberField(double number) {
-        this(number, -Double.MAX_VALUE, Double.MAX_VALUE);
-    }
-
-    public NumberField(double number, double min, double max) {
+    public NumberField(T number, T min, T max) {
         super();
 
-        if (min > max) {
+        if (min.compareTo(max) > 0) {
             throw new IllegalArgumentException("Min value " + min + " is greater than max value " + max);
         }
-        if (number < min || number > max) {
+        if (number.compareTo(min) < 0 || number.compareTo(max) > 0) {
             throw new IllegalArgumentException("Number " + number + " is not between " + min + " and " + max);
         }
 
         this.min = min;
         this.max = max;
         setNumber(number);
-
-        setOnTextChange(event -> {
-            try {
-                setNumber(Double.parseDouble(getText()));
-            } catch (NumberFormatException e) {
-                setNumber(number);
-            }
-        });
     }
 
-    public double getNumber() {
+    public T getNumber() {
         return number;
     }
 
-    public void setNumber(double number) {
-        if (number < min || number > max) return;
+    public void setNumber(T number) {
+        if (number.compareTo(getMin()) < 0 || number.compareTo(getMax()) > 0) return;
 
         this.number = number;
-        setText(Double.toString(number));
     }
 
-    public double getMin() {
+    public T getMin() {
         return min;
     }
 
-    public double getMax() {
+    public T getMax() {
         return max;
     }
+
+    public abstract void updateNumber();
 }
