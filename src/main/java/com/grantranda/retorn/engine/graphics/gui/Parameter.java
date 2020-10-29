@@ -3,20 +3,16 @@ package com.grantranda.retorn.engine.graphics.gui;
 import lwjgui.geometry.Insets;
 import lwjgui.geometry.Pos;
 import lwjgui.scene.control.Label;
-import lwjgui.scene.control.TextField;
+import lwjgui.scene.control.TextInputControl;
 import lwjgui.scene.layout.HBox;
 
-public class Parameter extends HBox {
+public class Parameter<T extends TextInputControl> extends HBox {
 
     private final Label label;
-    private final TextField textField;
+    private final T textField;
     private double width;
 
-    public Parameter() {
-        this(0.0f, "", new TextField());
-    }
-
-    public Parameter(double width, String label, TextField textField) {
+    public Parameter(double width, String label, T textField) {
         this.width = width;
         this.label = new Label(label);
         this.label.setPrefWidth(width / 2.0f);
@@ -52,7 +48,7 @@ public class Parameter extends HBox {
         this.label.setText(label);
     }
 
-    public TextField getTextField() {
+    public T getTextField() {
         return textField;
     }
 

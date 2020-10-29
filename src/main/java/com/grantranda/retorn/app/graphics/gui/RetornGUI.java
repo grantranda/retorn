@@ -1,13 +1,18 @@
 package com.grantranda.retorn.app.graphics.gui;
 
+import com.grantranda.retorn.app.state.ApplicationState;
+import com.grantranda.retorn.app.state.DisplayState;
+import com.grantranda.retorn.app.state.RenderState;
 import com.grantranda.retorn.engine.graphics.Shader;
 import com.grantranda.retorn.engine.graphics.Window;
 import com.grantranda.retorn.engine.graphics.gui.ColorSelector;
 import com.grantranda.retorn.engine.graphics.gui.GUI;
-import com.grantranda.retorn.engine.graphics.gui.NumberField;
+import com.grantranda.retorn.engine.graphics.gui.NumberFieldd;
+import com.grantranda.retorn.engine.graphics.gui.NumberFieldi;
 import com.grantranda.retorn.engine.graphics.gui.Parameter;
 import com.grantranda.retorn.engine.input.MouseInput;
 import com.grantranda.retorn.engine.math.Vector3d;
+import com.grantranda.retorn.engine.state.State;
 import lwjgui.geometry.Pos;
 import lwjgui.paint.Color;
 import lwjgui.scene.Scene;
@@ -32,16 +37,19 @@ public class RetornGUI implements GUI {
 
     private lwjgui.scene.Window guiWindow;
 
+    private ApplicationState state;
+
     private BorderPane root;
     private BorderPane menu;
 
     private Button hideMenuButton;
     private Button showMenuButton;
+    private Button updateButton;
 
-    private Parameter maxIterationsParam;
-    private Parameter scaleParam;
-    private Parameter xParam;
-    private Parameter yParam;
+    private Parameter<NumberFieldi> maxIterationsParam;
+    private Parameter<NumberFieldi> scaleParam;
+    private Parameter<NumberFieldd> xParam;
+    private Parameter<NumberFieldd> yParam;
 
     private Label fpsDisplay;
 
@@ -96,7 +104,8 @@ public class RetornGUI implements GUI {
     }
 
     @Override
-    public void initialize(Window window) {
+    public void initialize(Window window, State state) {
+        this.state = (ApplicationState) state;
         initializeGui(window);
         initializeNvg(window);
     }
@@ -107,6 +116,7 @@ public class RetornGUI implements GUI {
         guiWindow.show();
 
         addGuiComponents(window, guiWindow.getScene());
+        updateParameters(state);
     }
 
     private void initializeNvg(Window window) {
@@ -124,7 +134,8 @@ public class RetornGUI implements GUI {
     public void update(Window window, Shader shader) {
         WindowManager.update();
         updateInput(window);
-        updateGui(window, shader);
+        updateGui(window);
+        updateUniforms(shader);
     }
 
     private void updateInput(Window window) {
@@ -137,16 +148,30 @@ public class RetornGUI implements GUI {
         setMouseOver(mouseOverMenu);
     }
 
-    private void updateGui(Window window, Shader shader) {
+    private void updateGui(Window window) {
         fpsDisplay.setText("FPS: " + window.getFpsCounter().getFps());
+    }
 
-        int maxIterations;
-        try {
-            maxIterations = (int) Double.parseDouble(maxIterationsParam.getText());
-        } catch (NumberFormatException e) {
-            maxIterations = 100;
-        }
-        shader.setUniform1i("max_iterations", maxIterations);
+    private void updateUniforms(Shader shader) {
+        shader.setUniform1i("max_iterations", state.getRenderState().getMaxIterations());
+    }
+
+    private void updateParameters(ApplicationState state) {
+        DisplayState displayState = state.getDisplayState();
+        RenderState renderState = state.getRenderState();
+
+        maxIterationsParam.getTextField().updateNumber();
+        scaleParam.getTextField().updateNumber();
+        xParam.getTextField().updateNumber();
+        yParam.getTextField().updateNumber();
+
+        renderState.setMaxIterations(maxIterationsParam.getTextField().getNumber());
+        renderState.setScale(scaleParam.getTextField().getNumber());
+        renderState.setPosition(new Vector3d(
+                xParam.getTextField().getNumber(),
+                yParam.getTextField().getNumber(),
+                0.0f
+        ));
     }
 
     @Override
@@ -264,16 +289,16 @@ public class RetornGUI implements GUI {
         showMenuButton.setOnAction(event -> showMenu());
 
         // Max Iterations
-        maxIterationsParam = new Parameter(RIGHT_PANE_WIDTH, "Max Iterations", new NumberField(100, 0, 100000));
+        maxIterationsParam = new Parameter<>(RIGHT_PANE_WIDTH, "Max Iterations", new NumberFieldi(100, 0, 100000));
         rightTop.getChildren().add(maxIterationsParam);
 
         // Scale
-        scaleParam = new Parameter(RIGHT_PANE_WIDTH, "Scale", new NumberField(1));
+        scaleParam = new Parameter<>(RIGHT_PANE_WIDTH, "Scale", new NumberFieldi(1));
         rightTop.getChildren().add(scaleParam);
 
         // Coordinates
-        xParam = new Parameter(RIGHT_PANE_WIDTH, "X", new NumberField(0.0f));
-        yParam = new Parameter(RIGHT_PANE_WIDTH, "Y", new NumberField(0.0f));
+        xParam = new Parameter<>(RIGHT_PANE_WIDTH, "X", new NumberFieldd(0.0));
+        yParam = new Parameter<>(RIGHT_PANE_WIDTH, "Y", new NumberFieldd(0.0));
         rightTop.getChildren().addAll(xParam, yParam);
 
         // Resolution
@@ -289,6 +314,11 @@ public class RetornGUI implements GUI {
 
         ColorSelector colorSelector = new ColorSelector();
         rightTop.getChildren().add(colorSelector);
+
+        // Update
+        updateButton = new Button("Update");
+        updateButton.setOnAction(event -> updateParameters((ApplicationState) state));
+        rightTop.getChildren().add(updateButton);
 
         fpsDisplay = new Label("FPS: " + window.getFpsCounter().getFps());
         fpsDisplay.setAlignment(Pos.BOTTOM_LEFT);
