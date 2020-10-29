@@ -2,6 +2,7 @@ package com.grantranda.retorn.engine.graphics.gui;
 
 import lwjgui.scene.control.TextField;
 
+// TODO: Make abstract and use generics. Extend using wrapper classes to create NumberFieldi & NumberFieldd
 public class NumberField extends TextField {
 
     private final double min;
