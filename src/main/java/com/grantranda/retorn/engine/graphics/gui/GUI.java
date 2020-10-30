@@ -10,7 +10,7 @@ public interface GUI {
 
     void terminate();
 
-    void update(Window window, Shader shader);
+    void update(Window window, Shader shader, State state);
 
     void render(Window window);
 }

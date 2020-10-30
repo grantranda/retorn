@@ -76,7 +76,7 @@ public class Retorn implements Application {
     public void update(Window window) {
         inputHandler.handle(window, renderer.getShader(), state);
         MouseInput.update();
-        gui.update(window, renderer.getShader());
+        gui.update(window, renderer.getShader(), state);
     }
 
     @Override

@@ -37,8 +37,6 @@ public class RetornGUI implements GUI {
 
     private lwjgui.scene.Window guiWindow;
 
-    private ApplicationState state;
-
     private BorderPane root;
     private BorderPane menu;
 
@@ -105,17 +103,16 @@ public class RetornGUI implements GUI {
 
     @Override
     public void initialize(Window window, State state) {
-        this.state = (ApplicationState) state;
-        initializeGui(window);
+        initializeGui(window, (ApplicationState) state);
         initializeNvg(window);
     }
 
-    private void initializeGui(Window window) {
+    private void initializeGui(Window window, ApplicationState state) {
         guiWindow = WindowManager.generateWindow(window.getWindowID());
         guiWindow.setWindowAutoClear(false);
         guiWindow.show();
 
-        addGuiComponents(window, guiWindow.getScene());
+        addGuiComponents(window, state, guiWindow.getScene());
         updateParameters(state);
     }
 
@@ -131,11 +128,11 @@ public class RetornGUI implements GUI {
     }
 
     @Override
-    public void update(Window window, Shader shader) {
+    public void update(Window window, Shader shader, State state) {
         WindowManager.update();
         updateInput(window);
         updateGui(window);
-        updateUniforms(shader);
+        updateUniforms(shader, (ApplicationState) state);
     }
 
     private void updateInput(Window window) {
@@ -152,7 +149,7 @@ public class RetornGUI implements GUI {
         fpsDisplay.setText("FPS: " + window.getFpsCounter().getFps());
     }
 
-    private void updateUniforms(Shader shader) {
+    private void updateUniforms(Shader shader, ApplicationState state) {
         shader.setUniform1i("max_iterations", state.getRenderState().getMaxIterations());
     }
 
@@ -213,7 +210,7 @@ public class RetornGUI implements GUI {
         nvgEndFrame(nvgContext);
     }
 
-    private void addGuiComponents(Window window, Scene scene) {
+    private void addGuiComponents(Window window, ApplicationState state, Scene scene) {
         /*
          * TODO:
          *  Add border. Possibly render fractal scene with size slightly less than window size.
@@ -226,7 +223,7 @@ public class RetornGUI implements GUI {
         root.setCenter(new StackPane()); // Set center so BorderPane alignment is correct
         //root.setTop(menuBar(window));
 
-        menu = createMenu(window);
+        menu = createMenu(window, state);
         root.setRight(menu);
 
 //        DraggablePane dragPane1 = new DraggablePane();
@@ -267,7 +264,7 @@ public class RetornGUI implements GUI {
         return menuBar;
     }
 
-    private BorderPane createMenu(Window window) {
+    private BorderPane createMenu(Window window, ApplicationState state) {
         BorderPane menu = new BorderPane();
         menu.setMinWidth(RIGHT_PANE_WIDTH);
         menu.setMaxWidth(RIGHT_PANE_WIDTH);
