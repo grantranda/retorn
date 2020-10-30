@@ -317,7 +317,7 @@ public class RetornGUI implements GUI {
 
         // Update
         updateButton = new Button("Update");
-        updateButton.setOnAction(event -> updateParameters((ApplicationState) state));
+        updateButton.setOnAction(event -> updateParameters(state));
         rightTop.getChildren().add(updateButton);
 
         fpsDisplay = new Label("FPS: " + window.getFpsCounter().getFps());
