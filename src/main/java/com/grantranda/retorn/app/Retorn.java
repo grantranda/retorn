@@ -16,11 +16,11 @@ import org.lwjgl.opengl.GL11;
 
 public class Retorn implements Application {
 
+    private final ApplicationState state = new ApplicationState();
     private final RetornRenderer renderer = new RetornRenderer(Projection.ORTHOGRAPHIC);
     private final Camera camera = new Camera();
     private final RetornGUI gui = new RetornGUI();
     private final RetornInputHandler inputHandler = new RetornInputHandler(gui);
-    private final ApplicationState state = new ApplicationState();
 
     private Model[] models;
 
@@ -74,7 +74,7 @@ public class Retorn implements Application {
 
     @Override
     public void update(Window window) {
-        inputHandler.handle(window, renderer.getShader());
+        inputHandler.handle(window, renderer.getShader(), state);
         MouseInput.update();
         gui.update(window, renderer.getShader());
     }

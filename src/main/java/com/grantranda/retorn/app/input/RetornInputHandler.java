@@ -1,5 +1,7 @@
 package com.grantranda.retorn.app.input;
 
+import com.grantranda.retorn.app.state.ApplicationState;
+import com.grantranda.retorn.app.state.RenderState;
 import com.grantranda.retorn.engine.graphics.Shader;
 import com.grantranda.retorn.engine.graphics.Window;
 import com.grantranda.retorn.app.graphics.gui.RetornGUI;
@@ -7,6 +9,7 @@ import com.grantranda.retorn.engine.input.InputHandler;
 import com.grantranda.retorn.engine.input.KeyboardInput;
 import com.grantranda.retorn.engine.input.MouseInput;
 import com.grantranda.retorn.engine.math.Vector3d;
+import com.grantranda.retorn.engine.state.State;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -27,13 +30,14 @@ public class RetornInputHandler implements InputHandler {
     }
 
     @Override
-    public void handle(Window window, Shader shader) {
-        handleKeyboardInput(window, shader);
-        handleMouseInput(window, shader);
-        updateApplication(window, shader);
+    public void handle(Window window, Shader shader, State state) {
+        handleKeyboardInput(window);
+        handleMouseInput(window);
+        updateState((ApplicationState) state);
+        updateUniforms(shader);
     }
 
-    private void handleKeyboardInput(Window window, Shader shader) {
+    private void handleKeyboardInput(Window window) {
         if (KeyboardInput.isKeyPressed(GLFW_KEY_ESCAPE)) {
             glfwSetWindowShouldClose(window.getWindowID(), true);
         } else if (KeyboardInput.isKeyPressed(GLFW_KEY_SPACE)) {
@@ -46,7 +50,7 @@ public class RetornInputHandler implements InputHandler {
         }
     }
 
-    private void handleMouseInput(Window window, Shader shader) {
+    private void handleMouseInput(Window window) {
         if (MouseInput.isButtonPressed(GLFW_MOUSE_BUTTON_1)) {
             if (gui.isMouseOver()) {
                 gui.setMousePressed(true);
@@ -60,7 +64,7 @@ public class RetornInputHandler implements InputHandler {
         }
     }
 
-    private void updateApplication(Window window, Shader shader) {
+    private void updateState(ApplicationState state) {
         if (draggable) {
             Vector3d mouseDelta = MouseInput.getDelta();
             offset.x += mouseDelta.x * scale;
@@ -73,6 +77,12 @@ public class RetornInputHandler implements InputHandler {
             }
         }
 
+        RenderState renderState = state.getRenderState();
+        renderState.setPosition(offset); // TODO change
+        renderState.setScale(scale);
+    }
+
+    private void updateUniforms(Shader shader) {
         shader.setUniform1d("scale", scale);
         shader.setUniform2d("offset", offset.x, offset.y);
     }
