@@ -6,6 +6,7 @@ import lwjgui.scene.control.Label;
 import lwjgui.scene.control.TextInputControl;
 import lwjgui.scene.layout.HBox;
 
+// TODO: text that expands beyond the field width cannot be seen or selected without keyboard shortcuts.
 public class Parameter<T extends TextInputControl> extends HBox {
 
     private final Label label;
