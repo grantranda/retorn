@@ -1,7 +1,6 @@
 package com.grantranda.retorn.app.graphics.gui;
 
 import com.grantranda.retorn.app.state.ApplicationState;
-import com.grantranda.retorn.app.state.DisplayState;
 import com.grantranda.retorn.app.state.RenderState;
 import com.grantranda.retorn.engine.graphics.Shader;
 import com.grantranda.retorn.engine.graphics.Window;
@@ -45,7 +44,7 @@ public class RetornGUI implements GUI {
     private Button updateButton;
 
     private Parameter<NumberFieldi> maxIterationsParam;
-    private Parameter<NumberFieldi> scaleParam;
+    private Parameter<NumberFieldd> scaleParam;
     private Parameter<NumberFieldd> xParam;
     private Parameter<NumberFieldd> yParam;
 
@@ -113,7 +112,8 @@ public class RetornGUI implements GUI {
         guiWindow.show();
 
         addGuiComponents(window, state, guiWindow.getScene());
-        updateParameters(state);
+        updateParameters();
+        updateState(state);
     }
 
     private void initializeNvg(Window window) {
@@ -149,26 +149,35 @@ public class RetornGUI implements GUI {
         fpsDisplay.setText("FPS: " + window.getFpsCounter().getFps());
     }
 
-    private void updateUniforms(Shader shader, ApplicationState state) {
-        shader.setUniform1i("max_iterations", state.getRenderState().getMaxIterations());
+    private void updateParameters() {
+        maxIterationsParam.getTextField().validate();
+        scaleParam.getTextField().validate();
+        xParam.getTextField().validate();
+        yParam.getTextField().validate();
     }
 
-    private void updateParameters(ApplicationState state) {
-        DisplayState displayState = state.getDisplayState();
+    public void updateParametersFromState(ApplicationState state) {
         RenderState renderState = state.getRenderState();
 
-        maxIterationsParam.getTextField().updateNumber();
-        scaleParam.getTextField().updateNumber();
-        xParam.getTextField().updateNumber();
-        yParam.getTextField().updateNumber();
+        maxIterationsParam.getTextField().setNumber(renderState.getMaxIterations());
+        scaleParam.getTextField().setNumber(renderState.getScale());
+        xParam.getTextField().setNumber(renderState.getOffset().x);
+        yParam.getTextField().setNumber(renderState.getOffset().y);
+    }
 
+    private void updateState(ApplicationState state) {
+        RenderState renderState = state.getRenderState();
         renderState.setMaxIterations(maxIterationsParam.getTextField().getNumber());
         renderState.setScale(scaleParam.getTextField().getNumber());
-        renderState.setPosition(new Vector3d(
-                xParam.getTextField().getNumber(),
-                yParam.getTextField().getNumber(),
-                0.0f
-        ));
+        renderState.setOffset(xParam.getTextField().getNumber(), yParam.getTextField().getNumber(), 0.0f);
+    }
+
+    private void updateUniforms(Shader shader, ApplicationState state) {
+        RenderState renderState = state.getRenderState();
+
+        shader.setUniform1i("max_iterations", renderState.getMaxIterations());
+        shader.setUniform1d("scale", renderState.getScale());
+        shader.setUniform2d("offset", renderState.getOffset().x, renderState.getOffset().y);
     }
 
     @Override
@@ -179,8 +188,8 @@ public class RetornGUI implements GUI {
     }
 
     private void renderNvg(Window window) {
-        int width  = (int)(window.getWidth() / window.getContentScaleX());
-        int height = (int)(window.getHeight() / window.getContentScaleY());
+        int width  = (int) (window.getWidth() / window.getContentScaleX());
+        int height = (int) (window.getHeight() / window.getContentScaleY());
         int midX = width / 2;
         int midY = height / 2;
         int startX = midX - 50;
@@ -290,7 +299,7 @@ public class RetornGUI implements GUI {
         rightTop.getChildren().add(maxIterationsParam);
 
         // Scale
-        scaleParam = new Parameter<>(RIGHT_PANE_WIDTH, "Scale", new NumberFieldi(1));
+        scaleParam = new Parameter<>(RIGHT_PANE_WIDTH, "Scale", new NumberFieldd(1.0));
         rightTop.getChildren().add(scaleParam);
 
         // Coordinates
@@ -314,7 +323,10 @@ public class RetornGUI implements GUI {
 
         // Update
         updateButton = new Button("Update");
-        updateButton.setOnAction(event -> updateParameters(state));
+        updateButton.setOnAction(event -> {
+            updateParameters();
+            updateState(state);
+        });
         rightTop.getChildren().add(updateButton);
 
         fpsDisplay = new Label("FPS: " + window.getFpsCounter().getFps());
