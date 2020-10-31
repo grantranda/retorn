@@ -31,6 +31,7 @@ public abstract class NumberField<T extends Number & Comparable<T>> extends Text
         if (number.compareTo(getMin()) < 0 || number.compareTo(getMax()) > 0) return;
 
         this.number = number;
+        setText(number.toString());
     }
 
     public T getMin() {
@@ -41,5 +42,7 @@ public abstract class NumberField<T extends Number & Comparable<T>> extends Text
         return max;
     }
 
-    public abstract void updateNumber();
+    public abstract boolean isValidNumber();
+
+    public abstract void validate();
 }

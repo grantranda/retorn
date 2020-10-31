@@ -19,22 +19,25 @@ public class RetornInputHandler implements InputHandler {
 
     private final RetornGUI gui;
 
-    private final Vector3d offset = new Vector3d();
-    private double scale = 1.0f;
-
+    private boolean stateChanged = false;
     private boolean menuToggled = false;
     private boolean draggable = false;
+    private boolean scalable = false;
 
     public RetornInputHandler(RetornGUI gui) {
         this.gui = gui;
     }
 
     @Override
-    public void handle(Window window, Shader shader, State state) {
+    public void handle(Window window, State state) {
         handleKeyboardInput(window);
         handleMouseInput(window);
         updateState((ApplicationState) state);
-        updateUniforms(shader);
+
+        if (stateChanged) {
+            gui.updateParametersFromState((ApplicationState) state);
+            stateChanged = false;
+        }
     }
 
     private void handleKeyboardInput(Window window) {
@@ -62,28 +65,40 @@ public class RetornInputHandler implements InputHandler {
             gui.setMousePressed(false);
             draggable = false;
         }
+
+        if (draggable || (MouseInput.isMouseInWindow() && !gui.isMouseOver())) {
+            scalable = MouseInput.isScrolling();
+        }
     }
 
     private void updateState(ApplicationState state) {
-        if (draggable) {
-            Vector3d mouseDelta = MouseInput.getDelta();
-            offset.x += mouseDelta.x * scale;
-            offset.y += mouseDelta.y * scale;
-        }
+        RenderState renderState = state.getRenderState();
+        double offsetX = renderState.getOffset().x;
+        double offsetY = renderState.getOffset().y;
+        double scale = renderState.getScale();
 
-        if (draggable || (MouseInput.isMouseInWindow() && !gui.isMouseOver())) {
-            if (MouseInput.isScrolling()) {
-                scale *= 1 + MouseInput.getScrollDirection().y * SCALE_FACTOR;
+        if (draggable) {
+            double previousX = offsetX;
+            double previousY = offsetY;
+
+            Vector3d mouseDelta = MouseInput.getDelta();
+            offsetX += mouseDelta.x * scale;
+            offsetY += mouseDelta.y * scale;
+
+            if (previousX != offsetX || previousY != offsetY) {
+                renderState.setOffset(offsetX, offsetY, 0.0f);
+                stateChanged = true;
             }
         }
 
-        RenderState renderState = state.getRenderState();
-        renderState.setPosition(offset); // TODO change
-        renderState.setScale(scale);
-    }
+        if (scalable) {
+            double previousScale = scale;
+            scale *= 1 + MouseInput.getScrollDirection().y * SCALE_FACTOR;
 
-    private void updateUniforms(Shader shader) {
-        shader.setUniform1d("scale", scale);
-        shader.setUniform2d("offset", offset.x, offset.y);
+            if (previousScale != scale) {
+                renderState.setScale(scale);
+                stateChanged = true;
+            }
+        }
     }
 }
