@@ -19,9 +19,7 @@ public class RetornInputHandler implements InputHandler {
 
     private final RetornGUI gui;
 
-    private final Vector3d offset = new Vector3d();
-    private double scale = 1.0f;
-
+    private boolean stateChanged = false;
     private boolean menuToggled = false;
     private boolean draggable = false;
     private boolean scalable = false;
@@ -31,11 +29,15 @@ public class RetornInputHandler implements InputHandler {
     }
 
     @Override
-    public void handle(Window window, Shader shader, State state) {
+    public void handle(Window window, State state) {
         handleKeyboardInput(window);
         handleMouseInput(window);
         updateState((ApplicationState) state);
-        updateUniforms(shader, (ApplicationState) state);
+
+        if (stateChanged) {
+            gui.updateParametersFromState((ApplicationState) state);
+            stateChanged = false;
+        }
     }
 
     private void handleKeyboardInput(Window window) {
@@ -70,24 +72,33 @@ public class RetornInputHandler implements InputHandler {
     }
 
     private void updateState(ApplicationState state) {
+        RenderState renderState = state.getRenderState();
+        double offsetX = renderState.getOffset().x;
+        double offsetY = renderState.getOffset().y;
+        double scale = renderState.getScale();
+
         if (draggable) {
+            double previousX = offsetX;
+            double previousY = offsetY;
+
             Vector3d mouseDelta = MouseInput.getDelta();
-            offset.x += mouseDelta.x * scale;
-            offset.y += mouseDelta.y * scale;
+            offsetX += mouseDelta.x * scale;
+            offsetY += mouseDelta.y * scale;
+
+            if (previousX != offsetX || previousY != offsetY) {
+                renderState.setOffset(offsetX, offsetY, 0.0f);
+                stateChanged = true;
+            }
         }
 
         if (scalable) {
+            double previousScale = scale;
             scale *= 1 + MouseInput.getScrollDirection().y * SCALE_FACTOR;
+
+            if (previousScale != scale) {
+                renderState.setScale(scale);
+                stateChanged = true;
+            }
         }
-
-        RenderState renderState = state.getRenderState();
-        renderState.setPosition(offset); // TODO change
-        renderState.setScale(scale);
-    }
-
-    private void updateUniforms(Shader shader, ApplicationState state) {
-        RenderState renderState = state.getRenderState();
-        shader.setUniform1d("scale", renderState.getScale());
-        shader.setUniform2d("offset", renderState.getPosition().x, renderState.getPosition().y);
     }
 }
