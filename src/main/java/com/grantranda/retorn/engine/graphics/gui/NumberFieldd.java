@@ -1,6 +1,5 @@
 package com.grantranda.retorn.engine.graphics.gui;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class NumberFieldd extends NumberField<Double> {
@@ -20,17 +19,16 @@ public class NumberFieldd extends NumberField<Double> {
     }
 
     @Override
-    public void updateNumber() {
-        String text = getText();
-        Matcher matcher = DOUBLE_PATTERN.matcher(text);
+    public boolean isValidNumber() {
+        return DOUBLE_PATTERN.matcher(getText()).matches();
+    }
 
-        if (matcher.matches()) {
+    @Override
+    public void validate() {
+        if (isValidNumber()) {
             setNumber(Double.parseDouble(getText()));
-            setText(text);
         } else {
             setNumber(number);
         }
-
-        setText(number.toString());
     }
 }
