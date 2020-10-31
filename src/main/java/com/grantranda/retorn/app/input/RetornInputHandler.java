@@ -24,6 +24,7 @@ public class RetornInputHandler implements InputHandler {
 
     private boolean menuToggled = false;
     private boolean draggable = false;
+    private boolean scalable = false;
 
     public RetornInputHandler(RetornGUI gui) {
         this.gui = gui;
@@ -34,7 +35,7 @@ public class RetornInputHandler implements InputHandler {
         handleKeyboardInput(window);
         handleMouseInput(window);
         updateState((ApplicationState) state);
-        updateUniforms(shader);
+        updateUniforms(shader, (ApplicationState) state);
     }
 
     private void handleKeyboardInput(Window window) {
@@ -62,6 +63,10 @@ public class RetornInputHandler implements InputHandler {
             gui.setMousePressed(false);
             draggable = false;
         }
+
+        if (draggable || (MouseInput.isMouseInWindow() && !gui.isMouseOver())) {
+            scalable = MouseInput.isScrolling();
+        }
     }
 
     private void updateState(ApplicationState state) {
@@ -71,10 +76,8 @@ public class RetornInputHandler implements InputHandler {
             offset.y += mouseDelta.y * scale;
         }
 
-        if (draggable || (MouseInput.isMouseInWindow() && !gui.isMouseOver())) {
-            if (MouseInput.isScrolling()) {
-                scale *= 1 + MouseInput.getScrollDirection().y * SCALE_FACTOR;
-            }
+        if (scalable) {
+            scale *= 1 + MouseInput.getScrollDirection().y * SCALE_FACTOR;
         }
 
         RenderState renderState = state.getRenderState();
@@ -82,8 +85,9 @@ public class RetornInputHandler implements InputHandler {
         renderState.setScale(scale);
     }
 
-    private void updateUniforms(Shader shader) {
-        shader.setUniform1d("scale", scale);
-        shader.setUniform2d("offset", offset.x, offset.y);
+    private void updateUniforms(Shader shader, ApplicationState state) {
+        RenderState renderState = state.getRenderState();
+        shader.setUniform1d("scale", renderState.getScale());
+        shader.setUniform2d("offset", renderState.getPosition().x, renderState.getPosition().y);
     }
 }
