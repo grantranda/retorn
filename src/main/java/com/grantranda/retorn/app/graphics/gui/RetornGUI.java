@@ -27,7 +27,7 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class RetornGUI implements GUI {
 
-    public static final int RIGHT_PANE_WIDTH = 300;
+    public static final int RIGHT_PANE_WIDTH = 400;
 
     private long nvgContext;
     private boolean mouseOver;
