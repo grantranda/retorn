@@ -231,13 +231,6 @@ public class RetornGUI implements GUI {
         nvgEndFrame(nvgContext);
     }
 
-    private void resetParameters() {
-        maxIterationsParam.getTextField().setNumber(100);
-        scaleParam.getTextField().setNumber(1.0);
-        xParam.getTextField().setNumber(0.0);
-        yParam.getTextField().setNumber(0.0);
-    }
-
     private void addGuiComponents(Window window, ApplicationState state, Scene scene) {
         /*
          * TODO:
@@ -351,8 +344,8 @@ public class RetornGUI implements GUI {
         // Reset
         resetButton = new Button("Reset");
         resetButton.setOnAction(event -> {
-            resetParameters();
-            updateState(state);
+            state.getRenderState().reset();
+            updateParametersFromState(state);
         });
         rightTop.getChildren().add(resetButton);
 
