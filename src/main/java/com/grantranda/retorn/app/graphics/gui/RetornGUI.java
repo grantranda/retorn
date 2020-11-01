@@ -42,6 +42,7 @@ public class RetornGUI implements GUI {
     private Button hideMenuButton;
     private Button showMenuButton;
     private Button updateButton;
+    private Button resetButton;
 
     private Parameter<NumberFieldi> maxIterationsParam;
     private Parameter<NumberFieldd> scaleParam;
@@ -219,6 +220,13 @@ public class RetornGUI implements GUI {
         nvgEndFrame(nvgContext);
     }
 
+    private void resetParameters() {
+        maxIterationsParam.getTextField().setNumber(100);
+        scaleParam.getTextField().setNumber(1.0);
+        xParam.getTextField().setNumber(0.0);
+        yParam.getTextField().setNumber(0.0);
+    }
+
     private void addGuiComponents(Window window, ApplicationState state, Scene scene) {
         /*
          * TODO:
@@ -328,6 +336,14 @@ public class RetornGUI implements GUI {
             updateState(state);
         });
         rightTop.getChildren().add(updateButton);
+
+        // Reset
+        resetButton = new Button("Reset");
+        resetButton.setOnAction(event -> {
+            resetParameters();
+            updateState(state);
+        });
+        rightTop.getChildren().add(resetButton);
 
         fpsDisplay = new Label("FPS: " + window.getFpsCounter().getFps());
         fpsDisplay.setAlignment(Pos.BOTTOM_LEFT);
