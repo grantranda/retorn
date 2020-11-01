@@ -1,17 +1,23 @@
 package com.grantranda.retorn.app.graphics.gui;
 
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 import com.grantranda.retorn.app.graphics.gui.control.ColorSelector;
 import com.grantranda.retorn.app.graphics.gui.control.NumberFieldd;
 import com.grantranda.retorn.app.graphics.gui.control.NumberFieldi;
 import com.grantranda.retorn.app.graphics.gui.control.Parameter;
 import com.grantranda.retorn.app.state.ApplicationState;
 import com.grantranda.retorn.app.state.RenderState;
+import com.grantranda.retorn.app.util.StateUtils;
 import com.grantranda.retorn.engine.graphics.Shader;
 import com.grantranda.retorn.engine.graphics.Window;
 import com.grantranda.retorn.engine.graphics.gui.GUI;
 import com.grantranda.retorn.engine.input.MouseInput;
 import com.grantranda.retorn.engine.math.Vector3d;
 import com.grantranda.retorn.engine.state.State;
+import com.grantranda.retorn.engine.util.JSONUtils;
+import lwjgui.LWJGUIDialog;
+import lwjgui.LWJGUIDialog.DialogIcon;
 import lwjgui.geometry.Pos;
 import lwjgui.paint.Color;
 import lwjgui.scene.Scene;
@@ -20,6 +26,9 @@ import lwjgui.scene.control.*;
 import lwjgui.scene.layout.BorderPane;
 import lwjgui.scene.layout.StackPane;
 import lwjgui.scene.layout.VBox;
+
+import java.io.File;
+import java.io.IOException;
 
 import static org.lwjgl.nanovg.NanoVG.*;
 import static org.lwjgl.nanovg.NanoVGGL3.*;
@@ -43,6 +52,8 @@ public class RetornGUI implements GUI {
     private Button showMenuButton;
     private Button updateButton;
     private Button resetButton;
+    private Button saveButton;
+    private Button loadButton;
 
     private Parameter<NumberFieldi> maxIterationsParam;
     private Parameter<NumberFieldd> scaleParam;
@@ -220,13 +231,6 @@ public class RetornGUI implements GUI {
         nvgEndFrame(nvgContext);
     }
 
-    private void resetParameters() {
-        maxIterationsParam.getTextField().setNumber(100);
-        scaleParam.getTextField().setNumber(1.0);
-        xParam.getTextField().setNumber(0.0);
-        yParam.getTextField().setNumber(0.0);
-    }
-
     private void addGuiComponents(Window window, ApplicationState state, Scene scene) {
         /*
          * TODO:
@@ -340,10 +344,25 @@ public class RetornGUI implements GUI {
         // Reset
         resetButton = new Button("Reset");
         resetButton.setOnAction(event -> {
-            resetParameters();
-            updateState(state);
+            state.getRenderState().reset();
+            updateParametersFromState(state);
         });
         rightTop.getChildren().add(resetButton);
+
+        // Save
+        saveButton = new Button("Save");
+        saveButton.setOnAction(event -> {
+            StateUtils.saveState(state.getRenderState(), "retorn_parameters.json");
+        });
+        rightTop.getChildren().add(saveButton);
+
+        // Load
+        loadButton = new Button("Load");
+        loadButton.setOnAction(event -> {
+            StateUtils.loadState(state, RenderState.class);
+            updateParametersFromState(state);
+        });
+        rightTop.getChildren().add(loadButton);
 
         fpsDisplay = new Label("FPS: " + window.getFpsCounter().getFps());
         fpsDisplay.setAlignment(Pos.BOTTOM_LEFT);

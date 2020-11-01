@@ -2,6 +2,8 @@ package com.grantranda.retorn.engine.util;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -15,7 +17,7 @@ public class JSONUtils {
 
     }
 
-    public static <T> T readJson(Class<T> type, String path) throws IOException {
+    public static <T> T readJson(Class<T> type, String path) throws IOException, JsonSyntaxException {
         BufferedReader in = new BufferedReader(new FileReader(path));
         T object = new Gson().fromJson(in, type);
         in.close();
@@ -30,7 +32,7 @@ public class JSONUtils {
         return gson.toJson(object);
     }
 
-    public static void toJson(Object object, String path) throws IOException {
+    public static void toJson(Object object, String path) throws IOException, JsonIOException {
         Gson gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .serializeNulls()

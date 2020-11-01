@@ -34,6 +34,7 @@ public class ApplicationState implements State {
 
     @Override
     public void reset() {
-
+        displayState.reset();
+        renderState.reset();
     }
 }
