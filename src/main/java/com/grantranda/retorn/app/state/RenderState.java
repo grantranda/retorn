@@ -1,8 +1,9 @@
 package com.grantranda.retorn.app.state;
 
 import com.grantranda.retorn.engine.math.Vector3d;
+import com.grantranda.retorn.engine.state.State;
 
-public class RenderState {
+public class RenderState implements State {
 
     private final Vector3d offset = new Vector3d();
     private int maxIterations;
@@ -38,5 +39,12 @@ public class RenderState {
         offset.x = x;
         offset.y = y;
         offset.z = z;
+    }
+
+    @Override
+    public void reset() {
+        setMaxIterations(100);
+        setScale(1.0);
+        setOffset(0.0, 0.0, 0.0);
     }
 }

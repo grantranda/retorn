@@ -1,6 +1,8 @@
 package com.grantranda.retorn.app.state;
 
-public class DisplayState {
+import com.grantranda.retorn.engine.state.State;
+
+public class DisplayState implements State {
 
     private int width;
     private int height;
@@ -32,5 +34,10 @@ public class DisplayState {
 
     public void setvSync(boolean vSync) {
         this.vSync = vSync;
+    }
+
+    @Override
+    public void reset() {
+
     }
 }
