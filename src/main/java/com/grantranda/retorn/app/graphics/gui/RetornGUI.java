@@ -1,14 +1,14 @@
 package com.grantranda.retorn.app.graphics.gui;
 
+import com.grantranda.retorn.app.graphics.gui.control.ColorSelector;
+import com.grantranda.retorn.app.graphics.gui.control.NumberFieldd;
+import com.grantranda.retorn.app.graphics.gui.control.NumberFieldi;
+import com.grantranda.retorn.app.graphics.gui.control.Parameter;
 import com.grantranda.retorn.app.state.ApplicationState;
 import com.grantranda.retorn.app.state.RenderState;
 import com.grantranda.retorn.engine.graphics.Shader;
 import com.grantranda.retorn.engine.graphics.Window;
-import com.grantranda.retorn.engine.graphics.gui.ColorSelector;
 import com.grantranda.retorn.engine.graphics.gui.GUI;
-import com.grantranda.retorn.engine.graphics.gui.NumberFieldd;
-import com.grantranda.retorn.engine.graphics.gui.NumberFieldi;
-import com.grantranda.retorn.engine.graphics.gui.Parameter;
 import com.grantranda.retorn.engine.input.MouseInput;
 import com.grantranda.retorn.engine.math.Vector3d;
 import com.grantranda.retorn.engine.state.State;
