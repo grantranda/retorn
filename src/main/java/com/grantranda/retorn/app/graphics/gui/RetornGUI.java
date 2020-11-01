@@ -8,6 +8,7 @@ import com.grantranda.retorn.app.graphics.gui.control.NumberFieldi;
 import com.grantranda.retorn.app.graphics.gui.control.Parameter;
 import com.grantranda.retorn.app.state.ApplicationState;
 import com.grantranda.retorn.app.state.RenderState;
+import com.grantranda.retorn.app.util.StateUtils;
 import com.grantranda.retorn.engine.graphics.Shader;
 import com.grantranda.retorn.engine.graphics.Window;
 import com.grantranda.retorn.engine.graphics.gui.GUI;
@@ -237,36 +238,6 @@ public class RetornGUI implements GUI {
         yParam.getTextField().setNumber(0.0);
     }
 
-    private void saveParameters(RenderState state) {
-        File defaultPath = new File(System.getProperty("user.home") + "/retorn_parameters.json");
-        File selectedFile = LWJGUIDialog.showSaveFileDialog("Save Parameters", defaultPath, "JSON Files (*.json)", "json", false);
-
-        if (selectedFile == null) return;
-
-        try {
-            selectedFile.createNewFile();
-            JSONUtils.toJson(state, selectedFile.getAbsolutePath());
-        } catch (IOException | JsonIOException e) {
-            LWJGUIDialog.showMessageDialog("Error", "Error saving parameters.", DialogIcon.ERROR);
-        }
-    }
-
-    private void loadParameters(ApplicationState state) {
-        File defaultPath = new File(System.getProperty("user.home"));
-        File selectedFile = LWJGUIDialog.showOpenFileDialog("Load Parameters", defaultPath, "JSON Files (*.json)", "json");
-
-        if (selectedFile == null) return;
-
-        try {
-            RenderState renderState = JSONUtils.readJson(RenderState.class, selectedFile.getAbsolutePath());
-            state.setRenderState(renderState);
-        } catch (IOException e) {
-            LWJGUIDialog.showMessageDialog("Error", "Error loading parameters.", DialogIcon.ERROR);
-        } catch (JsonSyntaxException e) {
-            LWJGUIDialog.showMessageDialog("Error", "Improper JSON syntax.", DialogIcon.ERROR);
-        }
-    }
-
     private void addGuiComponents(Window window, ApplicationState state, Scene scene) {
         /*
          * TODO:
@@ -388,14 +359,14 @@ public class RetornGUI implements GUI {
         // Save
         saveButton = new Button("Save");
         saveButton.setOnAction(event -> {
-            saveParameters(state.getRenderState());
+            StateUtils.saveState(state.getRenderState(), "retorn_parameters.json");
         });
         rightTop.getChildren().add(saveButton);
 
         // Load
         loadButton = new Button("Load");
         loadButton.setOnAction(event -> {
-            loadParameters(state);
+            StateUtils.loadState(state, RenderState.class);
             updateParametersFromState(state);
         });
         rightTop.getChildren().add(loadButton);
