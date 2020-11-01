@@ -12,6 +12,9 @@ import com.grantranda.retorn.engine.graphics.gui.GUI;
 import com.grantranda.retorn.engine.input.MouseInput;
 import com.grantranda.retorn.engine.math.Vector3d;
 import com.grantranda.retorn.engine.state.State;
+import com.grantranda.retorn.engine.util.JSONUtils;
+import lwjgui.LWJGUIDialog;
+import lwjgui.LWJGUIDialog.DialogIcon;
 import lwjgui.geometry.Pos;
 import lwjgui.paint.Color;
 import lwjgui.scene.Scene;
@@ -20,6 +23,9 @@ import lwjgui.scene.control.*;
 import lwjgui.scene.layout.BorderPane;
 import lwjgui.scene.layout.StackPane;
 import lwjgui.scene.layout.VBox;
+
+import java.io.File;
+import java.io.IOException;
 
 import static org.lwjgl.nanovg.NanoVG.*;
 import static org.lwjgl.nanovg.NanoVGGL3.*;
@@ -229,6 +235,21 @@ public class RetornGUI implements GUI {
         yParam.getTextField().setNumber(0.0);
     }
 
+    // TODO: Possibly save only renderState and save displayState upon exiting application
+    private void saveParameters(ApplicationState state) {
+        File defaultPath = new File(System.getProperty("user.home") + "/retorn_parameters.json");
+        File selectedFile = LWJGUIDialog.showSaveFileDialog("Save", defaultPath, "JSON Files (*.json)", "json", false);
+
+        if (selectedFile == null) return;
+
+        try {
+            selectedFile.createNewFile();
+            JSONUtils.toJson(state, selectedFile.getAbsolutePath());
+        } catch (IOException e) {
+            LWJGUIDialog.showMessageDialog("Error", "Error saving parameters.", DialogIcon.ERROR);
+        }
+    }
+
     private void addGuiComponents(Window window, ApplicationState state, Scene scene) {
         /*
          * TODO:
@@ -350,7 +371,7 @@ public class RetornGUI implements GUI {
         // Save
         saveButton = new Button("Save");
         saveButton.setOnAction(event -> {
-
+            saveParameters(state);
         });
         rightTop.getChildren().add(saveButton);
 
