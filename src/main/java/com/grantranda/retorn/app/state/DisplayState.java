@@ -38,6 +38,8 @@ public class DisplayState implements State {
 
     @Override
     public void reset() {
-
+        setWidth(1280);
+        setHeight(720);
+        setvSync(false);
     }
 }
