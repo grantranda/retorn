@@ -1,5 +1,7 @@
 package com.grantranda.retorn.app.graphics.gui;
 
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 import com.grantranda.retorn.app.graphics.gui.control.ColorSelector;
 import com.grantranda.retorn.app.graphics.gui.control.NumberFieldd;
 import com.grantranda.retorn.app.graphics.gui.control.NumberFieldi;
@@ -235,18 +237,33 @@ public class RetornGUI implements GUI {
         yParam.getTextField().setNumber(0.0);
     }
 
-    // TODO: Possibly save only renderState and save displayState upon exiting application
-    private void saveParameters(ApplicationState state) {
+    private void saveParameters(RenderState state) {
         File defaultPath = new File(System.getProperty("user.home") + "/retorn_parameters.json");
-        File selectedFile = LWJGUIDialog.showSaveFileDialog("Save", defaultPath, "JSON Files (*.json)", "json", false);
+        File selectedFile = LWJGUIDialog.showSaveFileDialog("Save Parameters", defaultPath, "JSON Files (*.json)", "json", false);
 
         if (selectedFile == null) return;
 
         try {
             selectedFile.createNewFile();
             JSONUtils.toJson(state, selectedFile.getAbsolutePath());
-        } catch (IOException e) {
+        } catch (IOException | JsonIOException e) {
             LWJGUIDialog.showMessageDialog("Error", "Error saving parameters.", DialogIcon.ERROR);
+        }
+    }
+
+    private void loadParameters(ApplicationState state) {
+        File defaultPath = new File(System.getProperty("user.home"));
+        File selectedFile = LWJGUIDialog.showOpenFileDialog("Load Parameters", defaultPath, "JSON Files (*.json)", "json");
+
+        if (selectedFile == null) return;
+
+        try {
+            RenderState renderState = JSONUtils.readJson(RenderState.class, selectedFile.getAbsolutePath());
+            state.setRenderState(renderState);
+        } catch (IOException e) {
+            LWJGUIDialog.showMessageDialog("Error", "Error loading parameters.", DialogIcon.ERROR);
+        } catch (JsonSyntaxException e) {
+            LWJGUIDialog.showMessageDialog("Error", "Improper JSON syntax.", DialogIcon.ERROR);
         }
     }
 
@@ -371,14 +388,15 @@ public class RetornGUI implements GUI {
         // Save
         saveButton = new Button("Save");
         saveButton.setOnAction(event -> {
-            saveParameters(state);
+            saveParameters(state.getRenderState());
         });
         rightTop.getChildren().add(saveButton);
 
         // Load
         loadButton = new Button("Load");
         loadButton.setOnAction(event -> {
-
+            loadParameters(state);
+            updateParametersFromState(state);
         });
         rightTop.getChildren().add(loadButton);
 
