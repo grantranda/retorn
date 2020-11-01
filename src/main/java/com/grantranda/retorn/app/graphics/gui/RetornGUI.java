@@ -43,6 +43,8 @@ public class RetornGUI implements GUI {
     private Button showMenuButton;
     private Button updateButton;
     private Button resetButton;
+    private Button saveButton;
+    private Button loadButton;
 
     private Parameter<NumberFieldi> maxIterationsParam;
     private Parameter<NumberFieldd> scaleParam;
@@ -344,6 +346,20 @@ public class RetornGUI implements GUI {
             updateState(state);
         });
         rightTop.getChildren().add(resetButton);
+
+        // Save
+        saveButton = new Button("Save");
+        saveButton.setOnAction(event -> {
+
+        });
+        rightTop.getChildren().add(saveButton);
+
+        // Load
+        loadButton = new Button("Load");
+        loadButton.setOnAction(event -> {
+
+        });
+        rightTop.getChildren().add(loadButton);
 
         fpsDisplay = new Label("FPS: " + window.getFpsCounter().getFps());
         fpsDisplay.setAlignment(Pos.BOTTOM_LEFT);
