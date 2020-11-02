@@ -1,13 +1,10 @@
 package com.grantranda.retorn.engine.graphics;
 
-import com.grantranda.retorn.app.Main;
 import org.lwjgl.system.MemoryStack;
 
 import java.io.File;
-import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
-import java.nio.file.Paths;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
