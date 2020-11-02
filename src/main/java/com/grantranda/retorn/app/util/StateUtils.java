@@ -19,8 +19,8 @@ public class StateUtils {
 
     }
 
-    public static <T extends State> void saveState(T state, String defaultFilename) {
-        File defaultPath = new File(System.getProperty("user.home") + defaultFilename);
+    public static void saveState(State state, String defaultFilename) {
+        File defaultPath = new File(System.getProperty("user.home") + "/" + defaultFilename);
         File selectedFile = LWJGUIDialog.showSaveFileDialog("Save Parameters", defaultPath, "JSON Files (*.json)", "json", false);
 
         if (selectedFile == null) return;
