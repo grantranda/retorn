@@ -224,11 +224,6 @@ public class RetornGUI implements GUI {
     }
 
     private void addGuiComponents(Window window, ApplicationState state, Scene scene) {
-        /*
-         * TODO:
-         *  Add border. Possibly render fractal scene with size slightly less than window size.
-         */
-
         root = new BorderPane();
         root.setPrefSize(window.getWidth(), window.getHeight());
         scene.setRoot(root);
