@@ -1,7 +1,5 @@
 package com.grantranda.retorn.app.graphics.gui;
 
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
 import com.grantranda.retorn.app.graphics.gui.control.ColorSelector;
 import com.grantranda.retorn.app.graphics.gui.control.NumberFieldd;
 import com.grantranda.retorn.app.graphics.gui.control.NumberFieldi;
@@ -15,9 +13,6 @@ import com.grantranda.retorn.engine.graphics.gui.GUI;
 import com.grantranda.retorn.engine.input.MouseInput;
 import com.grantranda.retorn.engine.math.Vector3d;
 import com.grantranda.retorn.engine.state.State;
-import com.grantranda.retorn.engine.util.JSONUtils;
-import lwjgui.LWJGUIDialog;
-import lwjgui.LWJGUIDialog.DialogIcon;
 import lwjgui.geometry.Pos;
 import lwjgui.paint.Color;
 import lwjgui.scene.Scene;
@@ -26,9 +21,6 @@ import lwjgui.scene.control.*;
 import lwjgui.scene.layout.BorderPane;
 import lwjgui.scene.layout.StackPane;
 import lwjgui.scene.layout.VBox;
-
-import java.io.File;
-import java.io.IOException;
 
 import static org.lwjgl.nanovg.NanoVG.*;
 import static org.lwjgl.nanovg.NanoVGGL3.*;
@@ -242,7 +234,6 @@ public class RetornGUI implements GUI {
         scene.setRoot(root);
 
         root.setCenter(new StackPane()); // Set center so BorderPane alignment is correct
-        //root.setTop(menuBar(window));
 
         menu = createMenu(window, state);
         root.setRight(menu);
@@ -274,15 +265,6 @@ public class RetornGUI implements GUI {
 //
 //        //Add it to root
 //        root.getChildren().add(dragPane1);
-    }
-
-    private MenuBar menuBar(Window window) {
-        MenuBar menuBar = new MenuBar();
-
-        Menu fileMenu = new Menu("File");
-        menuBar.getItems().add(fileMenu);
-
-        return menuBar;
     }
 
     private BorderPane createMenu(Window window, ApplicationState state) {
