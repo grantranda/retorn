@@ -31,7 +31,7 @@ public class Window {
     private float contentScaleX;
     private float contentScaleY;
 
-    private boolean vSync; // TODO: Handle vSync
+    private boolean vSync;
     private boolean resized = false;
 
     public Window(String title, int width, int height, boolean vSync) {
@@ -186,7 +186,5 @@ public class Window {
 
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_STENCIL_TEST); // TODO: Possibly add window options class and check before enabling
-
-        // GLUtil.setupDebugMessageCallback(); TODO: Remove
     }
 }
