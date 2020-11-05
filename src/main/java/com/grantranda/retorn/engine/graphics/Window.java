@@ -83,6 +83,7 @@ public class Window {
 
     public void setvSync(boolean vSync) {
         this.vSync = vSync;
+        glfwSwapInterval(vSync ? 1 : 0);
     }
 
     public boolean isResized() {
