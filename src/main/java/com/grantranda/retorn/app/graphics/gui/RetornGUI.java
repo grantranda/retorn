@@ -328,9 +328,7 @@ public class RetornGUI implements GUI {
 
         // Save
         saveButton = new Button("Save");
-        saveButton.setOnAction(event -> {
-            StateUtils.saveState(state.getRenderState(), "retorn_parameters.json");
-        });
+        saveButton.setOnAction(event -> StateUtils.saveState(state.getRenderState(), "retorn_parameters.json"));
         rightTop.getChildren().add(saveButton);
 
         // Load
