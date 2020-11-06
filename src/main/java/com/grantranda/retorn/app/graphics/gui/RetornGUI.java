@@ -233,6 +233,7 @@ public class RetornGUI implements GUI {
         menu = createMenu(window, state);
         root.setRight(menu);
 
+        // TODO: Remove following commented color selector code
 //        DraggablePane dragPane1 = new DraggablePane();
 //        dragPane1.setBackgroundLegacy(Color.DARK_GRAY);
 //        dragPane1.setPrefHeight(64);
