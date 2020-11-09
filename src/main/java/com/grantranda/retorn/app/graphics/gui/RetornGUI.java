@@ -115,7 +115,7 @@ public class RetornGUI implements GUI {
         guiWindow.setWindowAutoClear(false);
         guiWindow.show();
 
-        addGuiComponents(window, state, guiWindow.getScene());
+        addGuiElements(window, state, guiWindow.getScene());
         updateParameters();
         updateState(state);
     }
@@ -223,7 +223,7 @@ public class RetornGUI implements GUI {
         nvgEndFrame(nvgContext);
     }
 
-    private void addGuiComponents(Window window, ApplicationState state, Scene scene) {
+    private void addGuiElements(Window window, ApplicationState state, Scene scene) {
         root = new BorderPane();
         root.setPrefSize(window.getWidth(), window.getHeight());
         scene.setRoot(root);
