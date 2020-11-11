@@ -230,7 +230,7 @@ public class RetornGUI implements GUI {
 
         root.setCenter(new StackPane()); // Set center so BorderPane alignment is correct
 
-        menu = createMenu(window, state);
+        createMenu(window, state);
         root.setRight(menu);
 
         // TODO: Remove following commented color selector code
@@ -263,8 +263,8 @@ public class RetornGUI implements GUI {
 //        root.getChildren().add(dragPane1);
     }
 
-    private BorderPane createMenu(Window window, ApplicationState state) {
-        BorderPane menu = new BorderPane();
+    private void createMenu(Window window, ApplicationState state) {
+        menu = new BorderPane();
         menu.setMinWidth(RIGHT_PANE_WIDTH);
         menu.setMaxWidth(RIGHT_PANE_WIDTH);
         menu.setPrefHeight(window.getHeight());
@@ -344,7 +344,5 @@ public class RetornGUI implements GUI {
         fpsDisplay.setAlignment(Pos.BOTTOM_LEFT);
         fpsDisplay.setFillToParentWidth(true);
         menu.setBottom(fpsDisplay);
-
-        return menu;
     }
 }
