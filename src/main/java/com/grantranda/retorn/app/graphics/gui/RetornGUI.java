@@ -21,7 +21,10 @@ import lwjgui.scene.control.*;
 import lwjgui.scene.layout.BorderPane;
 import lwjgui.scene.layout.StackPane;
 import lwjgui.scene.layout.VBox;
+import org.lwjgl.glfw.GLFWVidMode;
 
+import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
+import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
 import static org.lwjgl.nanovg.NanoVG.*;
 import static org.lwjgl.nanovg.NanoVGGL3.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
@@ -299,6 +302,21 @@ public class RetornGUI implements GUI {
 
         // Resolution
         // TODO: Label. Possibly display "1080p" when unselected and "1080p (1920x1080)" otherwise.
+        GLFWVidMode vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+        double aspectRatio = (double) vidMode.width() / vidMode.height();
+
+        String[] resolutions;
+        if (aspectRatio == 16.0 / 9.0) {
+            resolutions = new String[]{
+                    "1024x576", "1152x648", "1280x720", "1366x768",
+                    "1600x900", "1920x1080", "2560x1440", "3840x2160"
+            };
+        } else if (aspectRatio == 16.0 / 10.0) {
+            resolutions = new String[]{""};
+        } else {
+            resolutions = new String[]{""};
+        }
+
         ComboBox<String> resolutionParam = new ComboBox<>();
         resolutionParam.setPrefWidth(200);
         resolutionParam.getItems().add("1080p (1920x1080)");
