@@ -103,6 +103,10 @@ public class Window {
         return glfwWindowShouldClose(windowID);
     }
 
+    public double getAspectRatio() {
+        return (double) width / height;
+    }
+
     public void initialize() {
         initializeGlfw();
     }
