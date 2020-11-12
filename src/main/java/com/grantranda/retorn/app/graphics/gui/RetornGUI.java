@@ -303,10 +303,16 @@ public class RetornGUI implements GUI {
         // Resolution
         // TODO: Label. Possibly display "1080p" when unselected and "1080p (1920x1080)" otherwise.
         GLFWVidMode vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-        double aspectRatio = (double) vidMode.width() / vidMode.height();
+        int monitorWidth = vidMode.width();
+        int monitorHeight = vidMode.height();
+        double monitorAspectRatio = (double) monitorWidth / monitorHeight;
 
         String[] resolutions;
-        if (aspectRatio == 16.0 / 9.0) {
+        if (monitorAspectRatio == 16.0 / 10.0) {
+            resolutions = new String[]{
+                    "1280x800", "1440x900", "1680x1050", "1920x1200", "2560x1600"
+            };
+        } else { // 16:9
             resolutions = new String[]{
                     "1024x576", "1152x648", "1280x720", "1366x768",
                     "1600x900", "1920x1080", "2560x1440", "3840x2160"
