@@ -57,6 +57,8 @@ public class RetornGUI implements GUI {
 
     private Label fpsDisplay;
 
+    private Popup customResolutionPopup;
+
     public RetornGUI() {
 
     }
@@ -317,15 +319,39 @@ public class RetornGUI implements GUI {
                     "1024x576", "1152x648", "1280x720", "1366x768",
                     "1600x900", "1920x1080", "2560x1440", "3840x2160"
             };
-        } else if (aspectRatio == 16.0 / 10.0) {
-            resolutions = new String[]{""};
-        } else {
-            resolutions = new String[]{""};
         }
 
+        BorderPane customResolutionRoot = new BorderPane();
+        customResolutionPopup = new Popup(300, 100, "Custom Resolution", customResolutionRoot);
+
         ComboBox<String> resolutionParam = new ComboBox<>();
+        resolutionParam.setOnAction(event -> {
+            String value = resolutionParam.getValue();
+            if (value.equals("Custom")) {
+                customResolutionPopup.show();
+            } else {
+                int xIndex = value.indexOf('x');
+                int w = Integer.parseInt(value.substring(0, xIndex));
+                int h = Integer.parseInt(value.substring(xIndex + 1));
+                window.resize(w, h);
+            }
+        });
         resolutionParam.setPrefWidth(200);
-        resolutionParam.getItems().add("1080p (1920x1080)");
+
+        // TODO: Add option for custom resolution that opens popup window to input resolution
+
+        for (String resolution : resolutions) {
+            int xIndex = resolution.indexOf('x');
+            int w = Integer.parseInt(resolution.substring(0, xIndex));
+            int h = Integer.parseInt(resolution.substring(xIndex + 1));
+
+            if (w > monitorWidth || h > monitorHeight) {
+                break;
+            }
+            resolutionParam.getItems().add(resolution);
+        }
+        resolutionParam.getItems().add("Custom");
+        resolutionParam.setValue(resolutions[0]);
         rightTop.getChildren().add(resolutionParam);
 
         // vSync
