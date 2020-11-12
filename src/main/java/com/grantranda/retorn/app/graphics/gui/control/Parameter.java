@@ -2,27 +2,27 @@ package com.grantranda.retorn.app.graphics.gui.control;
 
 import lwjgui.geometry.Insets;
 import lwjgui.geometry.Pos;
+import lwjgui.scene.control.Control;
 import lwjgui.scene.control.Label;
-import lwjgui.scene.control.TextInputControl;
 import lwjgui.scene.layout.HBox;
 
-public class Parameter<T extends TextInputControl> extends HBox {
+public class Parameter<T extends Control> extends HBox {
 
     private final Label label;
-    private final T textField;
+    private final T control;
     private double width;
 
-    public Parameter(double width, String label, T textField) {
+    public Parameter(double width, String label, T control) {
         this.label = new Label(label);
         this.label.setAlignment(Pos.CENTER_LEFT);
         this.label.setPadding(new Insets(10, 0, 10, 10));
-        this.textField = textField;
+        this.control = control;
 
         setWidth(width);
         setFillToParentWidth(true);
         setAlignment(Pos.CENTER);
 
-        getChildren().addAll(this.label, this.textField);
+        getChildren().addAll(this.label, this.control);
     }
 
     @Override
@@ -34,26 +34,18 @@ public class Parameter<T extends TextInputControl> extends HBox {
         this.width = width;
         setPrefWidth(width);
         this.label.setPrefWidth(width / 2.0f);
-        this.textField.setPrefWidth(width / 2.0f - 20);
+        this.control.setPrefWidth(width / 2.0f - 20);
     }
 
-    public String getLabel() {
+    public String getLabelText() {
         return label.getText();
     }
 
-    public void setLabel(String label) {
+    public void setLabelText(String label) {
         this.label.setText(label);
     }
 
-    public T getTextField() {
-        return textField;
-    }
-
-    public String getText() {
-        return textField.getText();
-    }
-
-    public void setText(String text) {
-        textField.setText(text);
+    public T getControl() {
+        return control;
     }
 }
