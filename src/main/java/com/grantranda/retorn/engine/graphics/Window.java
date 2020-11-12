@@ -97,6 +97,8 @@ public class Window {
     public void resize(int width, int height) {
         setWidth(width);
         setHeight(height);
+        setResized(true);
+        glfwSetWindowSize(windowID, width, height);
     }
 
     public boolean shouldClose() {
@@ -140,7 +142,7 @@ public class Window {
 
         // Configure GLFW
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-        glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+        glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
         // Create the window
         windowID = glfwCreateWindow(width, height, title, NULL, NULL);
@@ -152,7 +154,6 @@ public class Window {
         // Set window resize callback
         glfwSetFramebufferSizeCallback(windowID, (window, width, height) -> {
             resize(width, height);
-            setResized(true);
         });
         glfwSetWindowContentScaleCallback(windowID, (window, contentScaleX, contentScaleY) -> {
             this.contentScaleX = contentScaleX;
