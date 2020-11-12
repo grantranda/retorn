@@ -157,26 +157,26 @@ public class RetornGUI implements GUI {
     }
 
     private void updateParameters() {
-        maxIterationsParam.getTextField().validate();
-        scaleParam.getTextField().validate();
-        xParam.getTextField().validate();
-        yParam.getTextField().validate();
+        maxIterationsParam.getControl().validate();
+        scaleParam.getControl().validate();
+        xParam.getControl().validate();
+        yParam.getControl().validate();
     }
 
     public void updateParametersFromState(ApplicationState state) {
         RenderState renderState = state.getRenderState();
 
-        maxIterationsParam.getTextField().setNumber(renderState.getMaxIterations());
-        scaleParam.getTextField().setNumber(renderState.getScale());
-        xParam.getTextField().setNumber(renderState.getOffset().x);
-        yParam.getTextField().setNumber(renderState.getOffset().y);
+        maxIterationsParam.getControl().setNumber(renderState.getMaxIterations());
+        scaleParam.getControl().setNumber(renderState.getScale());
+        xParam.getControl().setNumber(renderState.getOffset().x);
+        yParam.getControl().setNumber(renderState.getOffset().y);
     }
 
     private void updateState(ApplicationState state) {
         RenderState renderState = state.getRenderState();
-        renderState.setMaxIterations(maxIterationsParam.getTextField().getNumber());
-        renderState.setScale(scaleParam.getTextField().getNumber());
-        renderState.setOffset(xParam.getTextField().getNumber(), yParam.getTextField().getNumber(), 0.0f);
+        renderState.setMaxIterations(maxIterationsParam.getControl().getNumber());
+        renderState.setScale(scaleParam.getControl().getNumber());
+        renderState.setOffset(xParam.getControl().getNumber(), yParam.getControl().getNumber(), 0.0f);
     }
 
     private void updateUniforms(Shader shader, ApplicationState state) {
