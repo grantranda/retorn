@@ -7,7 +7,7 @@ import com.grantranda.retorn.app.state.ApplicationState;
 import com.grantranda.retorn.engine.graphics.Camera;
 import com.grantranda.retorn.engine.graphics.Model;
 import com.grantranda.retorn.engine.graphics.Texture;
-import com.grantranda.retorn.engine.graphics.Window;
+import com.grantranda.retorn.engine.graphics.display.Window;
 import com.grantranda.retorn.engine.graphics.Mesh;
 import com.grantranda.retorn.engine.graphics.gui.GUI;
 import com.grantranda.retorn.engine.input.MouseInput;

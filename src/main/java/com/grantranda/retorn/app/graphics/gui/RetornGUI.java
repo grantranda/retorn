@@ -8,7 +8,8 @@ import com.grantranda.retorn.app.state.ApplicationState;
 import com.grantranda.retorn.app.state.RenderState;
 import com.grantranda.retorn.app.util.StateUtils;
 import com.grantranda.retorn.engine.graphics.Shader;
-import com.grantranda.retorn.engine.graphics.Window;
+import com.grantranda.retorn.engine.graphics.display.Resolution;
+import com.grantranda.retorn.engine.graphics.display.Window;
 import com.grantranda.retorn.engine.graphics.gui.GUI;
 import com.grantranda.retorn.engine.input.MouseInput;
 import com.grantranda.retorn.engine.math.Vector3d;
@@ -21,7 +22,14 @@ import lwjgui.scene.control.*;
 import lwjgui.scene.layout.BorderPane;
 import lwjgui.scene.layout.StackPane;
 import lwjgui.scene.layout.VBox;
+import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.glfw.GLFWVidMode.Buffer;
 
+import java.util.TreeSet;
+
+import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
+import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
+import static org.lwjgl.glfw.GLFW.glfwGetVideoModes;
 import static org.lwjgl.nanovg.NanoVG.*;
 import static org.lwjgl.nanovg.NanoVGGL3.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
@@ -53,6 +61,8 @@ public class RetornGUI implements GUI {
     private Parameter<NumberFieldd> yParam;
 
     private Label fpsDisplay;
+
+    private Popup customResolutionPopup;
 
     public RetornGUI() {
 
@@ -141,7 +151,7 @@ public class RetornGUI implements GUI {
 
     private void updateInput(Window window) {
         Vector3d mousePos = MouseInput.getCurrentPosition();
-        int width  = window.getWidth();
+        int width  = window.getResolution().getWidth();
         boolean mouseOverMenu = MouseInput.isMouseInWindow()
                 && isMenuShown()
                 && (mousePos.x >= width - RIGHT_PANE_WIDTH && mousePos.x <= width);
@@ -154,26 +164,26 @@ public class RetornGUI implements GUI {
     }
 
     private void updateParameters() {
-        maxIterationsParam.getTextField().validate();
-        scaleParam.getTextField().validate();
-        xParam.getTextField().validate();
-        yParam.getTextField().validate();
+        maxIterationsParam.getControl().validate();
+        scaleParam.getControl().validate();
+        xParam.getControl().validate();
+        yParam.getControl().validate();
     }
 
     public void updateParametersFromState(ApplicationState state) {
         RenderState renderState = state.getRenderState();
 
-        maxIterationsParam.getTextField().setNumber(renderState.getMaxIterations());
-        scaleParam.getTextField().setNumber(renderState.getScale());
-        xParam.getTextField().setNumber(renderState.getOffset().x);
-        yParam.getTextField().setNumber(renderState.getOffset().y);
+        maxIterationsParam.getControl().setNumber(renderState.getMaxIterations());
+        scaleParam.getControl().setNumber(renderState.getScale());
+        xParam.getControl().setNumber(renderState.getOffset().x);
+        yParam.getControl().setNumber(renderState.getOffset().y);
     }
 
     private void updateState(ApplicationState state) {
         RenderState renderState = state.getRenderState();
-        renderState.setMaxIterations(maxIterationsParam.getTextField().getNumber());
-        renderState.setScale(scaleParam.getTextField().getNumber());
-        renderState.setOffset(xParam.getTextField().getNumber(), yParam.getTextField().getNumber(), 0.0f);
+        renderState.setMaxIterations(maxIterationsParam.getControl().getNumber());
+        renderState.setScale(scaleParam.getControl().getNumber());
+        renderState.setOffset(xParam.getControl().getNumber(), yParam.getControl().getNumber(), 0.0f);
     }
 
     private void updateUniforms(Shader shader, ApplicationState state) {
@@ -192,8 +202,8 @@ public class RetornGUI implements GUI {
     }
 
     private void renderNvg(Window window) {
-        int width  = (int) (window.getWidth() / window.getContentScaleX());
-        int height = (int) (window.getHeight() / window.getContentScaleY());
+        int width  = (int) (window.getResolution().getWidth() / window.getContentScaleX());
+        int height = (int) (window.getResolution().getHeight() / window.getContentScaleY());
         int midX = width / 2;
         int midY = height / 2;
         int startX = midX - 50;
@@ -225,7 +235,7 @@ public class RetornGUI implements GUI {
 
     private void addGuiElements(Window window, ApplicationState state, Scene scene) {
         root = new BorderPane();
-        root.setPrefSize(window.getWidth(), window.getHeight());
+        root.setPrefSize(window.getResolution().getWidth(), window.getResolution().getHeight());
         scene.setRoot(root);
 
         root.setCenter(new StackPane()); // Set center so BorderPane alignment is correct
@@ -267,7 +277,7 @@ public class RetornGUI implements GUI {
         menu = new BorderPane();
         menu.setMinWidth(RIGHT_PANE_WIDTH);
         menu.setMaxWidth(RIGHT_PANE_WIDTH);
-        menu.setPrefHeight(window.getHeight());
+        menu.setPrefHeight(window.getResolution().getHeight());
         menu.setAlignment(Pos.TOP_LEFT);
         menu.setFillToParentHeight(true);
         menu.setBackgroundLegacy(new Color(.9, .9, .9, 0.95));
@@ -299,9 +309,61 @@ public class RetornGUI implements GUI {
 
         // Resolution
         // TODO: Label. Possibly display "1080p" when unselected and "1080p (1920x1080)" otherwise.
+        GLFWVidMode vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+        Resolution monitorResolution = new Resolution(vidMode.width(), vidMode.height());
+
+        TreeSet<Resolution> resolutions = new TreeSet<>();
+        Buffer vidModes = glfwGetVideoModes(glfwGetPrimaryMonitor());
+
+        for (GLFWVidMode vMode : vidModes) {
+            resolutions.add(new Resolution(vMode.width(), vMode.height()));
+        }
+
+//        String[] resolutions;
+//        if (monitorAspectRatio == 4.0 / 3.0) {
+//            resolutions = new String[]{
+//                    "640x480", "800x600", "960x720", "1024x768", "1280x960", "1400x1050",
+//                    "1440x1080", "1600x1200", "1856x1392", "1920x1440", "2048x1536"
+//            };
+//        } else if (monitorAspectRatio == 16.0 / 10.0) {
+//            resolutions = new String[]{
+//                    "1280x800", "1440x900", "1680x1050", "1920x1200", "2560x1600"
+//            };
+//        } else { // 16:9
+//            resolutions = new String[]{
+//                    "1024x576", "1152x648", "1280x720", "1366x768",
+//                    "1600x900", "1920x1080", "2560x1440", "3840x2160"
+//            };
+//        }
+
+        BorderPane customResolutionRoot = new BorderPane();
+        customResolutionPopup = new Popup(300, 100, "Custom Resolution", customResolutionRoot);
+
         ComboBox<String> resolutionParam = new ComboBox<>();
+        resolutionParam.setOnAction(event -> {
+            String value = resolutionParam.getValue();
+            if (value.equals("Custom")) {
+                customResolutionPopup.show();
+            } else {
+                int xIndex = value.indexOf('x');
+                int w = Integer.parseInt(value.substring(0, xIndex));
+                int h = Integer.parseInt(value.substring(xIndex + 1));
+                window.resize(w, h);
+            }
+        });
         resolutionParam.setPrefWidth(200);
-        resolutionParam.getItems().add("1080p (1920x1080)");
+
+        for (Resolution resolution : resolutions) {
+
+            if (resolution.getWidth() > monitorResolution.getWidth() ||
+                    resolution.getHeight() > monitorResolution.getHeight()) {
+
+                break;
+            }
+            resolutionParam.getItems().add(resolution.toString());
+        }
+        resolutionParam.getItems().add("Custom");
+        resolutionParam.setValue(resolutions.first().toString());
         rightTop.getChildren().add(resolutionParam);
 
         // vSync
