@@ -23,9 +23,13 @@ import lwjgui.scene.layout.BorderPane;
 import lwjgui.scene.layout.StackPane;
 import lwjgui.scene.layout.VBox;
 import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.glfw.GLFWVidMode.Buffer;
+
+import java.util.TreeSet;
 
 import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
 import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
+import static org.lwjgl.glfw.GLFW.glfwGetVideoModes;
 import static org.lwjgl.nanovg.NanoVG.*;
 import static org.lwjgl.nanovg.NanoVGGL3.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
@@ -308,17 +312,29 @@ public class RetornGUI implements GUI {
         GLFWVidMode vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
         Resolution monitorResolution = new Resolution(vidMode.width(), vidMode.height());
 
-        String[] resolutions;
-        if (monitorAspectRatio == 16.0 / 10.0) {
-            resolutions = new String[]{
-                    "1280x800", "1440x900", "1680x1050", "1920x1200", "2560x1600"
-            };
-        } else { // 16:9
-            resolutions = new String[]{
-                    "1024x576", "1152x648", "1280x720", "1366x768",
-                    "1600x900", "1920x1080", "2560x1440", "3840x2160"
-            };
+        TreeSet<Resolution> resolutions = new TreeSet<>();
+        Buffer vidModes = glfwGetVideoModes(glfwGetPrimaryMonitor());
+
+        for (GLFWVidMode vMode : vidModes) {
+            resolutions.add(new Resolution(vMode.width(), vMode.height()));
         }
+
+//        String[] resolutions;
+//        if (monitorAspectRatio == 4.0 / 3.0) {
+//            resolutions = new String[]{
+//                    "640x480", "800x600", "960x720", "1024x768", "1280x960", "1400x1050",
+//                    "1440x1080", "1600x1200", "1856x1392", "1920x1440", "2048x1536"
+//            };
+//        } else if (monitorAspectRatio == 16.0 / 10.0) {
+//            resolutions = new String[]{
+//                    "1280x800", "1440x900", "1680x1050", "1920x1200", "2560x1600"
+//            };
+//        } else { // 16:9
+//            resolutions = new String[]{
+//                    "1024x576", "1152x648", "1280x720", "1366x768",
+//                    "1600x900", "1920x1080", "2560x1440", "3840x2160"
+//            };
+//        }
 
         BorderPane customResolutionRoot = new BorderPane();
         customResolutionPopup = new Popup(300, 100, "Custom Resolution", customResolutionRoot);
@@ -337,20 +353,17 @@ public class RetornGUI implements GUI {
         });
         resolutionParam.setPrefWidth(200);
 
-        // TODO: Add option for custom resolution that opens popup window to input resolution
+        for (Resolution resolution : resolutions) {
 
-        for (String resolution : resolutions) {
-            int xIndex = resolution.indexOf('x');
-            int w = Integer.parseInt(resolution.substring(0, xIndex));
-            int h = Integer.parseInt(resolution.substring(xIndex + 1));
+            if (resolution.getWidth() > monitorResolution.getWidth() ||
+                    resolution.getHeight() > monitorResolution.getHeight()) {
 
-            if (w > monitorWidth || h > monitorHeight) {
                 break;
             }
-            resolutionParam.getItems().add(resolution);
+            resolutionParam.getItems().add(resolution.toString());
         }
         resolutionParam.getItems().add("Custom");
-        resolutionParam.setValue(resolutions[0]);
+        resolutionParam.setValue(resolutions.first().toString());
         rightTop.getChildren().add(resolutionParam);
 
         // vSync
