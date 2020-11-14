@@ -8,7 +8,8 @@ import com.grantranda.retorn.app.state.ApplicationState;
 import com.grantranda.retorn.app.state.RenderState;
 import com.grantranda.retorn.app.util.StateUtils;
 import com.grantranda.retorn.engine.graphics.Shader;
-import com.grantranda.retorn.engine.graphics.Window;
+import com.grantranda.retorn.engine.graphics.display.Resolution;
+import com.grantranda.retorn.engine.graphics.display.Window;
 import com.grantranda.retorn.engine.graphics.gui.GUI;
 import com.grantranda.retorn.engine.input.MouseInput;
 import com.grantranda.retorn.engine.math.Vector3d;
@@ -146,7 +147,7 @@ public class RetornGUI implements GUI {
 
     private void updateInput(Window window) {
         Vector3d mousePos = MouseInput.getCurrentPosition();
-        int width  = window.getWidth();
+        int width  = window.getResolution().getWidth();
         boolean mouseOverMenu = MouseInput.isMouseInWindow()
                 && isMenuShown()
                 && (mousePos.x >= width - RIGHT_PANE_WIDTH && mousePos.x <= width);
@@ -197,8 +198,8 @@ public class RetornGUI implements GUI {
     }
 
     private void renderNvg(Window window) {
-        int width  = (int) (window.getWidth() / window.getContentScaleX());
-        int height = (int) (window.getHeight() / window.getContentScaleY());
+        int width  = (int) (window.getResolution().getWidth() / window.getContentScaleX());
+        int height = (int) (window.getResolution().getHeight() / window.getContentScaleY());
         int midX = width / 2;
         int midY = height / 2;
         int startX = midX - 50;
@@ -230,7 +231,7 @@ public class RetornGUI implements GUI {
 
     private void addGuiElements(Window window, ApplicationState state, Scene scene) {
         root = new BorderPane();
-        root.setPrefSize(window.getWidth(), window.getHeight());
+        root.setPrefSize(window.getResolution().getWidth(), window.getResolution().getHeight());
         scene.setRoot(root);
 
         root.setCenter(new StackPane()); // Set center so BorderPane alignment is correct
@@ -272,7 +273,7 @@ public class RetornGUI implements GUI {
         BorderPane menu = new BorderPane();
         menu.setMinWidth(RIGHT_PANE_WIDTH);
         menu.setMaxWidth(RIGHT_PANE_WIDTH);
-        menu.setPrefHeight(window.getHeight());
+        menu.setPrefHeight(window.getResolution().getHeight());
         menu.setAlignment(Pos.TOP_LEFT);
         menu.setFillToParentHeight(true);
         menu.setBackgroundLegacy(new Color(.9, .9, .9, 0.95));
@@ -305,9 +306,7 @@ public class RetornGUI implements GUI {
         // Resolution
         // TODO: Label. Possibly display "1080p" when unselected and "1080p (1920x1080)" otherwise.
         GLFWVidMode vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-        int monitorWidth = vidMode.width();
-        int monitorHeight = vidMode.height();
-        double monitorAspectRatio = (double) monitorWidth / monitorHeight;
+        Resolution monitorResolution = new Resolution(vidMode.width(), vidMode.height());
 
         String[] resolutions;
         if (monitorAspectRatio == 16.0 / 10.0) {
