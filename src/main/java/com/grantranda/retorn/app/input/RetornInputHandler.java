@@ -2,8 +2,7 @@ package com.grantranda.retorn.app.input;
 
 import com.grantranda.retorn.app.state.ApplicationState;
 import com.grantranda.retorn.app.state.RenderState;
-import com.grantranda.retorn.engine.graphics.Shader;
-import com.grantranda.retorn.engine.graphics.Window;
+import com.grantranda.retorn.engine.graphics.display.Window;
 import com.grantranda.retorn.app.graphics.gui.RetornGUI;
 import com.grantranda.retorn.engine.input.InputHandler;
 import com.grantranda.retorn.engine.input.KeyboardInput;
