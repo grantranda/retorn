@@ -382,4 +382,33 @@ public class RetornGUI implements GUI {
         menu.setBottom(fpsDisplay);
         menu.setTop(rightTop);
     }
+
+    private void setEventHandlers(Window window, ApplicationState state) {
+        hideMenuButton.setOnAction(event -> hideMenu());
+        showMenuButton.setOnAction(event -> showMenu());
+        updateButton.setOnAction(event -> {
+            updateParameters();
+            updateState(state);
+        });
+        resetButton.setOnAction(event -> {
+            state.getRenderState().reset();
+            updateParametersFromState(state);
+        });
+        saveButton.setOnAction(event -> StateUtils.saveState(state.getRenderState(), "retorn_parameters.json"));
+        loadButton.setOnAction(event -> {
+            StateUtils.loadState(state, RenderState.class);
+            updateParametersFromState(state);
+        });
+        resolutionParam.setOnAction(event -> {
+            String value = resolutionParam.getValue();
+            if (value.equals("Custom")) {
+                customResolutionPopup.show();
+            } else {
+                int xIndex = value.indexOf('x');
+                int w = Integer.parseInt(value.substring(0, xIndex));
+                int h = Integer.parseInt(value.substring(xIndex + 1));
+                window.resize(w, h);
+            }
+        });
+    }
 }
