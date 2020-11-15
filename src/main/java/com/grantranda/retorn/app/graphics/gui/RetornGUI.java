@@ -275,59 +275,25 @@ public class RetornGUI implements GUI {
     }
 
     private void createMenu(Window window, ApplicationState state) {
-        menu = new BorderPane();
-        menu.setMinWidth(RIGHT_PANE_WIDTH);
-        menu.setMaxWidth(RIGHT_PANE_WIDTH);
-        menu.setPrefHeight(window.getResolution().getHeight());
-        menu.setAlignment(Pos.TOP_LEFT);
-        menu.setFillToParentHeight(true);
-        menu.setBackgroundLegacy(new Color(.9, .9, .9, 0.95));
-
-        VBox rightTop = new VBox();
-        rightTop.setAlignment(Pos.TOP_LEFT);
-        rightTop.setFillToParentWidth(true);
-        menu.setTop(rightTop);
-
         hideMenuButton = new Button("X");
         hideMenuButton.setOnAction(event -> hideMenu());
-        rightTop.getChildren().add(hideMenuButton);
 
         showMenuButton = new Button("|||");
         showMenuButton.setOnAction(event -> showMenu());
 
         // Max Iterations
         maxIterationsParam = new Parameter<>(RIGHT_PANE_WIDTH, "Max Iterations", new NumberFieldi(100, 0, 100000));
-        rightTop.getChildren().add(maxIterationsParam);
 
         // Scale
         scaleParam = new Parameter<>(RIGHT_PANE_WIDTH, "Scale", new NumberFieldd(1.0));
-        rightTop.getChildren().add(scaleParam);
 
         // Coordinates
         xParam = new Parameter<>(RIGHT_PANE_WIDTH, "X", new NumberFieldd(0.0));
         yParam = new Parameter<>(RIGHT_PANE_WIDTH, "Y", new NumberFieldd(0.0));
-        rightTop.getChildren().addAll(xParam, yParam);
 
         // Resolution
         Resolution monitorResolution = DisplayUtils.getMonitorResolution();
         TreeSet<Resolution> resolutions = DisplayUtils.getMonitorResolutions();
-
-//        String[] resolutions;
-//        if (monitorAspectRatio == 4.0 / 3.0) {
-//            resolutions = new String[]{
-//                    "640x480", "800x600", "960x720", "1024x768", "1280x960", "1400x1050",
-//                    "1440x1080", "1600x1200", "1856x1392", "1920x1440", "2048x1536"
-//            };
-//        } else if (monitorAspectRatio == 16.0 / 10.0) {
-//            resolutions = new String[]{
-//                    "1280x800", "1440x900", "1680x1050", "1920x1200", "2560x1600"
-//            };
-//        } else { // 16:9
-//            resolutions = new String[]{
-//                    "1024x576", "1152x648", "1280x720", "1366x768",
-//                    "1600x900", "1920x1080", "2560x1440", "3840x2160"
-//            };
-//        }
 
         BorderPane customResolutionRoot = new BorderPane();
         customResolutionPopup = new Popup(300, 100, "Custom Resolution", customResolutionRoot);
@@ -347,7 +313,6 @@ public class RetornGUI implements GUI {
         resolutionParam.setPrefWidth(200);
 
         for (Resolution resolution : resolutions) {
-
             if (resolution.getWidth() > monitorResolution.getWidth() ||
                     resolution.getHeight() > monitorResolution.getHeight()) {
 
@@ -357,14 +322,11 @@ public class RetornGUI implements GUI {
         }
         resolutionParam.getItems().add("Custom");
         resolutionParam.setValue(resolutions.first().toString());
-        rightTop.getChildren().add(resolutionParam);
 
         // vSync
         ToggleButton vSyncParam = new ToggleButton("vSync");
-        rightTop.getChildren().add(vSyncParam);
 
         ColorSelector colorSelector = new ColorSelector();
-        rightTop.getChildren().add(colorSelector);
 
         // Update
         updateButton = new Button("Update");
@@ -372,7 +334,6 @@ public class RetornGUI implements GUI {
             updateParameters();
             updateState(state);
         });
-        rightTop.getChildren().add(updateButton);
 
         // Reset
         resetButton = new Button("Reset");
@@ -380,12 +341,10 @@ public class RetornGUI implements GUI {
             state.getRenderState().reset();
             updateParametersFromState(state);
         });
-        rightTop.getChildren().add(resetButton);
 
         // Save
         saveButton = new Button("Save");
         saveButton.setOnAction(event -> StateUtils.saveState(state.getRenderState(), "retorn_parameters.json"));
-        rightTop.getChildren().add(saveButton);
 
         // Load
         loadButton = new Button("Load");
@@ -393,11 +352,34 @@ public class RetornGUI implements GUI {
             StateUtils.loadState(state, RenderState.class);
             updateParametersFromState(state);
         });
-        rightTop.getChildren().add(loadButton);
 
         fpsDisplay = new Label("FPS: " + window.getFpsCounter().getFps());
         fpsDisplay.setAlignment(Pos.BOTTOM_LEFT);
         fpsDisplay.setFillToParentWidth(true);
+
+        VBox rightTop = new VBox();
+        rightTop.setAlignment(Pos.TOP_LEFT);
+        rightTop.setFillToParentWidth(true);
+        rightTop.getChildren().add(hideMenuButton);
+        rightTop.getChildren().add(maxIterationsParam);
+        rightTop.getChildren().add(scaleParam);
+        rightTop.getChildren().addAll(xParam, yParam);
+        rightTop.getChildren().add(resolutionParam);
+        rightTop.getChildren().add(vSyncParam);
+        rightTop.getChildren().add(colorSelector);
+        rightTop.getChildren().add(updateButton);
+        rightTop.getChildren().add(resetButton);
+        rightTop.getChildren().add(saveButton);
+        rightTop.getChildren().add(loadButton);
+
+        menu = new BorderPane();
+        menu.setMinWidth(RIGHT_PANE_WIDTH);
+        menu.setMaxWidth(RIGHT_PANE_WIDTH);
+        menu.setPrefHeight(window.getResolution().getHeight());
+        menu.setAlignment(Pos.TOP_LEFT);
+        menu.setFillToParentHeight(true);
+        menu.setBackgroundLegacy(new Color(.9, .9, .9, 0.95));
         menu.setBottom(fpsDisplay);
+        menu.setTop(rightTop);
     }
 }
