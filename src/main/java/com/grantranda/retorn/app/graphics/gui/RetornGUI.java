@@ -14,6 +14,7 @@ import com.grantranda.retorn.engine.graphics.gui.GUI;
 import com.grantranda.retorn.engine.input.MouseInput;
 import com.grantranda.retorn.engine.math.Vector3d;
 import com.grantranda.retorn.engine.state.State;
+import com.grantranda.retorn.engine.util.DisplayUtils;
 import lwjgui.geometry.Pos;
 import lwjgui.paint.Color;
 import lwjgui.scene.Scene;
@@ -308,15 +309,8 @@ public class RetornGUI implements GUI {
         rightTop.getChildren().addAll(xParam, yParam);
 
         // Resolution
-        GLFWVidMode vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-        Resolution monitorResolution = new Resolution(vidMode.width(), vidMode.height());
-
-        TreeSet<Resolution> resolutions = new TreeSet<>();
-        Buffer vidModes = glfwGetVideoModes(glfwGetPrimaryMonitor());
-
-        for (GLFWVidMode vMode : vidModes) {
-            resolutions.add(new Resolution(vMode.width(), vMode.height()));
-        }
+        Resolution monitorResolution = DisplayUtils.getMonitorResolution();
+        TreeSet<Resolution> resolutions = DisplayUtils.getMonitorResolutions();
 
 //        String[] resolutions;
 //        if (monitorAspectRatio == 4.0 / 3.0) {
