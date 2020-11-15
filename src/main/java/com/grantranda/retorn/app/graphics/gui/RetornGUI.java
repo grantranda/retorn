@@ -308,7 +308,6 @@ public class RetornGUI implements GUI {
         rightTop.getChildren().addAll(xParam, yParam);
 
         // Resolution
-        // TODO: Label. Possibly display "1080p" when unselected and "1080p (1920x1080)" otherwise.
         GLFWVidMode vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
         Resolution monitorResolution = new Resolution(vidMode.width(), vidMode.height());
 
