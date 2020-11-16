@@ -111,16 +111,12 @@ public class RetornGUI implements GUI {
     }
 
     @Override
-    public void initialize(Window window, State state) {
-        initializeGui(window, (ApplicationState) state);
-        initializeNvg(window);
+    public void init(Window window, State state) {
+        initGui(window, (ApplicationState) state);
+        initNvg(window);
     }
 
-    private void initializeGui(Window window, ApplicationState state) {
-        initializeMenu(window);
-        initializeRoot(window);
-        setEventHandlers(window, state);
-
+    private void initGui(Window window, ApplicationState state) {
         guiWindow = WindowManager.generateWindow(window.getWindowID());
         guiWindow.setWindowAutoClear(false);
         guiWindow.getScene().setRoot(root);
@@ -130,7 +126,7 @@ public class RetornGUI implements GUI {
         updateState(state);
     }
 
-    private void initializeNvg(Window window) {
+    private void initNvg(Window window) {
         nvgContext = nvgCreate(0); // TODO: Change flags?
         if (nvgContext == NULL) throw new RuntimeException("Failed to create a NanoVG context");
     }
@@ -269,7 +265,7 @@ public class RetornGUI implements GUI {
 //        root.getChildren().add(dragPane1);
     }
 
-    private void initializeMenu(Window window) {
+    private void initMenu(Window window) {
         maxIterationsParam = new Parameter<>(RIGHT_PANE_WIDTH, "Max Iterations", new NumberFieldi(100, 0, 100000));
         scaleParam = new Parameter<>(RIGHT_PANE_WIDTH, "Scale", new NumberFieldd(1.0));
         xParam = new Parameter<>(RIGHT_PANE_WIDTH, "X", new NumberFieldd(0.0));
