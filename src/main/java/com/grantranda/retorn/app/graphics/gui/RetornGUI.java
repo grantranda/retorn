@@ -330,6 +330,13 @@ public class RetornGUI implements GUI {
         menu.setTop(rightTop);
     }
 
+    private void initRoot(Window window) {
+        root = new BorderPane();
+        root.setPrefSize(window.getResolution().getWidth(), window.getResolution().getHeight());
+        root.setCenter(new StackPane()); // Set center so BorderPane alignment is correct
+        root.setRight(menu);
+    }
+
     private void setEventHandlers(Window window, ApplicationState state) {
         hideMenuButton.setOnAction(event -> hideMenu());
         showMenuButton.setOnAction(event -> showMenu());
