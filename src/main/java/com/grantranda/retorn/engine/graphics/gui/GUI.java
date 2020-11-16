@@ -6,7 +6,7 @@ import com.grantranda.retorn.engine.state.State;
 
 public interface GUI {
 
-    void initialize(Window window, State state);
+    void init(Window window, State state);
 
     void terminate();
 

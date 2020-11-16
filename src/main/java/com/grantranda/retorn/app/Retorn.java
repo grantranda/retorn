@@ -40,7 +40,7 @@ public class Retorn implements Application {
     @Override
     public void initialize(Window window) {
         renderer.initialize(window);
-        gui.initialize(window, state);
+        gui.init(window, state);
 
         // Create models
         float[] vertices = new float[]{
