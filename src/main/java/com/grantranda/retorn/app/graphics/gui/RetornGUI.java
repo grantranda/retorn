@@ -278,46 +278,24 @@ public class RetornGUI implements GUI {
         loadButton = new Button("Load");
         vSyncParam = new ToggleButton("vSync");
         colorSelector = new ColorSelector();
-
-        // Resolution
-        Resolution monitorResolution = DisplayUtils.getMonitorResolution();
-        TreeSet<Resolution> resolutions = DisplayUtils.getMonitorResolutions();
-
-        BorderPane customResolutionRoot = new BorderPane();
-        customResolutionPopup = new Popup(300, 100, "Custom Resolution", customResolutionRoot);
-
-        resolutionParam = new ComboBox<>();
-        resolutionParam.setPrefWidth(200);
-
-        for (Resolution resolution : resolutions) {
-            if (resolution.getWidth() > monitorResolution.getWidth() ||
-                    resolution.getHeight() > monitorResolution.getHeight()) {
-
-                break;
-            }
-            resolutionParam.getItems().add(resolution.toString());
-        }
-        resolutionParam.getItems().add("Custom");
-        resolutionParam.setValue(resolutions.first().toString());
-
         fpsDisplay = new Label("FPS: " + window.getFpsCounter().getFps());
         fpsDisplay.setAlignment(Pos.BOTTOM_LEFT);
         fpsDisplay.setFillToParentWidth(true);
 
-        VBox rightTop = new VBox();
-        rightTop.setAlignment(Pos.TOP_LEFT);
-        rightTop.setFillToParentWidth(true);
-        rightTop.getChildren().add(hideMenuButton);
-        rightTop.getChildren().add(maxIterationsParam);
-        rightTop.getChildren().add(scaleParam);
-        rightTop.getChildren().addAll(xParam, yParam);
-        rightTop.getChildren().add(resolutionParam);
-        rightTop.getChildren().add(vSyncParam);
-        rightTop.getChildren().add(colorSelector);
-        rightTop.getChildren().add(updateButton);
-        rightTop.getChildren().add(resetButton);
-        rightTop.getChildren().add(saveButton);
-        rightTop.getChildren().add(loadButton);
+        VBox menuTop = new VBox();
+        menuTop.setAlignment(Pos.TOP_LEFT);
+        menuTop.setFillToParentWidth(true);
+        menuTop.getChildren().add(hideMenuButton);
+        menuTop.getChildren().add(maxIterationsParam);
+        menuTop.getChildren().add(scaleParam);
+        menuTop.getChildren().addAll(xParam, yParam);
+        menuTop.getChildren().add(resolutionParam);
+        menuTop.getChildren().add(vSyncParam);
+        menuTop.getChildren().add(colorSelector);
+        menuTop.getChildren().add(updateButton);
+        menuTop.getChildren().add(resetButton);
+        menuTop.getChildren().add(saveButton);
+        menuTop.getChildren().add(loadButton);
 
         menu = new BorderPane();
         menu.setMinWidth(RIGHT_PANE_WIDTH);
@@ -327,7 +305,7 @@ public class RetornGUI implements GUI {
         menu.setFillToParentHeight(true);
         menu.setBackgroundLegacy(new Color(.9, .9, .9, 0.95));
         menu.setBottom(fpsDisplay);
-        menu.setTop(rightTop);
+        menu.setTop(menuTop);
     }
 
     private void initRoot(Window window) {
