@@ -41,7 +41,7 @@ public class RetornRenderer {
         return shader;
     }
 
-    public void initialize(Window window) {
+    public void init(Window window) {
         shader = new Shader("shaders/vertex.vert", "shaders/fragment.frag");
 
         setProjectionType(window, projectionType);

@@ -21,14 +21,14 @@ public class Engine implements Runnable {
     public void run() {
         logger.info("Engine running\n");
 
-        initialize();
+        init();
         loop();
         terminate();
     }
 
-    private void initialize() {
-        window.initialize();
-        application.initialize(window);
+    private void init() {
+        window.init();
+        application.init(window);
 
         logger.info("LWJGL version: " + Version.getVersion());
         logger.info("OpenGL version: " + GL11.glGetString(GL11.GL_VERSION));

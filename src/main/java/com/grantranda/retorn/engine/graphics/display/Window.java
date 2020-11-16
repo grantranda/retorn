@@ -89,33 +89,11 @@ public class Window {
         return glfwWindowShouldClose(windowID);
     }
 
-    public void initialize() {
-        initializeGlfw();
+    public void init() {
+        initGlfw();
     }
 
-    public void terminate() {
-        glfwFreeCallbacks(windowID);
-        glfwDestroyWindow(windowID);
-        glfwTerminate();
-        Objects.requireNonNull(glfwSetErrorCallback(null)).free();
-    }
-
-    public void update() {
-        glfwSwapBuffers(windowID);
-        glfwPollEvents();
-        fpsCounter.update();
-    }
-
-    public void render() {
-
-    }
-
-    public void restoreRenderState() {
-        glEnable(GL_DEPTH_TEST);
-        glEnable(GL_STENCIL_TEST);
-    }
-
-    private void initializeGlfw() {
+    private void initGlfw() {
         GLFWErrorCallback.createPrint(System.err).set();
 
         if (!glfwInit()) throw new IllegalStateException("Error initializing GLFW");
@@ -128,8 +106,8 @@ public class Window {
         windowID = glfwCreateWindow(resolution.getWidth(), resolution.getHeight(), title, NULL, NULL);
         if (windowID == NULL) throw new RuntimeException("Failed to create the GLFW window");
 
-        KeyboardInput.initialize(windowID);
-        MouseInput.initialize(windowID);
+        KeyboardInput.init(windowID);
+        MouseInput.init(windowID);
 
         // Set window resize callback
         glfwSetFramebufferSizeCallback(windowID, (window, width, height) -> {
@@ -171,5 +149,27 @@ public class Window {
 
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_STENCIL_TEST); // TODO: Possibly add window options class and check before enabling
+    }
+
+    public void terminate() {
+        glfwFreeCallbacks(windowID);
+        glfwDestroyWindow(windowID);
+        glfwTerminate();
+        Objects.requireNonNull(glfwSetErrorCallback(null)).free();
+    }
+
+    public void update() {
+        glfwSwapBuffers(windowID);
+        glfwPollEvents();
+        fpsCounter.update();
+    }
+
+    public void render() {
+
+    }
+
+    public void restoreRenderState() {
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_STENCIL_TEST);
     }
 }

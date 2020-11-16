@@ -38,8 +38,8 @@ public class Retorn implements Application {
     }
 
     @Override
-    public void initialize(Window window) {
-        renderer.initialize(window);
+    public void init(Window window) {
+        renderer.init(window);
         gui.init(window, state);
 
         // Create models

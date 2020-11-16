@@ -20,7 +20,7 @@ public class MouseInput {
 
     }
 
-    public static void initialize(long windowID) {
+    public static void init(long windowID) {
         if (MouseInput.windowID != NULL) throw new ExceptionInInitializerError("MouseInput already initialized");
 
         MouseInput.windowID = windowID;

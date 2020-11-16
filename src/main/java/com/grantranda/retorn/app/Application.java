@@ -7,7 +7,7 @@ public interface Application {
 
     GUI getGui();
 
-    void initialize(Window window);
+    void init(Window window);
 
     void update(Window window);
 

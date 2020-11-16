@@ -14,7 +14,7 @@ public class KeyboardInput {
 
     }
 
-    public static void initialize(long windowID) {
+    public static void init(long windowID) {
         if (KeyboardInput.windowID != NULL) throw new ExceptionInInitializerError("KeyboardInput already initialized");
 
         KeyboardInput.windowID = windowID;
