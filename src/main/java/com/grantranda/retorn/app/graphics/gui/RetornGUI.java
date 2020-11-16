@@ -58,6 +58,7 @@ public class RetornGUI implements GUI {
     private ComboBox<String> resolutionParam;
     private Label fpsDisplay;
 
+    private BorderPane customResolutionRoot;
     private Popup customResolutionPopup;
 
     public RetornGUI() {
@@ -119,8 +120,15 @@ public class RetornGUI implements GUI {
     private void initGui(Window window, ApplicationState state) {
         guiWindow = WindowManager.generateWindow(window.getWindowID());
         guiWindow.setWindowAutoClear(false);
-        guiWindow.getScene().setRoot(root);
         guiWindow.show();
+
+        initResolutionSelection();
+        initColorSelector(window);
+        initMenu(window);
+        initRoot(window);
+        setEventHandlers(window, state);
+
+        guiWindow.getScene().setRoot(root);
 
         updateParameters();
         updateState(state);
@@ -229,11 +237,34 @@ public class RetornGUI implements GUI {
         nvgEndFrame(nvgContext);
     }
 
-    private void initializeRoot(Window window) {
-        root = new BorderPane();
-        root.setPrefSize(window.getResolution().getWidth(), window.getResolution().getHeight());
-        root.setCenter(new StackPane()); // Set center so BorderPane alignment is correct
-        root.setRight(menu);
+    private void initResolutionSelection() {
+        initCustomResolutionRoot();
+
+        customResolutionPopup = new Popup(300, 100, "Custom Resolution", customResolutionRoot);
+        resolutionParam = new ComboBox<>();
+        resolutionParam.setPrefWidth(200);
+
+        Resolution monitorResolution = DisplayUtils.getMonitorResolution();
+        TreeSet<Resolution> resolutions = DisplayUtils.getMonitorResolutions();
+
+        for (Resolution resolution : resolutions) {
+            if (resolution.getArea() > monitorResolution.getArea()) {
+                break;
+            }
+            resolutionParam.getItems().add(resolution.toString());
+        }
+        resolutionParam.getItems().add("Custom");
+
+//        // Set default option
+//        resolutionParam.setValue(resolutions.first().toString());
+    }
+
+    // TODO Create custom resolution root pane
+    private void initCustomResolutionRoot() {
+        customResolutionRoot = new BorderPane();
+    }
+
+    private void initColorSelector(Window window) {
 
         // TODO: Remove following commented color selector code
 //        DraggablePane dragPane1 = new DraggablePane();
