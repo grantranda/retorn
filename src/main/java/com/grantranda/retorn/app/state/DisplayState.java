@@ -1,31 +1,23 @@
 package com.grantranda.retorn.app.state;
 
+import com.grantranda.retorn.engine.graphics.display.Resolution;
 import com.grantranda.retorn.engine.state.State;
 
 public class DisplayState implements State {
 
-    private int width;
-    private int height;
-    private boolean vSync;
+    private final Resolution windowResolution = new Resolution(1280, 720);
+    private boolean vSync = false;
 
     public DisplayState() {
 
     }
 
-    public int getWidth() {
-        return width;
+    public Resolution getWindowResolution() {
+        return windowResolution;
     }
 
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
+    public void setWindowResolution(int width, int height) {
+        windowResolution.set(width, height);
     }
 
     public boolean isvSync() {
@@ -38,8 +30,7 @@ public class DisplayState implements State {
 
     @Override
     public void reset() {
-        setWidth(1280);
-        setHeight(720);
+        setWindowResolution(1280, 720);
         setvSync(false);
     }
 }
