@@ -1,6 +1,5 @@
 package com.grantranda.retorn.app.graphics;
 
-import com.grantranda.retorn.engine.graphics.Camera;
 import com.grantranda.retorn.engine.graphics.Model;
 import com.grantranda.retorn.engine.graphics.display.Resolution;
 import com.grantranda.retorn.engine.math.Matrix4f;
@@ -47,7 +46,7 @@ public class RetornRenderer {
         setProjectionType(window, projectionType);
     }
 
-    public void render(Window window, Camera camera, Model[] models) {
+    public void render(Window window, Model[] models) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
         Resolution resolution = window.getResolution();
@@ -66,7 +65,6 @@ public class RetornRenderer {
         // Set uniforms
         shader.setUniform2f("window_size", resolution.getWidth(), resolution.getHeight());
         shader.setUniform1i("tex", 0);
-        shader.setUniformMatrix4f("view_matrix", camera.getViewMatrix());
 
         glDisable(GL_CULL_FACE);
 
