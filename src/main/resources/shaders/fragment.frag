@@ -29,8 +29,8 @@ vec4 mandelbrot(int max_iterations) {
 }
 
 int calc_mandelbrot_iterations(int max_iterations) {
-    float pixel_width = 3.5f / window_size.x;
-    float pixel_height = 2.0f / window_size.y;
+    double pixel_width = 3.5f / window_size.x;
+    double pixel_height = 2.0f / window_size.y;
 
     int iterations = 0;
     double x0 = pos.x * scale - offset.x * pixel_width, y0 = pos.y * scale + offset.y * pixel_height;
