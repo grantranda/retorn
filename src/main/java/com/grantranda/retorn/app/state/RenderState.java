@@ -6,8 +6,8 @@ import com.grantranda.retorn.engine.state.State;
 public class RenderState implements State {
 
     private final Vector3d offset = new Vector3d();
-    private int maxIterations;
-    private double scale;
+    private int maxIterations = 100;
+    private double scale = 1.0;
 
     // Palette class?
 
