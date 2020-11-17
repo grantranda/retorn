@@ -248,10 +248,11 @@ public class RetornGUI implements GUI {
         TreeSet<Resolution> resolutions = DisplayUtils.getMonitorResolutions();
 
         for (Resolution resolution : resolutions) {
-            if (resolution.getArea() > monitorResolution.getArea()) {
-                break;
+            if (resolution.getArea() <= monitorResolution.getArea()) {
+                if (resolution.getWidth() >= resolution.getHeight()) {
+                    resolutionParam.getItems().add(resolution.toString());
+                }
             }
-            resolutionParam.getItems().add(resolution.toString());
         }
         resolutionParam.getItems().add("Custom");
 

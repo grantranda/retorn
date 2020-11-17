@@ -49,7 +49,7 @@ public class Resolution implements Comparable<Resolution> {
 
     @Override
     public int compareTo(@NotNull Resolution o) {
-        return Integer.compare(getArea(), o.getArea());
+        return Double.compare(getArea() * getAspectRatio(), o.getArea() * o.getAspectRatio());
     }
 
     @Override
@@ -57,8 +57,7 @@ public class Resolution implements Comparable<Resolution> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Resolution that = (Resolution) o;
-        return width == that.width &&
-                height == that.height;
+        return width == that.width && height == that.height;
     }
 
     @Override

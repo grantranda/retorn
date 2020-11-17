@@ -4,7 +4,6 @@ import com.grantranda.retorn.app.graphics.RetornRenderer;
 import com.grantranda.retorn.app.graphics.gui.RetornGUI;
 import com.grantranda.retorn.app.input.RetornInputHandler;
 import com.grantranda.retorn.app.state.ApplicationState;
-import com.grantranda.retorn.engine.graphics.Camera;
 import com.grantranda.retorn.engine.graphics.Model;
 import com.grantranda.retorn.engine.graphics.Texture;
 import com.grantranda.retorn.engine.graphics.display.Window;
@@ -18,7 +17,6 @@ public class Retorn implements Application {
 
     private final ApplicationState state = new ApplicationState();
     private final RetornRenderer renderer = new RetornRenderer(Projection.ORTHOGRAPHIC);
-    private final Camera camera = new Camera();
     private final RetornGUI gui = new RetornGUI();
     private final RetornInputHandler inputHandler = new RetornInputHandler(gui);
 
@@ -83,7 +81,7 @@ public class Retorn implements Application {
 
     @Override
     public void render(Window window) {
-        renderer.render(window, camera, models);
+        renderer.render(window, models);
         gui.render(window);
     }
 }
