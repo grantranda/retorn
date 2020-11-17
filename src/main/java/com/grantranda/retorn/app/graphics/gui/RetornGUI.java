@@ -255,9 +255,6 @@ public class RetornGUI implements GUI {
             }
         }
         resolutionParam.getItems().add("Custom");
-
-//        // Set default option
-//        resolutionParam.setValue(resolutions.first().toString());
     }
 
     // TODO Create custom resolution root pane
@@ -374,5 +371,6 @@ public class RetornGUI implements GUI {
                 window.resize(w, h);
             }
         });
+        resolutionParam.setValue(state.getDisplayState().getWindowResolution().toString());
     }
 }
