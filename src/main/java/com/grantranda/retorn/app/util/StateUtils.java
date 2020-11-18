@@ -18,21 +18,6 @@ public class StateUtils {
 
     }
 
-    public static void saveState(State state, File file) throws IOException, JsonIOException {
-        if (file == null) return;
-
-        file.createNewFile();
-        JSONUtils.toJson(state, file.getAbsolutePath());
-    }
-
-    public static void saveStateDialog(State state, String defaultFilename, String title)
-            throws IOException, JsonIOException {
-
-        File defaultPath = new File(System.getProperty("user.home") + "/" + defaultFilename);
-        File selectedFile = LWJGUIDialog.showSaveFileDialog(title, defaultPath, "JSON Files (*.json)", "json", false);
-        saveState(state, selectedFile);
-    }
-
     public static <T extends State> void loadState(ApplicationState state, Class<T> type, File file)
             throws IOException, JsonSyntaxException {
 
@@ -55,5 +40,20 @@ public class StateUtils {
         File defaultPath = new File(System.getProperty("user.home"));
         File selectedFile = LWJGUIDialog.showOpenFileDialog(title, defaultPath, "JSON Files (*.json)", "json");
         loadState(state, type, selectedFile);
+    }
+
+    public static void saveState(State state, File file) throws IOException, JsonIOException {
+        if (file == null) return;
+
+        file.createNewFile();
+        JSONUtils.toJson(state, file.getAbsolutePath());
+    }
+
+    public static void saveStateDialog(State state, String defaultFilename, String title)
+            throws IOException, JsonIOException {
+
+        File defaultPath = new File(System.getProperty("user.home") + "/" + defaultFilename);
+        File selectedFile = LWJGUIDialog.showSaveFileDialog(title, defaultPath, "JSON Files (*.json)", "json", false);
+        saveState(state, selectedFile);
     }
 }
