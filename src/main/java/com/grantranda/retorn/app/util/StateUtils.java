@@ -8,7 +8,6 @@ import com.grantranda.retorn.app.state.RenderState;
 import com.grantranda.retorn.engine.state.State;
 import com.grantranda.retorn.engine.util.JSONUtils;
 import lwjgui.LWJGUIDialog;
-import lwjgui.LWJGUIDialog.DialogIcon;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,38 +18,42 @@ public class StateUtils {
 
     }
 
-    public static void saveState(State state, String defaultFilename) {
+    public static void saveState(State state, File file) throws IOException, JsonIOException {
+        if (file == null) return;
+
+        file.createNewFile();
+        JSONUtils.toJson(state, file.getAbsolutePath());
+    }
+
+    public static void saveStateDialog(State state, String defaultFilename, String title)
+            throws IOException, JsonIOException {
+
         File defaultPath = new File(System.getProperty("user.home") + "/" + defaultFilename);
-        File selectedFile = LWJGUIDialog.showSaveFileDialog("Save Parameters", defaultPath, "JSON Files (*.json)", "json", false);
+        File selectedFile = LWJGUIDialog.showSaveFileDialog(title, defaultPath, "JSON Files (*.json)", "json", false);
+        saveState(state, selectedFile);
+    }
 
-        if (selectedFile == null) return;
+    public static <T extends State> void loadState(ApplicationState state, Class<T> type, File file)
+            throws IOException, JsonSyntaxException {
 
-        try {
-            selectedFile.createNewFile();
-            JSONUtils.toJson(state, selectedFile.getAbsolutePath());
-        } catch (IOException | JsonIOException e) {
-            LWJGUIDialog.showMessageDialog("Error", "Error saving parameters.", DialogIcon.ERROR);
+        if (file == null) return;
+
+        T loadedState = JSONUtils.readJson(type, file.getAbsolutePath());
+
+        if (loadedState instanceof DisplayState) {
+            state.setDisplayState((DisplayState) loadedState);
+        } else if (loadedState instanceof RenderState) {
+            state.setRenderState((RenderState) loadedState);
+        } else {
+            throw new IOException();
         }
     }
 
-    public static <T extends State> void loadState(ApplicationState state, Class<T> type) {
+    public static <T extends State> void loadStateDialog(ApplicationState state, Class<T> type)
+            throws IOException, JsonSyntaxException {
+
         File defaultPath = new File(System.getProperty("user.home"));
         File selectedFile = LWJGUIDialog.showOpenFileDialog("Load Parameters", defaultPath, "JSON Files (*.json)", "json");
-
-        if (selectedFile == null) return;
-
-        try {
-            T loadedState = JSONUtils.readJson(type, selectedFile.getAbsolutePath());
-
-            if (loadedState instanceof DisplayState) {
-                state.setDisplayState((DisplayState) loadedState);
-            } else if (loadedState instanceof RenderState) {
-                state.setRenderState((RenderState) loadedState);
-            } else {
-                throw new IOException();
-            }
-        } catch (IOException | JsonSyntaxException e) {
-            LWJGUIDialog.showMessageDialog("Error", "Error loading parameters.", DialogIcon.ERROR);
-        }
+        loadState(state, type, selectedFile);
     }
 }
