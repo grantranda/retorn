@@ -1,9 +1,13 @@
 package com.grantranda.retorn.app;
 
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 import com.grantranda.retorn.app.graphics.RetornRenderer;
 import com.grantranda.retorn.app.graphics.gui.RetornGUI;
 import com.grantranda.retorn.app.input.RetornInputHandler;
 import com.grantranda.retorn.app.state.ApplicationState;
+import com.grantranda.retorn.app.state.DisplayState;
+import com.grantranda.retorn.app.util.StateUtils;
 import com.grantranda.retorn.engine.graphics.Model;
 import com.grantranda.retorn.engine.graphics.Texture;
 import com.grantranda.retorn.engine.graphics.display.Window;
@@ -12,6 +16,9 @@ import com.grantranda.retorn.engine.graphics.gui.GUI;
 import com.grantranda.retorn.engine.input.MouseInput;
 import com.grantranda.retorn.engine.math.Matrix4f.Projection;
 import org.lwjgl.opengl.GL11;
+
+import java.io.File;
+import java.io.IOException;
 
 public class Retorn implements Application {
 
@@ -37,6 +44,7 @@ public class Retorn implements Application {
 
     @Override
     public void init(Window window) {
+        loadDisplayState(state);
         renderer.init(window);
         gui.init(window, state);
 
@@ -66,6 +74,7 @@ public class Retorn implements Application {
 
     @Override
     public void terminate() {
+        saveDisplayState(state);
         for (Model model : models) {
             model.delete();
         }
@@ -83,5 +92,21 @@ public class Retorn implements Application {
     public void render(Window window) {
         renderer.render(window, models);
         gui.render(window);
+    }
+
+    public void loadDisplayState(ApplicationState state) {
+        try {
+            StateUtils.loadState(state, DisplayState.class, new File("display_parameters.json"));
+        } catch (IOException | JsonSyntaxException e) {
+            Main.logger.error("Error loading display state");
+        }
+    }
+
+    public void saveDisplayState(ApplicationState state) {
+        try {
+            StateUtils.saveState(state.getDisplayState(), new File("display_parameters.json"));
+        } catch (IOException | JsonIOException e) {
+            Main.logger.error("Error saving display state");
+        }
     }
 }

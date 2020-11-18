@@ -1,5 +1,7 @@
 package com.grantranda.retorn.app.graphics.gui;
 
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 import com.grantranda.retorn.app.graphics.gui.control.ColorSelector;
 import com.grantranda.retorn.app.graphics.gui.control.NumberFieldd;
 import com.grantranda.retorn.app.graphics.gui.control.NumberFieldi;
@@ -15,6 +17,8 @@ import com.grantranda.retorn.engine.input.MouseInput;
 import com.grantranda.retorn.engine.math.Vector3d;
 import com.grantranda.retorn.engine.state.State;
 import com.grantranda.retorn.engine.util.DisplayUtils;
+import lwjgui.LWJGUIDialog;
+import lwjgui.LWJGUIDialog.DialogIcon;
 import lwjgui.geometry.Pos;
 import lwjgui.paint.Color;
 import lwjgui.scene.WindowManager;
@@ -23,6 +27,7 @@ import lwjgui.scene.layout.BorderPane;
 import lwjgui.scene.layout.StackPane;
 import lwjgui.scene.layout.VBox;
 
+import java.io.IOException;
 import java.util.TreeSet;
 
 import static org.lwjgl.nanovg.NanoVG.*;
@@ -355,10 +360,20 @@ public class RetornGUI implements GUI {
             state.getRenderState().reset();
             updateParametersFromState(state);
         });
-        saveButton.setOnAction(event -> StateUtils.saveState(state.getRenderState(), "retorn_parameters.json"));
+        saveButton.setOnAction(event -> {
+            try {
+                StateUtils.saveStateDialog(state.getRenderState(), "retorn_parameters.json", "Save Parameters");
+            } catch (IOException | JsonIOException e) {
+                LWJGUIDialog.showMessageDialog("Error", "Error saving parameters.", DialogIcon.ERROR);
+            }
+        });
         loadButton.setOnAction(event -> {
-            StateUtils.loadState(state, RenderState.class);
-            updateParametersFromState(state);
+            try {
+                StateUtils.loadStateDialog(state, RenderState.class, "Load Parameters");
+                updateParametersFromState(state);
+            } catch (IOException | JsonSyntaxException e) {
+                LWJGUIDialog.showMessageDialog("Error", "Error loading parameters.", DialogIcon.ERROR);
+            }
         });
         resolutionParam.setOnAction(event -> {
             String value = resolutionParam.getValue();
@@ -369,6 +384,7 @@ public class RetornGUI implements GUI {
                 int w = Integer.parseInt(value.substring(0, xIndex));
                 int h = Integer.parseInt(value.substring(xIndex + 1));
                 window.resize(w, h);
+                state.getDisplayState().setWindowResolution(w, h);
             }
         });
         resolutionParam.setValue(state.getDisplayState().getWindowResolution().toString());
