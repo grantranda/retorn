@@ -49,11 +49,11 @@ public class StateUtils {
         }
     }
 
-    public static <T extends State> void loadStateDialog(ApplicationState state, Class<T> type)
+    public static <T extends State> void loadStateDialog(ApplicationState state, Class<T> type, String title)
             throws IOException, JsonSyntaxException {
 
         File defaultPath = new File(System.getProperty("user.home"));
-        File selectedFile = LWJGUIDialog.showOpenFileDialog("Load Parameters", defaultPath, "JSON Files (*.json)", "json");
+        File selectedFile = LWJGUIDialog.showOpenFileDialog(title, defaultPath, "JSON Files (*.json)", "json");
         loadState(state, type, selectedFile);
     }
 }

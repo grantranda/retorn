@@ -369,7 +369,7 @@ public class RetornGUI implements GUI {
         });
         loadButton.setOnAction(event -> {
             try {
-                StateUtils.loadStateDialog(state, RenderState.class);
+                StateUtils.loadStateDialog(state, RenderState.class, "Load Parameters");
                 updateParametersFromState(state);
             } catch (IOException | JsonSyntaxException e) {
                 LWJGUIDialog.showMessageDialog("Error", "Error loading parameters.", DialogIcon.ERROR);
