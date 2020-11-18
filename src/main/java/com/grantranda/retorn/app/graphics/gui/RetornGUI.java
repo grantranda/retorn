@@ -384,6 +384,7 @@ public class RetornGUI implements GUI {
                 int w = Integer.parseInt(value.substring(0, xIndex));
                 int h = Integer.parseInt(value.substring(xIndex + 1));
                 window.resize(w, h);
+                state.getDisplayState().setWindowResolution(w, h);
             }
         });
         resolutionParam.setValue(state.getDisplayState().getWindowResolution().toString());
