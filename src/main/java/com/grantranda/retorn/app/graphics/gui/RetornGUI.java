@@ -19,6 +19,7 @@ import com.grantranda.retorn.engine.state.State;
 import com.grantranda.retorn.engine.util.DisplayUtils;
 import lwjgui.LWJGUIDialog;
 import lwjgui.LWJGUIDialog.DialogIcon;
+import lwjgui.geometry.Insets;
 import lwjgui.geometry.Pos;
 import lwjgui.paint.Color;
 import lwjgui.scene.WindowManager;
@@ -66,6 +67,8 @@ public class RetornGUI implements GUI {
 
     private BorderPane customResolutionRoot;
     private Popup customResolutionPopup;
+    private Parameter<NumberFieldi> customWidthParameter;
+    private Parameter<NumberFieldi> customHeightParameter;
 
     public RetornGUI() {
 
@@ -263,9 +266,18 @@ public class RetornGUI implements GUI {
         resolutionParam.getItems().add("Custom");
     }
 
-    // TODO Create custom resolution root pane
     private void initCustomResolutionRoot() {
+        customWidthParameter = new Parameter<>(POPUP_WIDTH, "Width", new NumberFieldi(100, 100, 10000));
+        customHeightParameter = new Parameter<>(POPUP_WIDTH, "Height", new NumberFieldi(100, 100, 10000));
+
+        VBox top = new VBox();
+        top.setFillToParentWidth(true);
+        top.getChildren().addAll(customWidthParameter, customHeightParameter);
+
         customResolutionRoot = new BorderPane();
+        customResolutionRoot.setMinWidth(POPUP_WIDTH);
+        customResolutionRoot.setMaxWidth(POPUP_WIDTH);
+        customResolutionRoot.setTop(top);
     }
 
     private void initColorSelector(Window window) {
