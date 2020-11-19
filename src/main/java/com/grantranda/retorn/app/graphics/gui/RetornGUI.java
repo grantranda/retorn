@@ -36,7 +36,8 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class RetornGUI implements GUI {
 
-    public static final int RIGHT_PANE_WIDTH = 400;
+    public static final int MENU_WIDTH = 400;
+    public static final int POPUP_WIDTH = 300;
 
     private long nvgContext;
     private boolean mouseOver;
@@ -163,7 +164,7 @@ public class RetornGUI implements GUI {
         int width  = window.getResolution().getWidth();
         boolean mouseOverMenu = MouseInput.isMouseInWindow()
                 && isMenuShown()
-                && (mousePos.x >= width - RIGHT_PANE_WIDTH && mousePos.x <= width);
+                && (mousePos.x >= width - MENU_WIDTH && mousePos.x <= width);
 
         setMouseOver(mouseOverMenu);
     }
@@ -245,7 +246,7 @@ public class RetornGUI implements GUI {
     private void initResolutionSelection() {
         initCustomResolutionRoot();
 
-        customResolutionPopup = new Popup(300, 100, "Custom Resolution", customResolutionRoot);
+        customResolutionPopup = new Popup(POPUP_WIDTH, 100, "Custom Resolution", customResolutionRoot);
         resolutionParam = new ComboBox<>();
         resolutionParam.setPrefWidth(200);
 
@@ -300,10 +301,10 @@ public class RetornGUI implements GUI {
     }
 
     private void initMenu(Window window) {
-        maxIterationsParam = new Parameter<>(RIGHT_PANE_WIDTH, "Max Iterations", new NumberFieldi(100, 0, 100000));
-        scaleParam = new Parameter<>(RIGHT_PANE_WIDTH, "Scale", new NumberFieldd(1.0));
-        xParam = new Parameter<>(RIGHT_PANE_WIDTH, "X", new NumberFieldd(0.0));
-        yParam = new Parameter<>(RIGHT_PANE_WIDTH, "Y", new NumberFieldd(0.0));
+        maxIterationsParam = new Parameter<>(MENU_WIDTH, "Max Iterations", new NumberFieldi(100, 0, 100000));
+        scaleParam = new Parameter<>(MENU_WIDTH, "Scale", new NumberFieldd(1.0));
+        xParam = new Parameter<>(MENU_WIDTH, "X", new NumberFieldd(0.0));
+        yParam = new Parameter<>(MENU_WIDTH, "Y", new NumberFieldd(0.0));
         hideMenuButton = new Button("X");
         showMenuButton = new Button("|||");
         updateButton = new Button("Update");
@@ -316,30 +317,30 @@ public class RetornGUI implements GUI {
         fpsDisplay.setAlignment(Pos.BOTTOM_LEFT);
         fpsDisplay.setFillToParentWidth(true);
 
-        VBox menuTop = new VBox();
-        menuTop.setAlignment(Pos.TOP_LEFT);
-        menuTop.setFillToParentWidth(true);
-        menuTop.getChildren().add(hideMenuButton);
-        menuTop.getChildren().add(maxIterationsParam);
-        menuTop.getChildren().add(scaleParam);
-        menuTop.getChildren().addAll(xParam, yParam);
-        menuTop.getChildren().add(resolutionParam);
-        menuTop.getChildren().add(vSyncParam);
-        menuTop.getChildren().add(colorSelector);
-        menuTop.getChildren().add(updateButton);
-        menuTop.getChildren().add(resetButton);
-        menuTop.getChildren().add(saveButton);
-        menuTop.getChildren().add(loadButton);
+        VBox top = new VBox();
+        top.setAlignment(Pos.TOP_LEFT);
+        top.setPadding(new Insets(0, 10, 0, 0));
+        top.getChildren().add(hideMenuButton);
+        top.getChildren().add(maxIterationsParam);
+        top.getChildren().add(scaleParam);
+        top.getChildren().addAll(xParam, yParam);
+        top.getChildren().add(resolutionParam);
+        top.getChildren().add(vSyncParam);
+        top.getChildren().add(colorSelector);
+        top.getChildren().add(updateButton);
+        top.getChildren().add(resetButton);
+        top.getChildren().add(saveButton);
+        top.getChildren().add(loadButton);
 
         menu = new BorderPane();
-        menu.setMinWidth(RIGHT_PANE_WIDTH);
-        menu.setMaxWidth(RIGHT_PANE_WIDTH);
+        menu.setMinWidth(MENU_WIDTH);
+        menu.setMaxWidth(MENU_WIDTH);
         menu.setPrefHeight(window.getResolution().getHeight());
         menu.setAlignment(Pos.TOP_LEFT);
         menu.setFillToParentHeight(true);
         menu.setBackgroundLegacy(new Color(.9, .9, .9, 0.95));
         menu.setBottom(fpsDisplay);
-        menu.setTop(menuTop);
+        menu.setTop(top);
     }
 
     private void initRoot(Window window) {
