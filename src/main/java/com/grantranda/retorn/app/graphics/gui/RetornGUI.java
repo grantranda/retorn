@@ -211,7 +211,6 @@ public class RetornGUI implements GUI {
     public void render(Window window) {
         guiWindow.render();
         renderNvg(window);
-        window.restoreRenderState();
     }
 
     private void renderNvg(Window window) {

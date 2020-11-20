@@ -165,10 +165,6 @@ public class Window {
     }
 
     public void render() {
-
-    }
-
-    public void restoreRenderState() {
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_STENCIL_TEST);
     }

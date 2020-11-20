@@ -48,6 +48,7 @@ public class Engine implements Runnable {
 
     private void render() {
         application.render(window);
+        window.render();
     }
 
     private void terminate() {
