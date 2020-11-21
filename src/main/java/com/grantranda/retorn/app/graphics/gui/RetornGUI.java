@@ -38,7 +38,6 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 public class RetornGUI implements GUI {
 
     public static final int MENU_WIDTH = 400;
-    public static final int POPUP_WIDTH = 300;
 
     private long nvgContext;
     private boolean mouseOver;
@@ -60,13 +59,12 @@ public class RetornGUI implements GUI {
     private Parameter<NumberFieldd> scaleParam;
     private Parameter<NumberFieldd> xParam;
     private Parameter<NumberFieldd> yParam;
+    private Parameter<NumberFieldi> widthParameter;
+    private Parameter<NumberFieldi> heightParameter;
+    private ComboBox<String> resolutionParam;
     private ToggleButton vSyncParam;
     private ColorSelector colorSelector;
-    private ComboBox<String> resolutionParam;
     private Label fpsDisplay;
-
-    private Parameter<NumberFieldi> customWidthParameter;
-    private Parameter<NumberFieldi> customHeightParameter;
 
     public RetornGUI() {
 
@@ -244,8 +242,8 @@ public class RetornGUI implements GUI {
     }
 
     private void initResolutionSelection() {
-        customWidthParameter = new Parameter<>(POPUP_WIDTH, "Width", new NumberFieldi(100, 100, 10000));
-        customHeightParameter = new Parameter<>(POPUP_WIDTH, "Height", new NumberFieldi(100, 100, 10000));
+        widthParameter = new Parameter<>(MENU_WIDTH, "Width", new NumberFieldi(100, 100, 10000));
+        heightParameter = new Parameter<>(MENU_WIDTH, "Height", new NumberFieldi(100, 100, 10000));
 
         resolutionParam = new ComboBox<>();
         resolutionParam.setPrefWidth(200);
