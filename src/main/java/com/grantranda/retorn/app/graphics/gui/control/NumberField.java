@@ -1,8 +1,15 @@
 package com.grantranda.retorn.app.graphics.gui.control;
 
+import lwjgui.paint.Color;
 import lwjgui.scene.control.TextField;
+import lwjgui.style.Background;
+import lwjgui.style.BackgroundSolid;
+import lwjgui.theme.Theme;
 
 public abstract class NumberField<T extends Number & Comparable<T>> extends TextField {
+
+    private static final Background BACKGROUND_ENABLED = new BackgroundSolid(Theme.current().getBackground());
+    private static final Background BACKGROUND_DISABLED = new BackgroundSolid(Color.LIGHT_GRAY);
 
     protected final T min;
     protected final T max;
@@ -21,6 +28,12 @@ public abstract class NumberField<T extends Number & Comparable<T>> extends Text
         this.min = min;
         this.max = max;
         setNumber(number);
+    }
+
+    @Override
+    public void setDisabled(boolean disabled) {
+        super.setDisabled(disabled);
+        setBackground(disabled ? BACKGROUND_DISABLED : BACKGROUND_ENABLED);
     }
 
     public T getNumber() {
