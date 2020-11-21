@@ -65,8 +65,6 @@ public class RetornGUI implements GUI {
     private ComboBox<String> resolutionParam;
     private Label fpsDisplay;
 
-    private BorderPane customResolutionRoot;
-    private Popup customResolutionPopup;
     private Parameter<NumberFieldi> customWidthParameter;
     private Parameter<NumberFieldi> customHeightParameter;
 
@@ -246,9 +244,9 @@ public class RetornGUI implements GUI {
     }
 
     private void initResolutionSelection() {
-        initCustomResolutionRoot();
+        customWidthParameter = new Parameter<>(POPUP_WIDTH, "Width", new NumberFieldi(100, 100, 10000));
+        customHeightParameter = new Parameter<>(POPUP_WIDTH, "Height", new NumberFieldi(100, 100, 10000));
 
-        customResolutionPopup = new Popup(POPUP_WIDTH, 100, "Custom Resolution", customResolutionRoot);
         resolutionParam = new ComboBox<>();
         resolutionParam.setPrefWidth(200);
 
@@ -263,20 +261,6 @@ public class RetornGUI implements GUI {
             }
         }
         resolutionParam.getItems().add("Custom");
-    }
-
-    private void initCustomResolutionRoot() {
-        customWidthParameter = new Parameter<>(POPUP_WIDTH, "Width", new NumberFieldi(100, 100, 10000));
-        customHeightParameter = new Parameter<>(POPUP_WIDTH, "Height", new NumberFieldi(100, 100, 10000));
-
-        VBox top = new VBox();
-        top.setFillToParentWidth(true);
-        top.getChildren().addAll(customWidthParameter, customHeightParameter);
-
-        customResolutionRoot = new BorderPane();
-        customResolutionRoot.setMinWidth(POPUP_WIDTH);
-        customResolutionRoot.setMaxWidth(POPUP_WIDTH);
-        customResolutionRoot.setTop(top);
     }
 
     private void initColorSelector(Window window) {
@@ -390,7 +374,7 @@ public class RetornGUI implements GUI {
         resolutionParam.setOnAction(event -> {
             String value = resolutionParam.getValue();
             if (value.equals("Custom")) {
-                customResolutionPopup.show();
+
             } else {
                 int xIndex = value.indexOf('x');
                 int w = Integer.parseInt(value.substring(0, xIndex));
