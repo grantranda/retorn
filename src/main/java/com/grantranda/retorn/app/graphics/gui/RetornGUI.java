@@ -40,9 +40,10 @@ public class RetornGUI implements GUI {
     public static final int MENU_WIDTH = 400;
 
     private long nvgContext;
-    private boolean mouseOver;
-    private boolean mousePressed;
+    private boolean mouseOver = false;
+    private boolean mousePressed = false;
     private boolean menuShown = true;
+    private boolean customResolution = false;
 
     private lwjgui.scene.Window guiWindow;
 
@@ -127,8 +128,6 @@ public class RetornGUI implements GUI {
         guiWindow.setWindowAutoClear(false);
         guiWindow.show();
 
-        initResolutionSelection();
-        initColorSelector(window);
         initMenu(window);
         initRoot(window);
         setEventHandlers(window, state);
@@ -294,6 +293,9 @@ public class RetornGUI implements GUI {
     }
 
     private void initMenu(Window window) {
+        initResolutionSelection();
+        initColorSelector(window);
+
         maxIterationsParam = new Parameter<>(MENU_WIDTH, "Max Iterations", new NumberFieldi(100, 0, 100000));
         scaleParam = new Parameter<>(MENU_WIDTH, "Scale", new NumberFieldd(1.0));
         xParam = new Parameter<>(MENU_WIDTH, "X", new NumberFieldd(0.0));
@@ -318,6 +320,7 @@ public class RetornGUI implements GUI {
         top.getChildren().add(scaleParam);
         top.getChildren().addAll(xParam, yParam);
         top.getChildren().add(resolutionParam);
+        top.getChildren().addAll(widthParameter, heightParameter);
         top.getChildren().add(vSyncParam);
         top.getChildren().add(colorSelector);
         top.getChildren().add(updateButton);
@@ -372,8 +375,17 @@ public class RetornGUI implements GUI {
         resolutionParam.setOnAction(event -> {
             String value = resolutionParam.getValue();
             if (value.equals("Custom")) {
-
+                customResolution = true;
+                widthParameter.getControl().setEditable(true);
+                widthParameter.getControl().setDisabled(false);
+                heightParameter.getControl().setEditable(true);
+                heightParameter.getControl().setDisabled(false);
             } else {
+                customResolution = false;
+                widthParameter.getControl().setEditable(false);
+                widthParameter.getControl().setDisabled(true);
+                heightParameter.getControl().setEditable(false);
+                heightParameter.getControl().setDisabled(true);
                 int xIndex = value.indexOf('x');
                 int w = Integer.parseInt(value.substring(0, xIndex));
                 int h = Integer.parseInt(value.substring(xIndex + 1));
