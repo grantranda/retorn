@@ -171,6 +171,17 @@ public class RetornGUI implements GUI {
 
     private void updateGui(Window window) {
         fpsDisplay.setText("FPS: " + window.getFpsCounter().getFps());
+
+        if (window.isResized()) {
+            resolutionParam.setValue("Custom");
+            customResolution = true;
+            widthParameter.getControl().setEditable(true);
+            widthParameter.getControl().setDisabled(false);
+            widthParameter.getControl().setNumber(window.getResolution().getWidth());
+            heightParameter.getControl().setEditable(true);
+            heightParameter.getControl().setDisabled(false);
+            heightParameter.getControl().setNumber(window.getResolution().getHeight());
+        }
     }
 
     private void updateUniforms(Shader shader, ApplicationState state) {
