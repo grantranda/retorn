@@ -103,7 +103,8 @@ public class Window {
 
         // Configure GLFW
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-        glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+        glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+        glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
 
         // Create the window
         windowID = glfwCreateWindow(resolution.getWidth(), resolution.getHeight(), title, NULL, NULL);
