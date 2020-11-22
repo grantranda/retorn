@@ -7,7 +7,6 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
-
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.Objects;
@@ -19,6 +18,9 @@ import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.*;
 
 public class Window {
+
+    public static final int MIN_WIDTH = 400;
+    public static final int MIN_HEIGHT = 400;
 
     private final String title;
     private final Resolution resolution;
@@ -79,10 +81,11 @@ public class Window {
         this.resized = resized;
     }
 
-    public void resize(int width, int height) {
+    public void setSize(int width, int height) {
         resolution.set(width, height);
         setResized(true);
         glfwSetWindowSize(windowID, width, height);
+        glViewport(0, 0, width, height);
     }
 
     public boolean shouldClose() {
@@ -90,28 +93,32 @@ public class Window {
     }
 
     public void init() {
-        initGlfw();
-    }
-
-    private void initGlfw() {
         GLFWErrorCallback.createPrint(System.err).set();
 
         if (!glfwInit()) throw new IllegalStateException("Error initializing GLFW");
 
         // Configure GLFW
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-        glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+        glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+        glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
 
         // Create the window
         windowID = glfwCreateWindow(resolution.getWidth(), resolution.getHeight(), title, NULL, NULL);
-        if (windowID == NULL) throw new RuntimeException("Failed to create the GLFW window");
+        if (windowID == NULL) {
+            terminate();
+            throw new RuntimeException("Failed to create the GLFW window");
+        }
+        glfwMakeContextCurrent(windowID);
+        GL.createCapabilities();
+
+        glfwSetWindowSizeLimits(windowID, MIN_WIDTH, MIN_HEIGHT, GLFW_DONT_CARE, GLFW_DONT_CARE);
 
         KeyboardInput.init(windowID);
         MouseInput.init(windowID);
 
-        // Set window resize callback
+        // Set callbacks
         glfwSetFramebufferSizeCallback(windowID, (window, width, height) -> {
-            resize(width, height);
+            setSize(width, height);
         });
         glfwSetWindowContentScaleCallback(windowID, (window, contentScaleX, contentScaleY) -> {
             this.contentScaleX = contentScaleX;
@@ -140,9 +147,7 @@ public class Window {
                 (vidMode.height() - resolution.getHeight()) / 2
         );
 
-        glfwMakeContextCurrent(windowID);
         glfwShowWindow(windowID);
-        GL.createCapabilities();
         if (isvSync()) glfwSwapInterval(1);
 
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -159,16 +164,13 @@ public class Window {
     }
 
     public void update() {
+        fpsCounter.update();
+        setResized(false);
         glfwSwapBuffers(windowID);
         glfwPollEvents();
-        fpsCounter.update();
     }
 
     public void render() {
-
-    }
-
-    public void restoreRenderState() {
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_STENCIL_TEST);
     }

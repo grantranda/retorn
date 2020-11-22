@@ -7,6 +7,7 @@ import com.grantranda.retorn.app.graphics.gui.control.NumberFieldd;
 import com.grantranda.retorn.app.graphics.gui.control.NumberFieldi;
 import com.grantranda.retorn.app.graphics.gui.control.Parameter;
 import com.grantranda.retorn.app.state.ApplicationState;
+import com.grantranda.retorn.app.state.DisplayState;
 import com.grantranda.retorn.app.state.RenderState;
 import com.grantranda.retorn.app.util.StateUtils;
 import com.grantranda.retorn.engine.graphics.Shader;
@@ -19,6 +20,7 @@ import com.grantranda.retorn.engine.state.State;
 import com.grantranda.retorn.engine.util.DisplayUtils;
 import lwjgui.LWJGUIDialog;
 import lwjgui.LWJGUIDialog.DialogIcon;
+import lwjgui.geometry.Insets;
 import lwjgui.geometry.Pos;
 import lwjgui.paint.Color;
 import lwjgui.scene.WindowManager;
@@ -36,12 +38,13 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class RetornGUI implements GUI {
 
-    public static final int RIGHT_PANE_WIDTH = 400;
+    public static final int MENU_WIDTH = 400;
 
     private long nvgContext;
-    private boolean mouseOver;
-    private boolean mousePressed;
+    private boolean mouseOver = false;
+    private boolean mousePressed = false;
     private boolean menuShown = true;
+    private boolean customResolution = false;
 
     private lwjgui.scene.Window guiWindow;
 
@@ -54,17 +57,17 @@ public class RetornGUI implements GUI {
     private Button resetButton;
     private Button saveButton;
     private Button loadButton;
+    private Button applyButton;
     private Parameter<NumberFieldi> maxIterationsParam;
     private Parameter<NumberFieldd> scaleParam;
     private Parameter<NumberFieldd> xParam;
     private Parameter<NumberFieldd> yParam;
+    private Parameter<NumberFieldi> widthParameter;
+    private Parameter<NumberFieldi> heightParameter;
+    private ComboBox<String> resolutionParam;
     private ToggleButton vSyncParam;
     private ColorSelector colorSelector;
-    private ComboBox<String> resolutionParam;
     private Label fpsDisplay;
-
-    private BorderPane customResolutionRoot;
-    private Popup customResolutionPopup;
 
     public RetornGUI() {
 
@@ -127,16 +130,14 @@ public class RetornGUI implements GUI {
         guiWindow.setWindowAutoClear(false);
         guiWindow.show();
 
-        initResolutionSelection();
-        initColorSelector(window);
         initMenu(window);
         initRoot(window);
         setEventHandlers(window, state);
 
         guiWindow.getScene().setRoot(root);
 
-        updateParameters();
-        updateState(state);
+        applyRenderParameters();
+        applyDisplayParameters(window);
     }
 
     private void initNvg(Window window) {
@@ -163,20 +164,32 @@ public class RetornGUI implements GUI {
         int width  = window.getResolution().getWidth();
         boolean mouseOverMenu = MouseInput.isMouseInWindow()
                 && isMenuShown()
-                && (mousePos.x >= width - RIGHT_PANE_WIDTH && mousePos.x <= width);
+                && (mousePos.x >= width - MENU_WIDTH && mousePos.x <= width);
 
         setMouseOver(mouseOverMenu);
     }
 
     private void updateGui(Window window) {
         fpsDisplay.setText("FPS: " + window.getFpsCounter().getFps());
+
+        if (window.isResized()) {
+            resolutionParam.setValue("Custom");
+            customResolution = true;
+            widthParameter.getControl().setEditable(true);
+            widthParameter.getControl().setDisabled(false);
+            widthParameter.getControl().setNumber(window.getResolution().getWidth());
+            heightParameter.getControl().setEditable(true);
+            heightParameter.getControl().setDisabled(false);
+            heightParameter.getControl().setNumber(window.getResolution().getHeight());
+        }
     }
 
-    private void updateParameters() {
-        maxIterationsParam.getControl().validate();
-        scaleParam.getControl().validate();
-        xParam.getControl().validate();
-        yParam.getControl().validate();
+    private void updateUniforms(Shader shader, ApplicationState state) {
+        RenderState renderState = state.getRenderState();
+
+        shader.setUniform1i("max_iterations", renderState.getMaxIterations());
+        shader.setUniform1d("scale", renderState.getScale());
+        shader.setUniform2d("offset", renderState.getOffset().x, renderState.getOffset().y);
     }
 
     public void updateParametersFromState(ApplicationState state) {
@@ -188,26 +201,20 @@ public class RetornGUI implements GUI {
         yParam.getControl().setNumber(renderState.getOffset().y);
     }
 
-    private void updateState(ApplicationState state) {
-        RenderState renderState = state.getRenderState();
-        renderState.setMaxIterations(maxIterationsParam.getControl().getNumber());
-        renderState.setScale(scaleParam.getControl().getNumber());
-        renderState.setOffset(xParam.getControl().getNumber(), yParam.getControl().getNumber(), 0.0f);
+    private void updateRenderState(RenderState state) {
+        state.setMaxIterations(maxIterationsParam.getControl().getNumber());
+        state.setScale(scaleParam.getControl().getNumber());
+        state.setOffset(xParam.getControl().getNumber(), yParam.getControl().getNumber(), 0.0f);
     }
 
-    private void updateUniforms(Shader shader, ApplicationState state) {
-        RenderState renderState = state.getRenderState();
-
-        shader.setUniform1i("max_iterations", renderState.getMaxIterations());
-        shader.setUniform1d("scale", renderState.getScale());
-        shader.setUniform2d("offset", renderState.getOffset().x, renderState.getOffset().y);
+    private void updateDisplayState(DisplayState state, Window window) {
+        state.setWindowResolution(window.getResolution().getWidth(), window.getResolution().getHeight());
     }
 
     @Override
     public void render(Window window) {
         guiWindow.render();
         renderNvg(window);
-        window.restoreRenderState();
     }
 
     private void renderNvg(Window window) {
@@ -242,12 +249,38 @@ public class RetornGUI implements GUI {
         nvgEndFrame(nvgContext);
     }
 
-    private void initResolutionSelection() {
-        initCustomResolutionRoot();
+    private void applyRenderParameters() {
+        maxIterationsParam.getControl().validate();
+        scaleParam.getControl().validate();
+        xParam.getControl().validate();
+        yParam.getControl().validate();
+    }
 
-        customResolutionPopup = new Popup(300, 100, "Custom Resolution", customResolutionRoot);
+    private void applyDisplayParameters(Window window) {
+        int width = window.getResolution().getWidth();
+        int height = window.getResolution().getHeight();
+
+        if (customResolution) {
+            if (widthParameter.getControl().validate() && heightParameter.getControl().validate()) {
+                width = widthParameter.getControl().getNumber();
+                height = heightParameter.getControl().getNumber();
+            }
+        } else {
+            String value = resolutionParam.getValue();
+            int xIndex = value.indexOf('x');
+            width = Integer.parseInt(value.substring(0, xIndex));
+            height = Integer.parseInt(value.substring(xIndex + 1));
+        }
+        widthParameter.getControl().setNumber(width);
+        heightParameter.getControl().setNumber(height);
+        window.setSize(width, height);
+    }
+
+    private void initResolutionSelection() {
         resolutionParam = new ComboBox<>();
         resolutionParam.setPrefWidth(200);
+        widthParameter = new Parameter<>(MENU_WIDTH, "Width", new NumberFieldi(100, 100, 10000));
+        heightParameter = new Parameter<>(MENU_WIDTH, "Height", new NumberFieldi(100, 100, 10000));
 
         Resolution monitorResolution = DisplayUtils.getMonitorResolution();
         TreeSet<Resolution> resolutions = DisplayUtils.getMonitorResolutions();
@@ -260,11 +293,6 @@ public class RetornGUI implements GUI {
             }
         }
         resolutionParam.getItems().add("Custom");
-    }
-
-    // TODO Create custom resolution root pane
-    private void initCustomResolutionRoot() {
-        customResolutionRoot = new BorderPane();
     }
 
     private void initColorSelector(Window window) {
@@ -300,46 +328,52 @@ public class RetornGUI implements GUI {
     }
 
     private void initMenu(Window window) {
-        maxIterationsParam = new Parameter<>(RIGHT_PANE_WIDTH, "Max Iterations", new NumberFieldi(100, 0, 100000));
-        scaleParam = new Parameter<>(RIGHT_PANE_WIDTH, "Scale", new NumberFieldd(1.0));
-        xParam = new Parameter<>(RIGHT_PANE_WIDTH, "X", new NumberFieldd(0.0));
-        yParam = new Parameter<>(RIGHT_PANE_WIDTH, "Y", new NumberFieldd(0.0));
+        initResolutionSelection();
+        initColorSelector(window);
+
+        maxIterationsParam = new Parameter<>(MENU_WIDTH, "Max Iterations", new NumberFieldi(100, 0, 100000));
+        scaleParam = new Parameter<>(MENU_WIDTH, "Scale", new NumberFieldd(1.0));
+        xParam = new Parameter<>(MENU_WIDTH, "X", new NumberFieldd(0.0));
+        yParam = new Parameter<>(MENU_WIDTH, "Y", new NumberFieldd(0.0));
         hideMenuButton = new Button("X");
         showMenuButton = new Button("|||");
         updateButton = new Button("Update");
         resetButton = new Button("Reset");
         saveButton = new Button("Save");
         loadButton = new Button("Load");
+        applyButton = new Button("Apply");
         vSyncParam = new ToggleButton("vSync");
         colorSelector = new ColorSelector();
         fpsDisplay = new Label("FPS: " + window.getFpsCounter().getFps());
         fpsDisplay.setAlignment(Pos.BOTTOM_LEFT);
         fpsDisplay.setFillToParentWidth(true);
 
-        VBox menuTop = new VBox();
-        menuTop.setAlignment(Pos.TOP_LEFT);
-        menuTop.setFillToParentWidth(true);
-        menuTop.getChildren().add(hideMenuButton);
-        menuTop.getChildren().add(maxIterationsParam);
-        menuTop.getChildren().add(scaleParam);
-        menuTop.getChildren().addAll(xParam, yParam);
-        menuTop.getChildren().add(resolutionParam);
-        menuTop.getChildren().add(vSyncParam);
-        menuTop.getChildren().add(colorSelector);
-        menuTop.getChildren().add(updateButton);
-        menuTop.getChildren().add(resetButton);
-        menuTop.getChildren().add(saveButton);
-        menuTop.getChildren().add(loadButton);
+        VBox top = new VBox();
+        top.setAlignment(Pos.TOP_LEFT);
+        top.setPadding(new Insets(0, 10, 0, 0));
+        top.getChildren().add(hideMenuButton);
+        top.getChildren().add(maxIterationsParam);
+        top.getChildren().add(scaleParam);
+        top.getChildren().addAll(xParam, yParam);
+        top.getChildren().add(resolutionParam);
+        top.getChildren().addAll(widthParameter, heightParameter);
+        top.getChildren().add(vSyncParam);
+        top.getChildren().add(applyButton);
+        top.getChildren().add(colorSelector);
+        top.getChildren().add(updateButton);
+        top.getChildren().add(resetButton);
+        top.getChildren().add(saveButton);
+        top.getChildren().add(loadButton);
 
         menu = new BorderPane();
-        menu.setMinWidth(RIGHT_PANE_WIDTH);
-        menu.setMaxWidth(RIGHT_PANE_WIDTH);
+        menu.setMinWidth(MENU_WIDTH);
+        menu.setMaxWidth(MENU_WIDTH);
         menu.setPrefHeight(window.getResolution().getHeight());
         menu.setAlignment(Pos.TOP_LEFT);
         menu.setFillToParentHeight(true);
         menu.setBackgroundLegacy(new Color(.9, .9, .9, 0.95));
         menu.setBottom(fpsDisplay);
-        menu.setTop(menuTop);
+        menu.setTop(top);
     }
 
     private void initRoot(Window window) {
@@ -353,8 +387,8 @@ public class RetornGUI implements GUI {
         hideMenuButton.setOnAction(event -> hideMenu());
         showMenuButton.setOnAction(event -> showMenu());
         updateButton.setOnAction(event -> {
-            updateParameters();
-            updateState(state);
+            applyRenderParameters();
+            updateRenderState(state.getRenderState());
         });
         resetButton.setOnAction(event -> {
             state.getRenderState().reset();
@@ -378,15 +412,23 @@ public class RetornGUI implements GUI {
         resolutionParam.setOnAction(event -> {
             String value = resolutionParam.getValue();
             if (value.equals("Custom")) {
-                customResolutionPopup.show();
+                customResolution = true;
+                widthParameter.getControl().setEditable(true);
+                widthParameter.getControl().setDisabled(false);
+                heightParameter.getControl().setEditable(true);
+                heightParameter.getControl().setDisabled(false);
             } else {
-                int xIndex = value.indexOf('x');
-                int w = Integer.parseInt(value.substring(0, xIndex));
-                int h = Integer.parseInt(value.substring(xIndex + 1));
-                window.resize(w, h);
-                state.getDisplayState().setWindowResolution(w, h);
+                customResolution = false;
+                widthParameter.getControl().setEditable(false);
+                widthParameter.getControl().setDisabled(true);
+                heightParameter.getControl().setEditable(false);
+                heightParameter.getControl().setDisabled(true);
             }
         });
         resolutionParam.setValue(state.getDisplayState().getWindowResolution().toString());
+        applyButton.setOnAction(event -> {
+            applyDisplayParameters(window);
+            updateDisplayState(state.getDisplayState(), window);
+        });
     }
 }

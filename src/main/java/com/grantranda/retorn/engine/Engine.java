@@ -42,12 +42,13 @@ public class Engine implements Runnable {
     }
 
     private void update() {
-        application.update(window);
         window.update();
+        application.update(window);
     }
 
     private void render() {
         application.render(window);
+        window.render();
     }
 
     private void terminate() {

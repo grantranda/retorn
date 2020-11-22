@@ -52,9 +52,6 @@ public class RetornRenderer {
         Resolution resolution = window.getResolution();
 
         if (window.isResized()) {
-            glViewport(0, 0, resolution.getWidth(), resolution.getHeight());
-            window.setResized(false);
-
             if (projectionType == Projection.PERSPECTIVE) {
                 setProjectionType(window, projectionType);
             }
@@ -75,7 +72,5 @@ public class RetornRenderer {
         }
 
         shader.unbind();
-
-        window.render();
     }
 }
