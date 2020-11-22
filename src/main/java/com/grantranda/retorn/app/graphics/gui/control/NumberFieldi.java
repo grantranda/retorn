@@ -24,11 +24,13 @@ public class NumberFieldi extends NumberField<Integer> {
     }
 
     @Override
-    public void validate() {
+    public boolean validate() {
         if (isValidNumber()) {
             setNumber(Integer.parseInt(getText()));
+            return true;
         } else {
             setNumber(number);
+            return false;
         }
     }
 }

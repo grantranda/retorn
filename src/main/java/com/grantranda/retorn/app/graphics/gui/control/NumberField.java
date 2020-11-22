@@ -57,5 +57,5 @@ public abstract class NumberField<T extends Number & Comparable<T>> extends Text
 
     public abstract boolean isValidNumber();
 
-    public abstract void validate();
+    public abstract boolean validate();
 }

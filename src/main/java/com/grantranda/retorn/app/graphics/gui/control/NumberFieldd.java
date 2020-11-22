@@ -24,11 +24,13 @@ public class NumberFieldd extends NumberField<Double> {
     }
 
     @Override
-    public void validate() {
+    public boolean validate() {
         if (isValidNumber()) {
             setNumber(Double.parseDouble(getText()));
+            return true;
         } else {
             setNumber(number);
+            return false;
         }
     }
 }
