@@ -173,11 +173,12 @@ public class RetornGUI implements GUI {
         fpsDisplay.setText("FPS: " + window.getFpsCounter().getFps());
     }
 
-    private void updateParameters() {
-        maxIterationsParam.getControl().validate();
-        scaleParam.getControl().validate();
-        xParam.getControl().validate();
-        yParam.getControl().validate();
+    private void updateUniforms(Shader shader, ApplicationState state) {
+        RenderState renderState = state.getRenderState();
+
+        shader.setUniform1i("max_iterations", renderState.getMaxIterations());
+        shader.setUniform1d("scale", renderState.getScale());
+        shader.setUniform2d("offset", renderState.getOffset().x, renderState.getOffset().y);
     }
 
     public void updateParametersFromState(ApplicationState state) {
