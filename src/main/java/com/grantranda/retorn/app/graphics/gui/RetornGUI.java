@@ -271,11 +271,10 @@ public class RetornGUI implements GUI {
     }
 
     private void initResolutionSelection() {
-        widthParameter = new Parameter<>(MENU_WIDTH, "Width", new NumberFieldi(100, 100, 10000));
-        heightParameter = new Parameter<>(MENU_WIDTH, "Height", new NumberFieldi(100, 100, 10000));
-
         resolutionParam = new ComboBox<>();
         resolutionParam.setPrefWidth(200);
+        widthParameter = new Parameter<>(MENU_WIDTH, "Width", new NumberFieldi(100, 100, 10000));
+        heightParameter = new Parameter<>(MENU_WIDTH, "Height", new NumberFieldi(100, 100, 10000));
 
         Resolution monitorResolution = DisplayUtils.getMonitorResolution();
         TreeSet<Resolution> resolutions = DisplayUtils.getMonitorResolutions();
