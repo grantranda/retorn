@@ -104,7 +104,14 @@ public class Window {
 
         // Create the window
         windowID = glfwCreateWindow(resolution.getWidth(), resolution.getHeight(), title, NULL, NULL);
-        if (windowID == NULL) throw new RuntimeException("Failed to create the GLFW window");
+        if (windowID == NULL) {
+            terminate();
+            throw new RuntimeException("Failed to create the GLFW window");
+        }
+        glfwMakeContextCurrent(windowID);
+        GL.createCapabilities();
+
+        glfwSetWindowSizeLimits(windowID, MIN_WIDTH, MIN_HEIGHT, GLFW_DONT_CARE, GLFW_DONT_CARE);
 
         KeyboardInput.init(windowID);
         MouseInput.init(windowID);
@@ -140,9 +147,7 @@ public class Window {
                 (vidMode.height() - resolution.getHeight()) / 2
         );
 
-        glfwMakeContextCurrent(windowID);
         glfwShowWindow(windowID);
-        GL.createCapabilities();
         if (isvSync()) glfwSwapInterval(1);
 
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
