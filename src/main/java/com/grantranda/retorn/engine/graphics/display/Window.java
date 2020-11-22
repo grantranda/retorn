@@ -164,9 +164,10 @@ public class Window {
     }
 
     public void update() {
+        fpsCounter.update();
+        setResized(false);
         glfwSwapBuffers(windowID);
         glfwPollEvents();
-        fpsCounter.update();
     }
 
     public void render() {
