@@ -7,6 +7,7 @@ import com.grantranda.retorn.app.graphics.gui.control.NumberFieldd;
 import com.grantranda.retorn.app.graphics.gui.control.NumberFieldi;
 import com.grantranda.retorn.app.graphics.gui.control.Parameter;
 import com.grantranda.retorn.app.state.ApplicationState;
+import com.grantranda.retorn.app.state.DisplayState;
 import com.grantranda.retorn.app.state.RenderState;
 import com.grantranda.retorn.app.util.StateUtils;
 import com.grantranda.retorn.engine.graphics.Shader;
@@ -135,8 +136,8 @@ public class RetornGUI implements GUI {
 
         guiWindow.getScene().setRoot(root);
 
-        updateParameters();
-        updateState(state);
+        applyRenderParameters();
+        applyDisplayParameters(window);
     }
 
     private void initNvg(Window window) {
@@ -239,6 +240,33 @@ public class RetornGUI implements GUI {
 //        }
 
         nvgEndFrame(nvgContext);
+    }
+
+    private void applyRenderParameters() {
+        maxIterationsParam.getControl().validate();
+        scaleParam.getControl().validate();
+        xParam.getControl().validate();
+        yParam.getControl().validate();
+    }
+
+    private void applyDisplayParameters(Window window) {
+        int width = window.getResolution().getWidth();
+        int height = window.getResolution().getHeight();
+
+        if (customResolution) {
+            if (widthParameter.getControl().validate() && heightParameter.getControl().validate()) {
+                width = widthParameter.getControl().getNumber();
+                height = heightParameter.getControl().getNumber();
+            }
+        } else {
+            String value = resolutionParam.getValue();
+            int xIndex = value.indexOf('x');
+            width = Integer.parseInt(value.substring(0, xIndex));
+            height = Integer.parseInt(value.substring(xIndex + 1));
+        }
+        widthParameter.getControl().setNumber(width);
+        heightParameter.getControl().setNumber(height);
+        window.setSize(width, height);
     }
 
     private void initResolutionSelection() {
@@ -353,8 +381,8 @@ public class RetornGUI implements GUI {
         hideMenuButton.setOnAction(event -> hideMenu());
         showMenuButton.setOnAction(event -> showMenu());
         updateButton.setOnAction(event -> {
-            updateParameters();
-            updateState(state);
+            applyRenderParameters();
+            updateRenderState(state.getRenderState());
         });
         resetButton.setOnAction(event -> {
             state.getRenderState().reset();
