@@ -109,7 +109,7 @@ public class Window {
         KeyboardInput.init(windowID);
         MouseInput.init(windowID);
 
-        // Set window resize callback
+        // Set callbacks
         glfwSetFramebufferSizeCallback(windowID, (window, width, height) -> {
             setSize(width, height);
         });
