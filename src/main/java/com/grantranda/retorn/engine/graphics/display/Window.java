@@ -82,7 +82,7 @@ public class Window {
         this.resized = resized;
     }
 
-    public void resize(int width, int height) {
+    public void setSize(int width, int height) {
         resolution.set(width, height);
         setResized(true);
         glfwSetWindowSize(windowID, width, height);
@@ -115,7 +115,7 @@ public class Window {
 
         // Set window resize callback
         glfwSetFramebufferSizeCallback(windowID, (window, width, height) -> {
-            resize(width, height);
+            setSize(width, height);
         });
         glfwSetWindowContentScaleCallback(windowID, (window, contentScaleX, contentScaleY) -> {
             this.contentScaleX = contentScaleX;
