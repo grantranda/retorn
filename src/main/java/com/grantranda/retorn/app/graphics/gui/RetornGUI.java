@@ -196,12 +196,8 @@ public class RetornGUI implements GUI {
         state.setOffset(xParam.getControl().getNumber(), yParam.getControl().getNumber(), 0.0f);
     }
 
-    private void updateUniforms(Shader shader, ApplicationState state) {
-        RenderState renderState = state.getRenderState();
-
-        shader.setUniform1i("max_iterations", renderState.getMaxIterations());
-        shader.setUniform1d("scale", renderState.getScale());
-        shader.setUniform2d("offset", renderState.getOffset().x, renderState.getOffset().y);
+    private void updateDisplayState(DisplayState state, Window window) {
+        state.setWindowResolution(window.getResolution().getWidth(), window.getResolution().getHeight());
     }
 
     @Override
