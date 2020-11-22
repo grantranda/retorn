@@ -56,6 +56,7 @@ public class RetornGUI implements GUI {
     private Button resetButton;
     private Button saveButton;
     private Button loadButton;
+    private Button applyButton;
     private Parameter<NumberFieldi> maxIterationsParam;
     private Parameter<NumberFieldd> scaleParam;
     private Parameter<NumberFieldd> xParam;
@@ -306,6 +307,7 @@ public class RetornGUI implements GUI {
         resetButton = new Button("Reset");
         saveButton = new Button("Save");
         loadButton = new Button("Load");
+        applyButton = new Button("Apply");
         vSyncParam = new ToggleButton("vSync");
         colorSelector = new ColorSelector();
         fpsDisplay = new Label("FPS: " + window.getFpsCounter().getFps());
@@ -322,6 +324,7 @@ public class RetornGUI implements GUI {
         top.getChildren().add(resolutionParam);
         top.getChildren().addAll(widthParameter, heightParameter);
         top.getChildren().add(vSyncParam);
+        top.getChildren().add(applyButton);
         top.getChildren().add(colorSelector);
         top.getChildren().add(updateButton);
         top.getChildren().add(resetButton);
@@ -394,5 +397,9 @@ public class RetornGUI implements GUI {
             }
         });
         resolutionParam.setValue(state.getDisplayState().getWindowResolution().toString());
+        applyButton.setOnAction(event -> {
+            applyDisplayParameters(window);
+            updateDisplayState(state.getDisplayState(), window);
+        });
     }
 }
