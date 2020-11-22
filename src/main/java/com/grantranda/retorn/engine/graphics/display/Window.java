@@ -20,6 +20,9 @@ import static org.lwjgl.system.MemoryUtil.*;
 
 public class Window {
 
+    public static final int MIN_WIDTH = 400;
+    public static final int MIN_HEIGHT = 400;
+
     private final String title;
     private final Resolution resolution;
     private final FPSCounter fpsCounter = new FPSCounter();
