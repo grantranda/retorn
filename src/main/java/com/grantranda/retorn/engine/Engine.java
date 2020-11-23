@@ -1,6 +1,5 @@
 package com.grantranda.retorn.engine;
 
-import com.grantranda.retorn.app.Application;
 import com.grantranda.retorn.engine.graphics.display.Window;
 import org.lwjgl.Version;
 import org.lwjgl.opengl.GL11;

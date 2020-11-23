@@ -8,6 +8,7 @@ import com.grantranda.retorn.app.input.RetornInputHandler;
 import com.grantranda.retorn.app.state.ApplicationState;
 import com.grantranda.retorn.app.state.DisplayState;
 import com.grantranda.retorn.app.util.StateUtils;
+import com.grantranda.retorn.engine.Application;
 import com.grantranda.retorn.engine.graphics.Model;
 import com.grantranda.retorn.engine.graphics.Texture;
 import com.grantranda.retorn.engine.graphics.display.Window;
