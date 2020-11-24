@@ -16,7 +16,7 @@ public class Mesh {
     private final int vertexCount;
 
     public Mesh(float[] vertices, float[] textureCoordinates, byte[] indices) {
-        vertexCount = vertices.length;
+        vertexCount = indices.length;
 
         vaoId = glGenVertexArrays();
         glBindVertexArray(vaoId);
