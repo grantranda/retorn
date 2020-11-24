@@ -49,23 +49,28 @@ public class Retorn implements Application {
         renderer.init(window);
         gui.init(window, state);
 
-        // Create models
+        // Vertices of mesh corners
         float[] vertices = new float[]{
                 -2.5f,  1.0f, 0.0f, // TL
                 -2.5f, -1.0f, 0.0f, // BL
                  1.0f, -1.0f, 0.0f, // BR
                  1.0f,  1.0f, 0.0f, // TR
         };
+
+        // Vertices of texture corners
         float[] textureCoordinates = new float[] {
-                0, 1,
-                0, 0,
-                1, 0,
-                1, 1
+                0, 1, // TL
+                0, 0, // BL
+                1, 0, // BR
+                1, 1, // TR
         };
+
+        // Indices of polygons. Each index points to a vertex in the vertices array.
         byte[] indices = new byte[]{
-                0, 1, 3,
-                3, 1, 2,
+                0, 1, 3, // First triangle
+                3, 1, 2, // Second triangle
         };
+
         Mesh mesh = new Mesh(vertices, textureCoordinates, indices);
         Texture texture = new Texture(GL11.GL_TEXTURE_1D, "textures/pal.png");
         Model model = new Model(mesh, texture);
