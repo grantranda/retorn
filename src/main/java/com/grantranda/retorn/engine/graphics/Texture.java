@@ -82,7 +82,7 @@ public class Texture {
         glTexParameteri(type, GL_TEXTURE_MAX_LEVEL, 0);
 
         if (type == GL_TEXTURE_1D) {
-            glTexImage1D(type, 0, GL_RGBA, 256, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+            glTexImage1D(type, 0, GL_RGBA, width, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
         } else {
             glTexImage2D(type, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
         }
