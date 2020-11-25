@@ -21,6 +21,10 @@ public class Texture {
         ID = load(path);
     }
 
+    public int getID() {
+        return ID;
+    }
+
     public int getWidth() {
         return width;
     }
