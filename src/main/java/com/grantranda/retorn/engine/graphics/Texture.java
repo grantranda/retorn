@@ -74,28 +74,14 @@ public class Texture {
         setTexParameteri(GL_TEXTURE_MAX_LEVEL, 0);
     }
 
-            width = x.get();
-            height = y.get();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+    private int createTexture(ByteBuffer pixels) {
         int id = glGenTextures();
         glBindTexture(type, id);
-        glTexParameteri(type, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(type, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(type, GL_TEXTURE_BASE_LEVEL, 0);
-        glTexParameteri(type, GL_TEXTURE_MAX_LEVEL, 0);
 
         if (type == GL_TEXTURE_1D) {
             glTexImage1D(type, 0, pixelFormat, width, 0, pixelFormat, GL_UNSIGNED_BYTE, pixels);
         } else {
             glTexImage2D(type, 0, pixelFormat, width, height, 0, pixelFormat, GL_UNSIGNED_BYTE, pixels);
-        }
-        unbind();
-
-        if (buffer != null) {
-            stbi_image_free(buffer);
         }
         return id;
     }
