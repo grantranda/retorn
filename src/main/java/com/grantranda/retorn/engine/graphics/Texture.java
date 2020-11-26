@@ -39,12 +39,20 @@ public class Texture {
         return type;
     }
 
-    public void setType(int type) {
-        if (type == GL_TEXTURE_1D || type == GL_TEXTURE_2D) {
-            this.type = type;
-        } else {
-            this.type = GL_TEXTURE_2D;
-        }
+    public int getPixelFormat() {
+        return pixelFormat;
+    }
+
+    public void setTexParameteri(int name, int param) {
+        bind();
+        glTexParameteri(type, name, param);
+        unbind();
+    }
+
+    public void setTexParameterf(int name, float param) {
+        bind();
+        glTexParameterf(type, name, param);
+        unbind();
     }
 
     public void bind() {
