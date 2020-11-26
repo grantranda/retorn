@@ -16,10 +16,11 @@ import com.grantranda.retorn.engine.graphics.Mesh;
 import com.grantranda.retorn.engine.graphics.gui.GUI;
 import com.grantranda.retorn.engine.input.MouseInput;
 import com.grantranda.retorn.engine.math.Matrix4f.Projection;
-import org.lwjgl.opengl.GL11;
 
 import java.io.File;
 import java.io.IOException;
+
+import static org.lwjgl.opengl.GL11.*;
 
 public class Retorn implements Application {
 
@@ -72,7 +73,7 @@ public class Retorn implements Application {
         };
 
         Mesh mesh = new Mesh(vertices, textureCoordinates, indices);
-        Texture texture = new Texture(GL11.GL_TEXTURE_1D, "textures/pal.png");
+        Texture texture = new Texture(GL_TEXTURE_1D, GL_RGBA, GL_NEAREST, "textures/pal.png");
         Model model = new Model(mesh, texture);
 
         models = new Model[]{model};
