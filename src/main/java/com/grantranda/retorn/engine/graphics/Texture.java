@@ -67,20 +67,12 @@ public class Texture {
         glDeleteTextures(ID);
     }
 
-    private int load(String path) {
-        ByteBuffer buffer = null;
-
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            IntBuffer x = stack.mallocInt(1);
-            IntBuffer y = stack.mallocInt(1);
-            IntBuffer channels = stack.mallocInt(1);
-
-            File file = new File(getClass().getClassLoader().getResource(path).getFile());
-
-            buffer = stbi_load(file.getAbsolutePath(), x, y, channels, 4);
-            if (buffer == null) {
-                throw new RuntimeException("Unable to load texture '" + path + "':\n" + stbi_failure_reason());
-            }
+    private void initParameters(int minMagFilter) {
+        setTexParameteri(GL_TEXTURE_MIN_FILTER, minMagFilter);
+        setTexParameteri(GL_TEXTURE_MAG_FILTER, minMagFilter);
+        setTexParameteri(GL_TEXTURE_BASE_LEVEL, 0);
+        setTexParameteri(GL_TEXTURE_MAX_LEVEL, 0);
+    }
 
             width = x.get();
             height = y.get();
