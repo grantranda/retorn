@@ -42,7 +42,7 @@ public class Framebuffer {
         return glCheckFramebufferStatus(FBO) == GL_FRAMEBUFFER_COMPLETE;
     }
 
-    public int addColorAttachment(int attachment, int width, int height) {
+    public void attachColorBuffer(int attachment) {
         bind();
 
         Texture texture = new Texture(GL_TEXTURE_2D, GL_RGB, GL_LINEAR, width, height);
