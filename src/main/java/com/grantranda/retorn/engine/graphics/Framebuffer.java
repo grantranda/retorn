@@ -7,7 +7,10 @@ import static org.lwjgl.opengl.GL30.*;
 
 public class Framebuffer {
 
-    private final int FBO;
+    private final int width;
+    private final int height;
+    private int fbo;
+    private int rbo;
 
     private final ArrayList<Texture> textures = new ArrayList<>();
 
@@ -27,7 +30,7 @@ public class Framebuffer {
     }
 
     public void bind() {
-        glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
     }
 
     public void unbind() {
@@ -35,11 +38,11 @@ public class Framebuffer {
     }
 
     public void delete() {
-        glDeleteFramebuffers(FBO);
+        glDeleteFramebuffers(fbo);
     }
 
     public boolean isComplete() {
-        return glCheckFramebufferStatus(FBO) == GL_FRAMEBUFFER_COMPLETE;
+        return glCheckFramebufferStatus(fbo) == GL_FRAMEBUFFER_COMPLETE;
     }
 
     public void attachColorBuffer(int attachment) {
