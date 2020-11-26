@@ -16,11 +16,27 @@ public class Texture {
     private final int type;
     private final int pixelFormat;
     private int width, height;
-    private int type;
 
-    public Texture(int type, String path) {
-        setType(type);
-        ID = load(path);
+    public Texture(int type, int pixelFormat, int minMagFilter, int width, int height) {
+        this(type, pixelFormat, minMagFilter, width, height, null);
+    }
+
+    public Texture(int type, int pixelFormat, int minMagFilter, int width, int height, ByteBuffer pixels) {
+        this.type = type;
+        this.pixelFormat = pixelFormat;
+        this.width = width;
+        this.height = height;
+        this.ID = createTexture(pixels);
+
+        initParameters(minMagFilter);
+    }
+
+    public Texture(int type, int pixelFormat, int minMagFilter, String path) {
+        this.type = type;
+        this.pixelFormat = pixelFormat;
+        this.ID = createTexture(path);
+
+        initParameters(minMagFilter);
     }
 
     public int getID() {
