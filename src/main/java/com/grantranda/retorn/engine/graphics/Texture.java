@@ -99,4 +99,33 @@ public class Texture {
         }
         return id;
     }
+
+    private int createTexture(String path) {
+        ByteBuffer buffer = null;
+
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            IntBuffer x = stack.mallocInt(1);
+            IntBuffer y = stack.mallocInt(1);
+            IntBuffer channels = stack.mallocInt(1);
+
+            File file = new File(getClass().getClassLoader().getResource(path).getFile());
+
+            buffer = stbi_load(file.getAbsolutePath(), x, y, channels, 4);
+            if (buffer == null) {
+                throw new RuntimeException("Unable to load texture '" + path + "':\n" + stbi_failure_reason());
+            }
+
+            width = x.get();
+            height = y.get();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        int id = createTexture(buffer);
+
+        if (buffer != null) {
+            stbi_image_free(buffer);
+        }
+        return id;
+    }
 }
