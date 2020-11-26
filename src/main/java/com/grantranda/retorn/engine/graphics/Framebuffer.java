@@ -50,6 +50,15 @@ public class Framebuffer {
         textures.add(texture);
 
         unbind();
-        return texture.getID();
+    }
+
+    private void attachRenderBuffer() {
+        rbo = glGenRenderbuffers();
+        glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+
+        glBindRenderbuffer(GL_RENDERBUFFER, 0);
     }
 }
