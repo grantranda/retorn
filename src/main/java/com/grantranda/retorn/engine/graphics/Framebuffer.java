@@ -21,8 +21,12 @@ public class Framebuffer {
         glBindFramebuffer(GL_FRAMEBUFFER, FBO);
     }
 
-    public int getFBO() {
-        return FBO;
+    public int getFbo() {
+        return fbo;
+    }
+
+    public int getRbo() {
+        return rbo;
     }
 
     public ArrayList<Texture> getTextures() {
