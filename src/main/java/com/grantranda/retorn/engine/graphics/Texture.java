@@ -13,6 +13,8 @@ import static org.lwjgl.stb.STBImage.*;
 public class Texture {
 
     private final int ID;
+    private final int type;
+    private final int pixelFormat;
     private int width, height;
     private int type;
 
@@ -86,9 +88,9 @@ public class Texture {
         glTexParameteri(type, GL_TEXTURE_MAX_LEVEL, 0);
 
         if (type == GL_TEXTURE_1D) {
-            glTexImage1D(type, 0, GL_RGBA, width, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+            glTexImage1D(type, 0, pixelFormat, width, 0, pixelFormat, GL_UNSIGNED_BYTE, pixels);
         } else {
-            glTexImage2D(type, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+            glTexImage2D(type, 0, pixelFormat, width, height, 0, pixelFormat, GL_UNSIGNED_BYTE, pixels);
         }
         unbind();
 
