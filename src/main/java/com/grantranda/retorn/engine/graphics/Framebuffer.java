@@ -14,11 +14,19 @@ public class Framebuffer {
 
     private final ArrayList<Texture> textures = new ArrayList<>();
 
-    public Framebuffer() {
+    public Framebuffer(int width, int height) {
+        this.width = width;
+        this.height = height;
+        fbo = glGenFramebuffers();
 
-        // Create framebuffer
-        FBO = glGenFramebuffers();
-        glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+        attachColorBuffer(GL_COLOR_ATTACHMENT0);
+        attachRenderBuffer();
+
+        if (!isComplete()) {
+            throw new RuntimeException("Error constructing framebuffer");
+        }
+
+        unbind();
     }
 
     public int getFbo() {
