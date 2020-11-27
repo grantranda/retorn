@@ -60,10 +60,10 @@ public class Retorn implements Application {
 
         // Vertices of texture corners
         float[] textureCoordinates = new float[] {
-                0, 1, // TL
-                0, 0, // BL
-                1, 0, // BR
-                1, 1, // TR
+                0.0f, 1.0f, // TL
+                0.0f, 0.0f, // BL
+                1.0f, 0.0f, // BR
+                1.0f, 1.0f, // TR
         };
 
         // Indices of polygons. Each index points to a vertex in the vertices array.
