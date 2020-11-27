@@ -85,9 +85,13 @@ public class Model {
     }
 
     public void render() {
-        texture.bind();
-        mesh.render();
-        texture.unbind();
+        if (texture != null) {
+            texture.bind();
+            mesh.render();
+            texture.unbind();
+        } else {
+            mesh.render();
+        }
     }
 
     public void delete() {
