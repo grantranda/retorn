@@ -22,9 +22,7 @@ public class Framebuffer {
         attachColorBuffer(GL_COLOR_ATTACHMENT0);
         attachRenderBuffer();
 
-        if (!isComplete()) {
-            throw new RuntimeException("Error constructing framebuffer");
-        }
+        validateCompleteness();
 
         unbind();
     }
@@ -53,8 +51,39 @@ public class Framebuffer {
         glDeleteFramebuffers(fbo);
     }
 
-    public boolean isComplete() {
-        return glCheckFramebufferStatus(fbo) == GL_FRAMEBUFFER_COMPLETE;
+    public void validateCompleteness() {
+        String statusMessage;
+        int status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+
+        switch (status) {
+            case GL_FRAMEBUFFER_COMPLETE:
+                return;
+            case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+                statusMessage = "GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT";
+                break;
+            case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+                statusMessage = "GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT";
+                break;
+            case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
+                statusMessage = "GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER";
+                break;
+            case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
+                statusMessage = "GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER";
+                break;
+            case GL_FRAMEBUFFER_UNSUPPORTED:
+                statusMessage = "GL_FRAMEBUFFER_UNSUPPORTED";
+                break;
+            case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:
+                statusMessage = "GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE";
+                break;
+            case GL_FRAMEBUFFER_UNDEFINED:
+                statusMessage = "GL_FRAMEBUFFER_UNDEFINED";
+                break;
+            default:
+                statusMessage = "" + status;
+        }
+
+        throw new RuntimeException("Framebuffer not complete. Status: " + statusMessage);
     }
 
     public void attachColorBuffer(int attachment) {
@@ -68,6 +97,8 @@ public class Framebuffer {
     }
 
     private void attachRenderBuffer() {
+        bind();
+
         rbo = glGenRenderbuffers();
         glBindRenderbuffer(GL_RENDERBUFFER, rbo);
 
