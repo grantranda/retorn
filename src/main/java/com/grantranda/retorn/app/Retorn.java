@@ -85,6 +85,7 @@ public class Retorn implements Application {
         for (Model model : models) {
             model.delete();
         }
+        renderer.terminate();
         gui.terminate();
     }
 
