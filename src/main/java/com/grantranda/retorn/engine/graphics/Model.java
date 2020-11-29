@@ -85,6 +85,7 @@ public class Model {
     }
 
     public void render() {
+        // TODO: Refactor without null check
         if (texture != null) {
             texture.bind();
             mesh.render();
