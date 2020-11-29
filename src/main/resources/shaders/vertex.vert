@@ -4,7 +4,6 @@ layout (location = 0) in vec3 position;
 out vec3 pos;
 
 uniform mat4 model_matrix;
-uniform mat4 view_matrix;
 uniform mat4 projection_matrix;
 
 void main() {
