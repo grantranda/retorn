@@ -72,10 +72,12 @@ public class Texture {
     }
 
     public void bind() {
+        glEnable(type);
         glBindTexture(type, ID);
     }
 
     public void unbind() {
+        glDisable(type);
         glBindTexture(type, 0);
     }
 
