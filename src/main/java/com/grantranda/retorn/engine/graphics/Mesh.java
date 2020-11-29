@@ -27,7 +27,6 @@ public class Mesh {
         glVertexAttribPointer(VBO_ATTRIB_INDEX, 3, GL_FLOAT, false, 0, 0);
         glEnableVertexAttribArray(VBO_ATTRIB_INDEX);
 
-        TBO_ID = glGenBuffers();
         if (textureCoordinates != null) {
             TBO = glGenBuffers();
             glBindBuffer(GL_ARRAY_BUFFER, TBO);
