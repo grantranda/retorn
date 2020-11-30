@@ -85,7 +85,6 @@ public class Window {
         resolution.set(width, height);
         setResized(true);
         glfwSetWindowSize(windowID, width, height);
-        glViewport(0, 0, width, height);
     }
 
     public boolean shouldClose() {
