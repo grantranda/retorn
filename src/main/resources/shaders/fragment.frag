@@ -28,11 +28,11 @@ vec4 mandelbrot(int max_iterations) {
 }
 
 int calc_mandelbrot_iterations(int max_iterations) {
-    double pixel_width = 3.5f / window_size.x;
-    double pixel_height = 2.0f / window_size.y;
-
+    // TODO: Render fractal at separate resolution than window
+    // TODO: Draw outline around render area
     int iterations = 0;
-    double x0 = pos.x * scale - offset.x * pixel_width, y0 = pos.y * scale + offset.y * pixel_height;
+    double x0 = pos.x * scale - offset.x;
+    double y0 = pos.y * scale + offset.y;
     double x1 = 0.0f, y1 = 0.0f;
     double x2 = 0.0f, y2 = 0.0f;
 
