@@ -7,6 +7,7 @@ import com.grantranda.retorn.engine.math.Matrix4f;
 import com.grantranda.retorn.engine.graphics.display.Window;
 import com.grantranda.retorn.engine.graphics.Shader;
 import com.grantranda.retorn.engine.math.Matrix4f.Projection;
+import com.grantranda.retorn.engine.math.Vector3f;
 import org.lwjgl.BufferUtils;
 
 import javax.imageio.ImageIO;
@@ -25,10 +26,7 @@ public class RetornRenderer {
     private Projection projectionType;
     private Shader shader;
 
-    // TODO: Remove
-//    private Shader quadShader;
-//    private Framebuffer framebuffer;
-//    private Model quad;
+    private boolean test; // TODO
 
     public RetornRenderer(Projection projectionType) {
         this.projectionType = projectionType;
@@ -68,6 +66,7 @@ public class RetornRenderer {
     public void render(Window window, RenderState renderState, Model[] models) {
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        glDisable(GL_CULL_FACE);
 
         shader.bind();
 
@@ -77,7 +76,19 @@ public class RetornRenderer {
             }
         }
 
-        glDisable(GL_CULL_FACE);
+        Vector3f viewportPos = updateViewport(window);
+
+        int windowWidth = window.getResolution().getWidth();
+        int windowHeight = window.getResolution().getHeight();
+        double pixelWidth = 3.5f / (windowWidth - viewportPos.x * 2);
+        double pixelHeight = 2.0f / (windowHeight - viewportPos.y * 2);
+        double translatedOffsetX = renderState.getOffset().x * pixelWidth;
+        double translatedOffsetY = renderState.getOffset().y * pixelHeight;
+
+        shader.setUniform1i("max_iterations", renderState.getMaxIterations());
+        shader.setUniform1d("scale", renderState.getScale());
+        shader.setUniform2d("offset", translatedOffsetX, translatedOffsetY);
+        shader.setUniform2f("window_size", windowWidth, windowHeight);
 
         // Render models
         for (Model model : models) {
@@ -125,5 +136,28 @@ public class RetornRenderer {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private Vector3f updateViewport(Window window) {
+        int renderWidth = 1920; // TODO: Read from state
+        int renderHeight = 1080;
+        float renderAspectRatio = (float) renderWidth / renderHeight;
+
+        int windowWidth = window.getResolution().getWidth();
+        int windowHeight = window.getResolution().getHeight();
+        int width = windowWidth;
+        int height = (int) (width / renderAspectRatio);
+
+        if (height > windowHeight) {
+            height = windowHeight;
+            width = (int) (height * renderAspectRatio);
+        }
+
+        int viewportX = (windowWidth - width) / 2;
+        int viewportY = (windowHeight - height) / 2;
+
+        glViewport(viewportX, viewportY, width, height);
+
+        return new Vector3f(viewportX, viewportY, 0.0f);
     }
 }
