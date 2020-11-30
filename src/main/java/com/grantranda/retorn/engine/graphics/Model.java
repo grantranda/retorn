@@ -85,9 +85,14 @@ public class Model {
     }
 
     public void render() {
-        texture.bind();
-        mesh.render();
-        texture.unbind();
+        // TODO: Refactor without null check
+        if (texture != null) {
+            texture.bind();
+            mesh.render();
+            texture.unbind();
+        } else {
+            mesh.render();
+        }
     }
 
     public void delete() {

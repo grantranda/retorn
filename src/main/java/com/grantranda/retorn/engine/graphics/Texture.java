@@ -13,12 +13,34 @@ import static org.lwjgl.stb.STBImage.*;
 public class Texture {
 
     private final int ID;
+    private final int type;
+    private final int pixelFormat;
     private int width, height;
-    private int type;
 
-    public Texture(int type, String path) {
-        setType(type);
-        ID = load(path);
+    public Texture(int type, int pixelFormat, int minMagFilter, int width, int height) {
+        this(type, pixelFormat, minMagFilter, width, height, null);
+    }
+
+    public Texture(int type, int pixelFormat, int minMagFilter, int width, int height, ByteBuffer pixels) {
+        this.type = type;
+        this.pixelFormat = pixelFormat;
+        this.width = width;
+        this.height = height;
+        this.ID = createTexture(pixels);
+
+        initParameters(minMagFilter);
+    }
+
+    public Texture(int type, int pixelFormat, int minMagFilter, String path) {
+        this.type = type;
+        this.pixelFormat = pixelFormat;
+        this.ID = createTexture(path);
+
+        initParameters(minMagFilter);
+    }
+
+    public int getID() {
+        return ID;
     }
 
     public int getWidth() {
@@ -33,19 +55,29 @@ public class Texture {
         return type;
     }
 
-    public void setType(int type) {
-        if (type == GL_TEXTURE_1D || type == GL_TEXTURE_2D) {
-            this.type = type;
-        } else {
-            this.type = GL_TEXTURE_2D;
-        }
+    public int getPixelFormat() {
+        return pixelFormat;
+    }
+
+    public void setTexParameteri(int name, int param) {
+        bind();
+        glTexParameteri(type, name, param);
+        unbind();
+    }
+
+    public void setTexParameterf(int name, float param) {
+        bind();
+        glTexParameterf(type, name, param);
+        unbind();
     }
 
     public void bind() {
+        glEnable(type);
         glBindTexture(type, ID);
     }
 
     public void unbind() {
+        glDisable(type);
         glBindTexture(type, 0);
     }
 
@@ -53,7 +85,26 @@ public class Texture {
         glDeleteTextures(ID);
     }
 
-    private int load(String path) {
+    private void initParameters(int minMagFilter) {
+        setTexParameteri(GL_TEXTURE_MIN_FILTER, minMagFilter);
+        setTexParameteri(GL_TEXTURE_MAG_FILTER, minMagFilter);
+        setTexParameteri(GL_TEXTURE_BASE_LEVEL, 0);
+        setTexParameteri(GL_TEXTURE_MAX_LEVEL, 0);
+    }
+
+    private int createTexture(ByteBuffer pixels) {
+        int id = glGenTextures();
+        glBindTexture(type, id);
+
+        if (type == GL_TEXTURE_1D) {
+            glTexImage1D(type, 0, pixelFormat, width, 0, pixelFormat, GL_UNSIGNED_BYTE, pixels);
+        } else {
+            glTexImage2D(type, 0, pixelFormat, width, height, 0, pixelFormat, GL_UNSIGNED_BYTE, pixels);
+        }
+        return id;
+    }
+
+    private int createTexture(String path) {
         ByteBuffer buffer = null;
 
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -74,19 +125,7 @@ public class Texture {
             e.printStackTrace();
         }
 
-        int id = glGenTextures();
-        glBindTexture(type, id);
-        glTexParameteri(type, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(type, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(type, GL_TEXTURE_BASE_LEVEL, 0);
-        glTexParameteri(type, GL_TEXTURE_MAX_LEVEL, 0);
-
-        if (type == GL_TEXTURE_1D) {
-            glTexImage1D(type, 0, GL_RGBA, 256, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-        } else {
-            glTexImage2D(type, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-        }
-        unbind();
+        int id = createTexture(buffer);
 
         if (buffer != null) {
             stbi_image_free(buffer);
