@@ -1,5 +1,6 @@
 package com.grantranda.retorn.app.graphics;
 
+import com.grantranda.retorn.app.state.RenderState;
 import com.grantranda.retorn.engine.graphics.Model;
 import com.grantranda.retorn.engine.graphics.display.Resolution;
 import com.grantranda.retorn.engine.math.Matrix4f;
@@ -108,14 +109,8 @@ public class RetornRenderer {
 //        framebuffer.delete();
     }
 
-    public void render(Window window, Model[] models) {
-        // TODO: Remove
-        // Bind custom framebuffer
-        //framebuffer.bind();
-        //glViewport(0, 0, framebuffer.getTexture(GL_COLOR_ATTACHMENT0).getWidth(), framebuffer.getTexture(GL_COLOR_ATTACHMENT0).getHeight());
-        //glEnable(GL_DEPTH_TEST);
-
-        glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+    public void render(Window window, RenderState renderState, Model[] models) {
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
         shader.bind();
