@@ -10,7 +10,6 @@ import com.grantranda.retorn.app.state.ApplicationState;
 import com.grantranda.retorn.app.state.DisplayState;
 import com.grantranda.retorn.app.state.RenderState;
 import com.grantranda.retorn.app.util.StateUtils;
-import com.grantranda.retorn.engine.graphics.Shader;
 import com.grantranda.retorn.engine.graphics.display.Resolution;
 import com.grantranda.retorn.engine.graphics.display.Window;
 import com.grantranda.retorn.engine.graphics.gui.GUI;
@@ -152,11 +151,10 @@ public class RetornGUI implements GUI {
     }
 
     @Override
-    public void update(Window window, Shader shader, State state) {
+    public void update(Window window, State state) {
         WindowManager.update();
         updateInput(window);
         updateGui(window);
-        updateUniforms(shader, (ApplicationState) state);
     }
 
     private void updateInput(Window window) {
@@ -182,14 +180,6 @@ public class RetornGUI implements GUI {
             heightParameter.getControl().setDisabled(false);
             heightParameter.getControl().setNumber(window.getResolution().getHeight());
         }
-    }
-
-    private void updateUniforms(Shader shader, ApplicationState state) {
-        RenderState renderState = state.getRenderState();
-
-        shader.setUniform1i("max_iterations", renderState.getMaxIterations());
-        shader.setUniform1d("scale", renderState.getScale());
-        shader.setUniform2d("offset", renderState.getOffset().x, renderState.getOffset().y);
     }
 
     public void updateParametersFromState(ApplicationState state) {
