@@ -1,7 +1,7 @@
 #version 460 core
 
 layout (location = 0) out vec4 frag_color;
-in vec3 pos;
+in vec4 pos;
 
 uniform int max_iterations;
 uniform double scale;
