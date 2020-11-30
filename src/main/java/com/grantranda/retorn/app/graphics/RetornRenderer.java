@@ -58,55 +58,11 @@ public class RetornRenderer {
         shader = new Shader("shaders/vertex.vert", "shaders/fragment.frag");
         shader.setUniform1i("palette_texture", 0);
 
-        // TODO: Remove
-//        quadShader = new Shader("shaders/v.vert", "shaders/f.frag");
-//        quadShader.setUniform1i("scene_texture", 0);
-//        framebuffer = new Framebuffer(window.getResolution().getWidth(), window.getResolution().getHeight());
-
         setProjectionType(window, projectionType);
-
-        // TODO: Remove
-//        float[] quadVertices = {
-//                -1.0f,  1.0f, 0.0f, // TL
-//                -1.0f, -1.0f, 0.0f, // BL
-//                 1.0f, -1.0f, 0.0f, // BR
-//                 1.0f,  1.0f, 0.0f, // TR
-//        };
-//
-////        float[] quadVertices = new float[]{
-////                -2.5f,  1.0f, 0.0f, // TL
-////                -2.5f, -1.0f, 0.0f, // BL
-////                1.0f, -1.0f, 0.0f, // BR
-////                1.0f,  1.0f, 0.0f, // TR
-////        };
-//
-////        float[] textureCoordinates = new float[] {
-////                0.0f, 1.0f, // TL
-////                0.0f, 0.0f, // BL
-////                1.0f, 0.0f, // BR
-////                1.0f, 1.0f, // TR
-////        };
-//
-//        float[] textureCoordinates = new float[] {
-//                -1.0f,  1.0f, // TL
-//                -1.0f, -1.0f, // BL
-//                 1.0f, -1.0f, // BR
-//                 1.0f,  1.0f, // TR
-//        };
-//
-//        byte[] quadIndices = new byte[]{
-//                0, 1, 3, // First triangle
-//                3, 1, 2, // Second triangle
-//        };
-//
-//        Mesh quadMesh = new Mesh(quadVertices, null, quadIndices);
-//        quad = new Model(quadMesh, framebuffer.getTextures().get(GL_COLOR_ATTACHMENT0));
     }
 
     public void terminate() {
-        // TODO: Remove
-//        quad.delete();
-//        framebuffer.delete();
+
     }
 
     public void render(Window window, RenderState renderState, Model[] models) {
@@ -114,9 +70,6 @@ public class RetornRenderer {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
         shader.bind();
-
-        Resolution resolution = window.getResolution();
-        shader.setUniform2f("window_size", resolution.getWidth(), resolution.getHeight());
 
         if (window.isResized()) {
             if (projectionType == Projection.PERSPECTIVE) {
@@ -134,22 +87,13 @@ public class RetornRenderer {
 
         shader.unbind();
 
-        // TODO: Remove
-        // Bind default framebuffer
-//        framebuffer.unbind();
-//        glViewport(0, 0, window.getResolution().getWidth(), window.getResolution().getHeight());
-//        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-//        glClear(GL_COLOR_BUFFER_BIT);
-//
-//        quadShader.bind();
-//        quadShader.setUniformMatrix4f("model_matrix", quad.getModelMatrix());
-//        glDisable(GL_DEPTH_TEST);
-//        glEnable(GL_TEXTURE_2D);
-//        glBindTexture(GL_TEXTURE_2D, framebuffer.getTexture(GL_COLOR_ATTACHMENT0).getID());
-//        quad.getMesh().render();
-//        glDisable(GL_TEXTURE_2D);
-//        glBindTexture(GL_TEXTURE_2D, 0);
-//        quadShader.unbind();
+        // TODO
+        if (!test) {
+
+            // TODO: Use different resolution
+            saveImage("test.png", "PNG", new Resolution(windowWidth, windowHeight), GL_FRAMEBUFFER);
+            test = true;
+        }
     }
 
     public void saveImage(String path, String format, Resolution resolution, int source) {
