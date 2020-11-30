@@ -1,6 +1,5 @@
 package com.grantranda.retorn.engine.graphics.gui;
 
-import com.grantranda.retorn.engine.graphics.Shader;
 import com.grantranda.retorn.engine.graphics.display.Window;
 import com.grantranda.retorn.engine.state.State;
 
@@ -10,7 +9,7 @@ public interface GUI {
 
     void terminate();
 
-    void update(Window window, Shader shader, State state);
+    void update(Window window, State state);
 
     void render(Window window);
 }

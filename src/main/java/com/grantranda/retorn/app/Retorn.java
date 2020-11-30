@@ -93,7 +93,7 @@ public class Retorn implements Application {
     public void update(Window window) {
         inputHandler.handle(window, state);
         MouseInput.update();
-        gui.update(window, renderer.getShader(), state);
+        gui.update(window, state);
     }
 
     @Override
