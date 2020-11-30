@@ -6,8 +6,7 @@ in vec4 pos;
 uniform int max_iterations;
 uniform double scale;
 uniform dvec2 offset;
-uniform vec2 window_size;
-uniform sampler1D tex;
+uniform sampler1D palette_texture;
 
 // Function declarations
 vec4 mandelbrot(int max_iterations);
@@ -18,12 +17,12 @@ vec4 mandelbrot(int max_iterations) {
     int iterations = calc_mandelbrot_iterations(max_iterations);
 
     if (iterations == max_iterations) {
-        //color = vec4(0.0f, 0.0f, 0.0f, 1.0f);
-        color = texture(tex, 0.0f).rgba;
+        //color = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+        color = texture(palette_texture, 0.0f).rgba;
     } else {
         //float rgb = sqrt(float(iterations) / max_iterations);
         //color = vec4(rgb, 0.0f, rgb, 1.0f);
-        color = texture(tex, float(iterations) / float(max_iterations)).rgba;
+        color = texture(palette_texture, float(iterations) / float(max_iterations)).rgba;
     }
     return color;
 }
