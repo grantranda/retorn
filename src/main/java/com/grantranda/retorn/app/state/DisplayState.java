@@ -6,6 +6,7 @@ import com.grantranda.retorn.engine.state.State;
 public class DisplayState implements State {
 
     private final Resolution windowResolution = new Resolution(1280, 720);
+    private boolean customResolution = false;
     private boolean vSync = false;
 
     public DisplayState() {
@@ -20,7 +21,15 @@ public class DisplayState implements State {
         windowResolution.set(width, height);
     }
 
-    public boolean isvSync() {
+    public boolean isCustomResolution() {
+        return customResolution;
+    }
+
+    public void setCustomResolution(boolean customResolution) {
+        this.customResolution = customResolution;
+    }
+
+    public boolean isVSync() {
         return vSync;
     }
 
@@ -31,6 +40,7 @@ public class DisplayState implements State {
     @Override
     public void reset() {
         setWindowResolution(1280, 720);
-        setvSync(false);
+        setCustomResolution(false);
+        setVSync(false);
     }
 }
