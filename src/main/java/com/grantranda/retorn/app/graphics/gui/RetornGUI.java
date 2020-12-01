@@ -135,6 +135,8 @@ public class RetornGUI implements GUI {
 
         guiWindow.getScene().setRoot(root);
 
+        updateRenderParameters(state.getRenderState());
+        updateDisplayParameters(state.getDisplayState());
         applyRenderParameters();
         applyDisplayParameters(window);
     }
@@ -171,14 +173,7 @@ public class RetornGUI implements GUI {
         fpsDisplay.setText("FPS: " + window.getFpsCounter().getFps());
 
         if (window.isResized()) {
-            resolutionParam.setValue("Custom");
-            customResolution = true;
-            widthParameter.getControl().setEditable(true);
-            widthParameter.getControl().setDisabled(false);
-            widthParameter.getControl().setNumber(window.getResolution().getWidth());
-            heightParameter.getControl().setEditable(true);
-            heightParameter.getControl().setDisabled(false);
-            heightParameter.getControl().setNumber(window.getResolution().getHeight());
+            updateResolutionParameters(window.getResolution(), true);
             updateDisplayState(state.getDisplayState(), window);
         }
     }
@@ -188,6 +183,23 @@ public class RetornGUI implements GUI {
         scaleParam.getControl().setNumber(state.getScale());
         xParam.getControl().setNumber(state.getOffset().x);
         yParam.getControl().setNumber(state.getOffset().y);
+    }
+
+    public void updateDisplayParameters(DisplayState state) {
+        updateResolutionParameters(state.getWindowResolution(), state.isCustomResolution());
+    }
+
+    public void updateResolutionParameters(Resolution resolution, boolean customResolution) {
+        if (customResolution) {
+            resolutionParam.setValue("Custom");
+            this.customResolution = true;
+        }
+        widthParameter.getControl().setEditable(customResolution);
+        widthParameter.getControl().setDisabled(!customResolution);
+        widthParameter.getControl().setNumber(resolution.getWidth());
+        heightParameter.getControl().setEditable(customResolution);
+        heightParameter.getControl().setDisabled(!customResolution);
+        heightParameter.getControl().setNumber(resolution.getHeight());
     }
 
     private void updateRenderState(RenderState state) {
