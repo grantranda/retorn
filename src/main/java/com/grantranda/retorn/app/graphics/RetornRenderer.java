@@ -6,7 +6,6 @@ import com.grantranda.retorn.engine.graphics.display.Resolution;
 import com.grantranda.retorn.engine.math.Matrix4f;
 import com.grantranda.retorn.engine.graphics.display.Window;
 import com.grantranda.retorn.engine.graphics.Shader;
-import com.grantranda.retorn.engine.math.Matrix4f.Projection;
 import com.grantranda.retorn.engine.math.Vector3f;
 import org.lwjgl.BufferUtils;
 
@@ -21,31 +20,12 @@ import static org.lwjgl.opengl.GL30.*;
 
 public class RetornRenderer {
 
-    public static final float FOV = 80.0f;
-
-    private Projection projectionType;
     private Shader shader;
 
     private boolean test; // TODO
 
-    public RetornRenderer(Projection projectionType) {
-        this.projectionType = projectionType;
-    }
+    public RetornRenderer() {
 
-    public Projection getProjectionType() {
-        return projectionType;
-    }
-
-    public void setProjectionType(Window window, Projection projectionType) {
-        this.projectionType = projectionType;
-
-        if (projectionType == Projection.ORTHOGRAPHIC) {
-            Matrix4f projection_matrix = Matrix4f.orthographic(-2.5f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f);
-            shader.setUniformMatrix4f("projection_matrix", projection_matrix);
-        } else if (projectionType == Projection.PERSPECTIVE) {
-            Matrix4f projection_matrix = Matrix4f.perspective(FOV, (float) window.getResolution().getAspectRatio(), 1.0f, 1000.0f);
-            shader.setUniformMatrix4f("projection_matrix", projection_matrix);
-        }
     }
 
     public Shader getShader() {
@@ -53,10 +33,11 @@ public class RetornRenderer {
     }
 
     public void init(Window window) {
-        shader = new Shader("shaders/vertex.vert", "shaders/fragment.frag");
-        shader.setUniform1i("palette_texture", 0);
+        Matrix4f projection_matrix = Matrix4f.orthographic(-2.5f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f);
 
-        setProjectionType(window, projectionType);
+        shader = new Shader("shaders/vertex.vert", "shaders/fragment.frag");
+        shader.setUniformMatrix4f("projection_matrix", projection_matrix);
+        shader.setUniform1i("palette_texture", 0);
     }
 
     public void terminate() {
@@ -69,12 +50,6 @@ public class RetornRenderer {
         glDisable(GL_CULL_FACE);
 
         shader.bind();
-
-        if (window.isResized()) {
-            if (projectionType == Projection.PERSPECTIVE) {
-                setProjectionType(window, projectionType);
-            }
-        }
 
         Vector3f viewportPos = updateViewport(window);
 
