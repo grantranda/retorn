@@ -26,6 +26,9 @@ public class Window {
     private final Resolution resolution;
     private final FPSCounter fpsCounter = new FPSCounter();
 
+    private KeyboardInput keyboardInput;
+    private MouseInput mouseInput;
+
     private long windowID;
 
     private float contentScaleX;
@@ -44,16 +47,24 @@ public class Window {
         return title;
     }
 
+    public Resolution getResolution() {
+        return resolution;
+    }
+
     public FPSCounter getFpsCounter() {
         return fpsCounter;
     }
 
-    public long getWindowID() {
-        return windowID;
+    public KeyboardInput getKeyboardInput() {
+        return keyboardInput;
     }
 
-    public Resolution getResolution() {
-        return resolution;
+    public MouseInput getMouseInput() {
+        return mouseInput;
+    }
+
+    public long getWindowID() {
+        return windowID;
     }
 
     public float getContentScaleX() {
@@ -112,8 +123,8 @@ public class Window {
 
         glfwSetWindowSizeLimits(windowID, MIN_WIDTH, MIN_HEIGHT, GLFW_DONT_CARE, GLFW_DONT_CARE);
 
-        KeyboardInput.init(windowID);
-        MouseInput.init(windowID);
+        keyboardInput = new KeyboardInput(windowID);
+        mouseInput = new MouseInput(windowID);
 
         // Set callbacks
         glfwSetFramebufferSizeCallback(windowID, (window, width, height) -> {
@@ -163,6 +174,7 @@ public class Window {
     }
 
     public void update() {
+        mouseInput.update();
         fpsCounter.update();
         setResized(false);
         glfwSwapBuffers(windowID);
