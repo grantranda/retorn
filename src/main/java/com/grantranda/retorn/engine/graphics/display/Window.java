@@ -64,11 +64,11 @@ public class Window {
         return contentScaleY;
     }
 
-    public boolean isvSync() {
+    public boolean isVSync() {
         return vSync;
     }
 
-    public void setvSync(boolean vSync) {
+    public void setVSync(boolean vSync) {
         this.vSync = vSync;
         glfwSwapInterval(vSync ? 1 : 0);
     }
@@ -147,7 +147,7 @@ public class Window {
         );
 
         glfwShowWindow(windowID);
-        if (isvSync()) glfwSwapInterval(1);
+        if (isVSync()) glfwSwapInterval(1);
 
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 

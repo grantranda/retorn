@@ -135,6 +135,8 @@ public class RetornGUI implements GUI {
 
         guiWindow.getScene().setRoot(root);
 
+        updateRenderParameters(state.getRenderState());
+        updateDisplayParameters(state.getDisplayState());
         applyRenderParameters();
         applyDisplayParameters(window);
     }
@@ -154,7 +156,7 @@ public class RetornGUI implements GUI {
     public void update(Window window, State state) {
         WindowManager.update();
         updateInput(window);
-        updateGui(window);
+        updateGui(window, (ApplicationState) state);
     }
 
     private void updateInput(Window window) {
@@ -167,28 +169,37 @@ public class RetornGUI implements GUI {
         setMouseOver(mouseOverMenu);
     }
 
-    private void updateGui(Window window) {
+    private void updateGui(Window window, ApplicationState state) {
         fpsDisplay.setText("FPS: " + window.getFpsCounter().getFps());
 
         if (window.isResized()) {
-            resolutionParam.setValue("Custom");
-            customResolution = true;
-            widthParameter.getControl().setEditable(true);
-            widthParameter.getControl().setDisabled(false);
-            widthParameter.getControl().setNumber(window.getResolution().getWidth());
-            heightParameter.getControl().setEditable(true);
-            heightParameter.getControl().setDisabled(false);
-            heightParameter.getControl().setNumber(window.getResolution().getHeight());
+            updateResolutionParameters(window.getResolution(), true);
+            updateDisplayState(state.getDisplayState(), window);
         }
     }
 
-    public void updateParametersFromState(ApplicationState state) {
-        RenderState renderState = state.getRenderState();
+    public void updateRenderParameters(RenderState state) {
+        maxIterationsParam.getControl().setNumber(state.getMaxIterations());
+        scaleParam.getControl().setNumber(state.getScale());
+        xParam.getControl().setNumber(state.getOffset().x);
+        yParam.getControl().setNumber(state.getOffset().y);
+    }
 
-        maxIterationsParam.getControl().setNumber(renderState.getMaxIterations());
-        scaleParam.getControl().setNumber(renderState.getScale());
-        xParam.getControl().setNumber(renderState.getOffset().x);
-        yParam.getControl().setNumber(renderState.getOffset().y);
+    public void updateDisplayParameters(DisplayState state) {
+        updateResolutionParameters(state.getWindowResolution(), state.isCustomResolution());
+    }
+
+    public void updateResolutionParameters(Resolution resolution, boolean customResolution) {
+        if (customResolution) {
+            resolutionParam.setValue("Custom");
+            this.customResolution = true;
+        }
+        widthParameter.getControl().setEditable(customResolution);
+        widthParameter.getControl().setDisabled(!customResolution);
+        widthParameter.getControl().setNumber(resolution.getWidth());
+        heightParameter.getControl().setEditable(customResolution);
+        heightParameter.getControl().setDisabled(!customResolution);
+        heightParameter.getControl().setNumber(resolution.getHeight());
     }
 
     private void updateRenderState(RenderState state) {
@@ -199,6 +210,7 @@ public class RetornGUI implements GUI {
 
     private void updateDisplayState(DisplayState state, Window window) {
         state.setWindowResolution(window.getResolution().getWidth(), window.getResolution().getHeight());
+        state.setCustomResolution(customResolution);
     }
 
     @Override
@@ -382,7 +394,7 @@ public class RetornGUI implements GUI {
         });
         resetButton.setOnAction(event -> {
             state.getRenderState().reset();
-            updateParametersFromState(state);
+            updateRenderParameters(state.getRenderState());
         });
         saveButton.setOnAction(event -> {
             try {
@@ -394,7 +406,7 @@ public class RetornGUI implements GUI {
         loadButton.setOnAction(event -> {
             try {
                 StateUtils.loadStateDialog(state, RenderState.class, "Load Parameters");
-                updateParametersFromState(state);
+                updateRenderParameters(state.getRenderState());
             } catch (IOException | JsonSyntaxException e) {
                 LWJGUIDialog.showMessageDialog("Error", "Error loading parameters.", DialogIcon.ERROR);
             }

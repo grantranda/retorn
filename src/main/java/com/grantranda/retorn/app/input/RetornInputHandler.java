@@ -34,7 +34,7 @@ public class RetornInputHandler implements InputHandler {
         updateState((ApplicationState) state);
 
         if (stateChanged) {
-            gui.updateParametersFromState((ApplicationState) state);
+            gui.updateRenderParameters(((ApplicationState) state).getRenderState());
             stateChanged = false;
         }
     }
