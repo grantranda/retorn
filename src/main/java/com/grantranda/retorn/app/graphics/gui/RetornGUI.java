@@ -154,7 +154,7 @@ public class RetornGUI implements GUI {
     public void update(Window window, State state) {
         WindowManager.update();
         updateInput(window);
-        updateGui(window);
+        updateGui(window, (ApplicationState) state);
     }
 
     private void updateInput(Window window) {
@@ -167,7 +167,7 @@ public class RetornGUI implements GUI {
         setMouseOver(mouseOverMenu);
     }
 
-    private void updateGui(Window window) {
+    private void updateGui(Window window, ApplicationState state) {
         fpsDisplay.setText("FPS: " + window.getFpsCounter().getFps());
 
         if (window.isResized()) {
@@ -179,6 +179,7 @@ public class RetornGUI implements GUI {
             heightParameter.getControl().setEditable(true);
             heightParameter.getControl().setDisabled(false);
             heightParameter.getControl().setNumber(window.getResolution().getHeight());
+            updateDisplayState(state.getDisplayState(), window);
         }
     }
 
