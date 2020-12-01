@@ -24,7 +24,7 @@ public class DisplayState implements State {
         return vSync;
     }
 
-    public void setvSync(boolean vSync) {
+    public void setVSync(boolean vSync) {
         this.vSync = vSync;
     }
 
