@@ -183,13 +183,11 @@ public class RetornGUI implements GUI {
         }
     }
 
-    public void updateParametersFromState(ApplicationState state) {
-        RenderState renderState = state.getRenderState();
-
-        maxIterationsParam.getControl().setNumber(renderState.getMaxIterations());
-        scaleParam.getControl().setNumber(renderState.getScale());
-        xParam.getControl().setNumber(renderState.getOffset().x);
-        yParam.getControl().setNumber(renderState.getOffset().y);
+    public void updateRenderParameters(RenderState state) {
+        maxIterationsParam.getControl().setNumber(state.getMaxIterations());
+        scaleParam.getControl().setNumber(state.getScale());
+        xParam.getControl().setNumber(state.getOffset().x);
+        yParam.getControl().setNumber(state.getOffset().y);
     }
 
     private void updateRenderState(RenderState state) {
