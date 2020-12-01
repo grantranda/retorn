@@ -31,7 +31,7 @@ int calc_mandelbrot_iterations(int max_iterations) {
     // TODO: Render fractal at separate resolution than window
     // TODO: Draw outline around render area
     int iterations = 0;
-    double x0 = pos.x * scale - offset.x;
+    double x0 = pos.x * scale + offset.x;
     double y0 = pos.y * scale + offset.y;
     double x1 = 0.0f, y1 = 0.0f;
     double x2 = 0.0f, y2 = 0.0f;

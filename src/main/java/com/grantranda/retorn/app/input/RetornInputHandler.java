@@ -81,7 +81,7 @@ public class RetornInputHandler implements InputHandler {
             double previousY = offsetY;
 
             Vector3d mouseDelta = MouseInput.getDelta();
-            offsetX += mouseDelta.x * scale;
+            offsetX -= mouseDelta.x * scale;
             offsetY += mouseDelta.y * scale;
 
             if (previousX != offsetX || previousY != offsetY) {
