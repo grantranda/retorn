@@ -3,27 +3,20 @@ package com.grantranda.retorn.engine.input;
 import com.grantranda.retorn.engine.math.Vector3d;
 
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.system.MemoryUtil.*;
 
 public class MouseInput {
 
-    private static final boolean[] BUTTONS = new boolean[GLFW_MOUSE_BUTTON_LAST];
-    private static final Vector3d PREVIOUS_POSITION = new Vector3d();
-    private static final Vector3d CURRENT_POSITION = new Vector3d();
-    private static final Vector3d DELTA = new Vector3d();
-    private static final Vector3d SCROLL_DIRECTION = new Vector3d();
-    private static long windowID = NULL;
-    private static boolean mouseInWindow = false;
-    private static boolean scrolling = false;
+    private final boolean[] BUTTONS = new boolean[GLFW_MOUSE_BUTTON_LAST];
+    private final Vector3d PREVIOUS_POSITION = new Vector3d();
+    private final Vector3d CURRENT_POSITION = new Vector3d();
+    private final Vector3d DELTA = new Vector3d();
+    private final Vector3d SCROLL_DIRECTION = new Vector3d();
+    private final long WINDOW_ID;
+    private boolean mouseInWindow = false;
+    private boolean scrolling = false;
 
-    private MouseInput() {
-
-    }
-
-    public static void init(long windowID) {
-        if (MouseInput.windowID != NULL) throw new ExceptionInInitializerError("MouseInput already initialized");
-
-        MouseInput.windowID = windowID;
+    public MouseInput(long windowID) {
+        this.WINDOW_ID = windowID;
 
         glfwSetMouseButtonCallback(windowID, (long window, int button, int action, int mods) -> {
             BUTTONS[button] = action == GLFW_PRESS;
@@ -42,47 +35,47 @@ public class MouseInput {
         });
     }
 
-    public static Vector3d getPreviousPosition() {
+    public Vector3d getPreviousPosition() {
         return PREVIOUS_POSITION;
     }
 
-    public static Vector3d getCurrentPosition() {
+    public Vector3d getCurrentPosition() {
         return CURRENT_POSITION;
     }
 
-    public static Vector3d getDelta() {
+    public Vector3d getDelta() {
         return DELTA;
     }
 
-    public static Vector3d getScrollDirection() {
+    public Vector3d getScrollDirection() {
         return SCROLL_DIRECTION;
     }
 
-    public static long getWindowID() {
-        return windowID;
+    public long getWindowID() {
+        return WINDOW_ID;
     }
 
-    public static boolean isButtonPressed(int button) {
+    public boolean isButtonPressed(int button) {
         return BUTTONS[button];
     }
 
-    public static boolean isMouseInWindow() {
+    public boolean isMouseInWindow() {
         return mouseInWindow;
     }
 
-    public static boolean isScrolling() {
+    public boolean isScrolling() {
         return scrolling;
     }
 
-    public static void setScrolling(boolean scrolling) {
-        MouseInput.scrolling = scrolling;
+    public void setScrolling(boolean scrolling) {
+        this.scrolling = scrolling;
     }
 
-    public static boolean isMouseHovered() {
-        return glfwGetWindowAttrib(windowID, GLFW_HOVERED) == GLFW_TRUE;
+    public boolean isMouseHovered() {
+        return glfwGetWindowAttrib(WINDOW_ID, GLFW_HOVERED) == GLFW_TRUE;
     }
 
-    public static void update() {
+    public void update() {
         DELTA.x = CURRENT_POSITION.x - PREVIOUS_POSITION.x;
         DELTA.y = CURRENT_POSITION.y - PREVIOUS_POSITION.y;
 
