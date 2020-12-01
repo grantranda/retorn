@@ -31,7 +31,7 @@ public class RetornInputHandler implements InputHandler {
     public void handle(Window window, State state) {
         handleKeyboardInput(window);
         handleMouseInput(window);
-        updateState((ApplicationState) state);
+        updateState(window, (ApplicationState) state);
 
         if (stateChanged) {
             gui.updateRenderParameters(((ApplicationState) state).getRenderState());
@@ -40,9 +40,11 @@ public class RetornInputHandler implements InputHandler {
     }
 
     private void handleKeyboardInput(Window window) {
-        if (KeyboardInput.isKeyPressed(GLFW_KEY_ESCAPE)) {
+        KeyboardInput keyboardInput = window.getKeyboardInput();
+
+        if (keyboardInput.isKeyPressed(GLFW_KEY_ESCAPE)) {
             glfwSetWindowShouldClose(window.getWindowID(), true);
-        } else if (KeyboardInput.isKeyPressed(GLFW_KEY_SPACE)) {
+        } else if (keyboardInput.isKeyPressed(GLFW_KEY_SPACE)) {
             if (!menuToggled) {
                 gui.toggleMenu();
                 menuToggled = true;
@@ -53,11 +55,13 @@ public class RetornInputHandler implements InputHandler {
     }
 
     private void handleMouseInput(Window window) {
-        if (MouseInput.isButtonPressed(GLFW_MOUSE_BUTTON_1)) {
+        MouseInput mouseInput = window.getMouseInput();
+
+        if (mouseInput.isButtonPressed(GLFW_MOUSE_BUTTON_1)) {
             if (gui.isMouseOver()) {
                 gui.setMousePressed(true);
             }
-            if (MouseInput.isMouseInWindow() && !gui.isMousePressed()) {
+            if (mouseInput.isMouseInWindow() && !gui.isMousePressed()) {
                 draggable = true;
             }
         } else {
@@ -65,12 +69,13 @@ public class RetornInputHandler implements InputHandler {
             draggable = false;
         }
 
-        if (draggable || (MouseInput.isMouseInWindow() && !gui.isMouseOver())) {
-            scalable = MouseInput.isScrolling();
+        if (draggable || (mouseInput.isMouseInWindow() && !gui.isMouseOver())) {
+            scalable = mouseInput.isScrolling();
         }
     }
 
-    private void updateState(ApplicationState state) {
+    private void updateState(Window window, ApplicationState state) {
+        MouseInput mouseInput = window.getMouseInput();
         RenderState renderState = state.getRenderState();
         double offsetX = renderState.getOffset().x;
         double offsetY = renderState.getOffset().y;
@@ -80,7 +85,7 @@ public class RetornInputHandler implements InputHandler {
             double previousX = offsetX;
             double previousY = offsetY;
 
-            Vector3d mouseDelta = MouseInput.getDelta();
+            Vector3d mouseDelta = mouseInput.getDelta();
             offsetX -= mouseDelta.x * scale;
             offsetY += mouseDelta.y * scale;
 
@@ -92,7 +97,7 @@ public class RetornInputHandler implements InputHandler {
 
         if (scalable) {
             double previousScale = scale;
-            scale *= 1 + MouseInput.getScrollDirection().y * SCALE_FACTOR;
+            scale *= 1 + mouseInput.getScrollDirection().y * SCALE_FACTOR;
 
             if (previousScale != scale) {
                 renderState.setScale(scale);

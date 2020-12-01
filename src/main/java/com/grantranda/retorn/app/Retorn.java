@@ -91,7 +91,6 @@ public class Retorn implements Application {
     @Override
     public void update(Window window) {
         inputHandler.handle(window, state);
-        MouseInput.update();
         gui.update(window, state);
     }
 
