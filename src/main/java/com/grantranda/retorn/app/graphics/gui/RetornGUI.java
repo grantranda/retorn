@@ -161,7 +161,7 @@ public class RetornGUI implements GUI {
 
     private void updateInput(Window window) {
         Vector3d mousePos = MouseInput.getCurrentPosition();
-        int width  = window.getResolution().getWidth();
+        int width = window.getResolution().getWidth();
         boolean mouseOverMenu = MouseInput.isMouseInWindow()
                 && isMenuShown()
                 && (mousePos.x >= width - MENU_WIDTH && mousePos.x <= width);
