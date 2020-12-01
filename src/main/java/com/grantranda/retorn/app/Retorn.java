@@ -15,7 +15,6 @@ import com.grantranda.retorn.engine.graphics.display.Window;
 import com.grantranda.retorn.engine.graphics.Mesh;
 import com.grantranda.retorn.engine.graphics.gui.GUI;
 import com.grantranda.retorn.engine.input.MouseInput;
-import com.grantranda.retorn.engine.math.Matrix4f.Projection;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,7 +24,7 @@ import static org.lwjgl.opengl.GL11.*;
 public class Retorn implements Application {
 
     private final ApplicationState state = new ApplicationState();
-    private final RetornRenderer renderer = new RetornRenderer(Projection.ORTHOGRAPHIC);
+    private final RetornRenderer renderer = new RetornRenderer();
     private final RetornGUI gui = new RetornGUI();
     private final RetornInputHandler inputHandler = new RetornInputHandler(gui);
 
