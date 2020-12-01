@@ -381,7 +381,7 @@ public class RetornGUI implements GUI {
         });
         resetButton.setOnAction(event -> {
             state.getRenderState().reset();
-            updateParametersFromState(state);
+            updateRenderParameters(state.getRenderState());
         });
         saveButton.setOnAction(event -> {
             try {
@@ -393,7 +393,7 @@ public class RetornGUI implements GUI {
         loadButton.setOnAction(event -> {
             try {
                 StateUtils.loadStateDialog(state, RenderState.class, "Load Parameters");
-                updateParametersFromState(state);
+                updateRenderParameters(state.getRenderState());
             } catch (IOException | JsonSyntaxException e) {
                 LWJGUIDialog.showMessageDialog("Error", "Error loading parameters.", DialogIcon.ERROR);
             }
