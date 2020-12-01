@@ -210,6 +210,7 @@ public class RetornGUI implements GUI {
 
     private void updateDisplayState(DisplayState state, Window window) {
         state.setWindowResolution(window.getResolution().getWidth(), window.getResolution().getHeight());
+        state.setCustomResolution(customResolution);
     }
 
     @Override
