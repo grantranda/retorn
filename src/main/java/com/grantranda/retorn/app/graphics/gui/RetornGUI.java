@@ -10,6 +10,7 @@ import com.grantranda.retorn.app.state.ApplicationState;
 import com.grantranda.retorn.app.state.DisplayState;
 import com.grantranda.retorn.app.state.RenderState;
 import com.grantranda.retorn.app.util.StateUtils;
+import com.grantranda.retorn.engine.graphics.ImageRenderer;
 import com.grantranda.retorn.engine.graphics.display.Resolution;
 import com.grantranda.retorn.engine.graphics.display.Window;
 import com.grantranda.retorn.engine.graphics.gui.GUI;
@@ -46,6 +47,7 @@ public class RetornGUI implements GUI {
     private boolean customResolution = false;
 
     private lwjgui.scene.Window guiWindow;
+    private ImageRenderer imageRenderer;
 
     private BorderPane root;
     private BorderPane menu;
@@ -68,8 +70,8 @@ public class RetornGUI implements GUI {
     private ColorSelector colorSelector;
     private Label fpsDisplay;
 
-    public RetornGUI() {
-
+    public RetornGUI(ImageRenderer imageRenderer) {
+        this.imageRenderer = imageRenderer;
     }
 
     public boolean isMouseOver() {
