@@ -9,12 +9,13 @@ import com.grantranda.retorn.app.state.ApplicationState;
 import com.grantranda.retorn.app.state.DisplayState;
 import com.grantranda.retorn.app.util.StateUtils;
 import com.grantranda.retorn.engine.Application;
+import com.grantranda.retorn.engine.graphics.ImageRenderer;
 import com.grantranda.retorn.engine.graphics.Model;
 import com.grantranda.retorn.engine.graphics.Texture;
+import com.grantranda.retorn.engine.graphics.display.Resolution;
 import com.grantranda.retorn.engine.graphics.display.Window;
 import com.grantranda.retorn.engine.graphics.Mesh;
 import com.grantranda.retorn.engine.graphics.gui.GUI;
-import com.grantranda.retorn.engine.input.MouseInput;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,7 +26,8 @@ public class Retorn implements Application {
 
     private final ApplicationState state = new ApplicationState();
     private final RetornRenderer renderer = new RetornRenderer();
-    private final RetornGUI gui = new RetornGUI();
+    private final ImageRenderer imageRenderer = new ImageRenderer(renderer, new Resolution(1280, 720), "test.png", "PNG");
+    private final RetornGUI gui = new RetornGUI(imageRenderer);
     private final RetornInputHandler inputHandler = new RetornInputHandler(gui);
 
     private Model[] models;
@@ -91,6 +93,7 @@ public class Retorn implements Application {
     @Override
     public void update(Window window) {
         inputHandler.handle(window, state);
+        imageRenderer.update(state.getRenderState(), models);
         gui.update(window, state);
     }
 
