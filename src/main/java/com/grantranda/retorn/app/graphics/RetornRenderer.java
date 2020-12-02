@@ -54,7 +54,7 @@ public class RetornRenderer implements Renderer {
 
         shader.bind();
 
-        Vector3f viewportPos = updateViewport(window);
+        Vector3i viewportPos = updateViewport(window, renderState);
 
         int windowWidth = window.getResolution().getWidth();
         int windowHeight = window.getResolution().getHeight();
@@ -85,40 +85,10 @@ public class RetornRenderer implements Renderer {
         }
     }
 
-    public void saveImage(String path, String format, Resolution resolution, int source) {
-        int width = resolution.getWidth();
-        int height = resolution.getHeight();
-        int bpp = 4;
-
-        glReadBuffer(GL_FRAMEBUFFER);
-        ByteBuffer buffer = BufferUtils.createByteBuffer(resolution.getArea() * bpp);
-        glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-
-        File file = new File(path);
-        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-
-        for(int x = 0; x < width; x++)
-        {
-            for(int y = 0; y < height; y++)
-            {
-                int i = (x + (width * y)) * bpp;
-                int r = buffer.get(i) & 0xFF;
-                int g = buffer.get(i + 1) & 0xFF;
-                int b = buffer.get(i + 2) & 0xFF;
-                image.setRGB(x, height - (y + 1), (0xFF << 24) | (r << 16) | (g << 8) | b);
-            }
-        }
-
-        try {
-            ImageIO.write(image, format, file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private Vector3f updateViewport(Window window) {
-        int renderWidth = 1920; // TODO: Read from state
-        int renderHeight = 1080;
+    private Vector3i updateViewport(Window window, RenderState renderState) {
+        Resolution renderResolution = renderState.getRenderResolution();
+        int renderWidth = renderResolution.getWidth();
+        int renderHeight = renderResolution.getHeight();
         float renderAspectRatio = (float) renderWidth / renderHeight;
 
         int windowWidth = window.getResolution().getWidth();
@@ -136,6 +106,6 @@ public class RetornRenderer implements Renderer {
 
         glViewport(viewportX, viewportY, width, height);
 
-        return new Vector3f(viewportX, viewportY, 0.0f);
+        return new Vector3i(viewportX, viewportY, 0);
     }
 }
