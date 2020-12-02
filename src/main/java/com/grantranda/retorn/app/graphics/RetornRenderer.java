@@ -2,6 +2,7 @@ package com.grantranda.retorn.app.graphics;
 
 import com.grantranda.retorn.app.state.RenderState;
 import com.grantranda.retorn.engine.graphics.Model;
+import com.grantranda.retorn.engine.graphics.Renderer;
 import com.grantranda.retorn.engine.graphics.display.Resolution;
 import com.grantranda.retorn.engine.math.Matrix4f;
 import com.grantranda.retorn.engine.graphics.display.Window;
@@ -18,7 +19,7 @@ import java.nio.ByteBuffer;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL30.*;
 
-public class RetornRenderer {
+public class RetornRenderer implements Renderer {
 
     private Shader shader;
 
