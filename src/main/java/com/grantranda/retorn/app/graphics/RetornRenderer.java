@@ -45,7 +45,9 @@ public class RetornRenderer implements Renderer {
 
     }
 
-    public void render(Window window, RenderState renderState, Model[] models) {
+    public void render(Window window, State state, Model[] models) {
+        RenderState renderState = (RenderState) state;
+
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         glDisable(GL_CULL_FACE);
