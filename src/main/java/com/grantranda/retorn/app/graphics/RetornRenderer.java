@@ -59,7 +59,6 @@ public class RetornRenderer implements Renderer {
         shader.setUniform2d("offset", translatedOffsetX, translatedOffsetY);
         shader.setUniform2f("window_size", windowWidth, windowHeight);
 
-        // Render models
         for (Model model : models) {
             shader.setUniformMatrix4f("model_matrix", model.getModelMatrix());
             model.render();
