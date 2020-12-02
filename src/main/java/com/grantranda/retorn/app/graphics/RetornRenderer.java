@@ -7,23 +7,14 @@ import com.grantranda.retorn.engine.graphics.display.Resolution;
 import com.grantranda.retorn.engine.math.Matrix4f;
 import com.grantranda.retorn.engine.graphics.display.Window;
 import com.grantranda.retorn.engine.graphics.Shader;
-import com.grantranda.retorn.engine.math.Vector3f;
-import org.lwjgl.BufferUtils;
-
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.nio.ByteBuffer;
+import com.grantranda.retorn.engine.math.Vector3i;
+import com.grantranda.retorn.engine.state.State;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL30.*;
 
 public class RetornRenderer implements Renderer {
 
     private Shader shader;
-
-    private boolean test; // TODO
 
     public RetornRenderer() {
 
@@ -75,14 +66,6 @@ public class RetornRenderer implements Renderer {
         }
 
         shader.unbind();
-
-        // TODO
-        if (!test) {
-
-            // TODO: Use different resolution
-            saveImage("test.png", "PNG", new Resolution(windowWidth, windowHeight), GL_FRAMEBUFFER);
-            test = true;
-        }
     }
 
     private Vector3i updateViewport(Window window, RenderState renderState) {
