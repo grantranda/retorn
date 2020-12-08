@@ -77,24 +77,22 @@ public class RetornRenderer implements Renderer {
 
     private Vector3i updateViewport(Window window, RenderState renderState) {
         Resolution renderResolution = renderState.getRenderResolution();
-        int renderWidth = renderResolution.getWidth();
-        int renderHeight = renderResolution.getHeight();
-        float renderAspectRatio = (float) renderWidth / renderHeight;
+        float renderAspectRatio = (float) renderResolution.getAspectRatio();
 
         int windowWidth = window.getResolution().getWidth();
         int windowHeight = window.getResolution().getHeight();
-        int width = windowWidth;
-        int height = (int) (width / renderAspectRatio);
+        int viewportWidth = windowWidth;
+        int viewportHeight = (int) (viewportWidth / renderAspectRatio);
 
-        if (height > windowHeight) {
-            height = windowHeight;
-            width = (int) (height * renderAspectRatio);
+        if (viewportHeight > windowHeight) {
+            viewportHeight = windowHeight;
+            viewportWidth = (int) (viewportHeight * renderAspectRatio);
         }
 
-        int viewportX = (windowWidth - width) / 2;
-        int viewportY = (windowHeight - height) / 2;
+        int viewportX = (windowWidth - viewportWidth) / 2;
+        int viewportY = (windowHeight - viewportHeight) / 2;
 
-        glViewport(viewportX, viewportY, width, height);
+        glViewport(viewportX, viewportY, viewportWidth, viewportHeight);
 
         return new Vector3i(viewportX, viewportY, 0);
     }
