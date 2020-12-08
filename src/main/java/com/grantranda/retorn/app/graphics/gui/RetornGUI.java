@@ -10,6 +10,7 @@ import com.grantranda.retorn.app.state.ApplicationState;
 import com.grantranda.retorn.app.state.DisplayState;
 import com.grantranda.retorn.app.state.RenderState;
 import com.grantranda.retorn.app.util.StateUtils;
+import com.grantranda.retorn.engine.graphics.ImageRenderer;
 import com.grantranda.retorn.engine.graphics.display.Resolution;
 import com.grantranda.retorn.engine.graphics.display.Window;
 import com.grantranda.retorn.engine.graphics.gui.GUI;
@@ -46,6 +47,7 @@ public class RetornGUI implements GUI {
     private boolean customResolution = false;
 
     private lwjgui.scene.Window guiWindow;
+    private ImageRenderer imageRenderer;
 
     private BorderPane root;
     private BorderPane menu;
@@ -57,19 +59,22 @@ public class RetornGUI implements GUI {
     private Button saveButton;
     private Button loadButton;
     private Button applyButton;
+    private Button renderButton;
     private Parameter<NumberFieldi> maxIterationsParam;
     private Parameter<NumberFieldd> scaleParam;
     private Parameter<NumberFieldd> xParam;
     private Parameter<NumberFieldd> yParam;
-    private Parameter<NumberFieldi> widthParameter;
-    private Parameter<NumberFieldi> heightParameter;
+    private Parameter<NumberFieldi> widthParam;
+    private Parameter<NumberFieldi> heightParam;
+    private Parameter<NumberFieldi> renderWidthParam;
+    private Parameter<NumberFieldi> renderHeightParam;
     private ComboBox<String> resolutionParam;
     private ToggleButton vSyncParam;
     private ColorSelector colorSelector;
     private Label fpsDisplay;
 
-    public RetornGUI() {
-
+    public RetornGUI(ImageRenderer imageRenderer) {
+        this.imageRenderer = imageRenderer;
     }
 
     public boolean isMouseOver() {
@@ -195,12 +200,12 @@ public class RetornGUI implements GUI {
             resolutionParam.setValue("Custom");
             this.customResolution = true;
         }
-        widthParameter.getControl().setEditable(customResolution);
-        widthParameter.getControl().setDisabled(!customResolution);
-        widthParameter.getControl().setNumber(resolution.getWidth());
-        heightParameter.getControl().setEditable(customResolution);
-        heightParameter.getControl().setDisabled(!customResolution);
-        heightParameter.getControl().setNumber(resolution.getHeight());
+        widthParam.getControl().setEditable(customResolution);
+        widthParam.getControl().setDisabled(!customResolution);
+        widthParam.getControl().setNumber(resolution.getWidth());
+        heightParam.getControl().setEditable(customResolution);
+        heightParam.getControl().setDisabled(!customResolution);
+        heightParam.getControl().setNumber(resolution.getHeight());
     }
 
     private void updateRenderState(RenderState state) {
@@ -264,9 +269,9 @@ public class RetornGUI implements GUI {
         int height = window.getResolution().getHeight();
 
         if (customResolution) {
-            if (widthParameter.getControl().validate() && heightParameter.getControl().validate()) {
-                width = widthParameter.getControl().getNumber();
-                height = heightParameter.getControl().getNumber();
+            if (widthParam.getControl().validate() && heightParam.getControl().validate()) {
+                width = widthParam.getControl().getNumber();
+                height = heightParam.getControl().getNumber();
             }
         } else {
             String value = resolutionParam.getValue();
@@ -274,16 +279,16 @@ public class RetornGUI implements GUI {
             width = Integer.parseInt(value.substring(0, xIndex));
             height = Integer.parseInt(value.substring(xIndex + 1));
         }
-        widthParameter.getControl().setNumber(width);
-        heightParameter.getControl().setNumber(height);
+        widthParam.getControl().setNumber(width);
+        heightParam.getControl().setNumber(height);
         window.setSize(width, height);
     }
 
     private void initResolutionSelection() {
         resolutionParam = new ComboBox<>();
         resolutionParam.setPrefWidth(200);
-        widthParameter = new Parameter<>(MENU_WIDTH, "Width", new NumberFieldi(100, 100, 10000));
-        heightParameter = new Parameter<>(MENU_WIDTH, "Height", new NumberFieldi(100, 100, 10000));
+        widthParam = new Parameter<>(MENU_WIDTH, "Width", new NumberFieldi(100, 100, 10000));
+        heightParam = new Parameter<>(MENU_WIDTH, "Height", new NumberFieldi(100, 100, 10000));
 
         Resolution monitorResolution = DisplayUtils.getMonitorResolution();
         TreeSet<Resolution> resolutions = DisplayUtils.getMonitorResolutions();
@@ -345,6 +350,7 @@ public class RetornGUI implements GUI {
         saveButton = new Button("Save");
         loadButton = new Button("Load");
         applyButton = new Button("Apply");
+        renderButton = new Button("Render");
         vSyncParam = new ToggleButton("vSync");
         colorSelector = new ColorSelector();
         fpsDisplay = new Label("FPS: " + window.getFpsCounter().getFps());
@@ -359,9 +365,10 @@ public class RetornGUI implements GUI {
         top.getChildren().add(scaleParam);
         top.getChildren().addAll(xParam, yParam);
         top.getChildren().add(resolutionParam);
-        top.getChildren().addAll(widthParameter, heightParameter);
+        top.getChildren().addAll(widthParam, heightParam);
         top.getChildren().add(vSyncParam);
         top.getChildren().add(applyButton);
+        top.getChildren().add(renderButton);
         top.getChildren().add(colorSelector);
         top.getChildren().add(updateButton);
         top.getChildren().add(resetButton);
@@ -416,22 +423,25 @@ public class RetornGUI implements GUI {
             String value = resolutionParam.getValue();
             if (value.equals("Custom")) {
                 customResolution = true;
-                widthParameter.getControl().setEditable(true);
-                widthParameter.getControl().setDisabled(false);
-                heightParameter.getControl().setEditable(true);
-                heightParameter.getControl().setDisabled(false);
+                widthParam.getControl().setEditable(true);
+                widthParam.getControl().setDisabled(false);
+                heightParam.getControl().setEditable(true);
+                heightParam.getControl().setDisabled(false);
             } else {
                 customResolution = false;
-                widthParameter.getControl().setEditable(false);
-                widthParameter.getControl().setDisabled(true);
-                heightParameter.getControl().setEditable(false);
-                heightParameter.getControl().setDisabled(true);
+                widthParam.getControl().setEditable(false);
+                widthParam.getControl().setDisabled(true);
+                heightParam.getControl().setEditable(false);
+                heightParam.getControl().setDisabled(true);
             }
         });
         resolutionParam.setValue(state.getDisplayState().getWindowResolution().toString());
         applyButton.setOnAction(event -> {
             applyDisplayParameters(window);
             updateDisplayState(state.getDisplayState(), window);
+        });
+        renderButton.setOnAction(event -> {
+            imageRenderer.render(window);
         });
     }
 }

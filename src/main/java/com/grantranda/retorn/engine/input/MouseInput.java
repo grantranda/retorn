@@ -22,12 +22,10 @@ public class MouseInput {
             BUTTONS[button] = action == GLFW_PRESS;
         });
         glfwSetCursorPosCallback(windowID, (long window, double xpos, double ypos) -> {
-            CURRENT_POSITION.x = xpos;
-            CURRENT_POSITION.y = ypos;
+            CURRENT_POSITION.set(xpos, ypos, 0.0f);
         });
         glfwSetScrollCallback(windowID, (long window, double xoffset, double yoffset) -> {
-            SCROLL_DIRECTION.x = xoffset;
-            SCROLL_DIRECTION.y = yoffset;
+            SCROLL_DIRECTION.set(xoffset, yoffset, 0.0f);
             scrolling = true;
         });
         glfwSetCursorEnterCallback(windowID, (long window, boolean entered) -> {
@@ -76,12 +74,8 @@ public class MouseInput {
     }
 
     public void update() {
-        DELTA.x = CURRENT_POSITION.x - PREVIOUS_POSITION.x;
-        DELTA.y = CURRENT_POSITION.y - PREVIOUS_POSITION.y;
-
-        PREVIOUS_POSITION.x = CURRENT_POSITION.x;
-        PREVIOUS_POSITION.y = CURRENT_POSITION.y;
-
+        DELTA.set(CURRENT_POSITION.x - PREVIOUS_POSITION.x, CURRENT_POSITION.y - PREVIOUS_POSITION.y, 0.0f);
+        PREVIOUS_POSITION.set(CURRENT_POSITION.x, CURRENT_POSITION.y, 0.0f);
         setScrolling(false);
     }
 }

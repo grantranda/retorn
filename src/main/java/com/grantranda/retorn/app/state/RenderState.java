@@ -1,10 +1,12 @@
 package com.grantranda.retorn.app.state;
 
+import com.grantranda.retorn.engine.graphics.display.Resolution;
 import com.grantranda.retorn.engine.math.Vector3d;
 import com.grantranda.retorn.engine.state.State;
 
 public class RenderState implements State {
 
+    private final Resolution renderResolution = new Resolution(1280, 720);
     private final Vector3d offset = new Vector3d();
     private int maxIterations = 100;
     private double scale = 1.0;
@@ -39,6 +41,14 @@ public class RenderState implements State {
         offset.x = x;
         offset.y = y;
         offset.z = z;
+    }
+
+    public Resolution getRenderResolution() {
+        return renderResolution;
+    }
+
+    public void setRenderResolution(int width, int height) {
+        renderResolution.set(width, height);
     }
 
     @Override

@@ -8,13 +8,8 @@ public class Model {
     private final Mesh mesh;
     private final Texture texture;
     private final Vector3f position;
-
-    // Axis rotation angles in degrees
-    private final Vector3f rotation;
-
-    // Axis scaling factors
-    private final Vector3f scale;
-
+    private final Vector3f rotation; // Axis rotation angles in degrees
+    private final Vector3f scale; // Axis scaling factors
     private final Matrix4f modelMatrix;
 
     public Model(Mesh mesh) {
@@ -47,9 +42,7 @@ public class Model {
     }
 
     public void setPosition(float x, float y, float z) {
-        position.x = x;
-        position.y = y;
-        position.z = z;
+        position.set(x, y, z);
     }
 
     public Vector3f getRotation() {
@@ -57,9 +50,7 @@ public class Model {
     }
 
     public void setRotation(float x, float y, float z) {
-        rotation.x = x;
-        rotation.y = y;
-        rotation.z = z;
+        rotation.set(x, y, z);
     }
 
     public Vector3f getScale() {
@@ -67,9 +58,7 @@ public class Model {
     }
 
     public void setScale(float x, float y, float z) {
-        scale.x = x;
-        scale.y = y;
-        scale.z = z;
+        scale.set(x, y, z);
     }
 
     public Matrix4f getModelMatrix() {

@@ -14,7 +14,7 @@ import static org.lwjgl.glfw.GLFW.*;
 
 public class RetornInputHandler implements InputHandler {
 
-    public static final float SCALE_FACTOR = -0.025f;
+    public static final double SCALE_FACTOR = -0.025;
 
     private final RetornGUI gui;
 

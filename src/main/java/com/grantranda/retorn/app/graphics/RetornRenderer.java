@@ -2,27 +2,19 @@ package com.grantranda.retorn.app.graphics;
 
 import com.grantranda.retorn.app.state.RenderState;
 import com.grantranda.retorn.engine.graphics.Model;
+import com.grantranda.retorn.engine.graphics.Renderer;
 import com.grantranda.retorn.engine.graphics.display.Resolution;
 import com.grantranda.retorn.engine.math.Matrix4f;
 import com.grantranda.retorn.engine.graphics.display.Window;
 import com.grantranda.retorn.engine.graphics.Shader;
-import com.grantranda.retorn.engine.math.Vector3f;
-import org.lwjgl.BufferUtils;
-
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.nio.ByteBuffer;
+import com.grantranda.retorn.engine.math.Vector3i;
+import com.grantranda.retorn.engine.state.State;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL30.*;
 
-public class RetornRenderer {
+public class RetornRenderer implements Renderer {
 
     private Shader shader;
-
-    private boolean test; // TODO
 
     public RetornRenderer() {
 
@@ -44,14 +36,24 @@ public class RetornRenderer {
 
     }
 
-    public void render(Window window, RenderState renderState, Model[] models) {
+    // TODO: Alter coordinate system?
+    // Current coordinates are based on the viewport. If the viewport's size changes,
+    // the coordinates change respectively.
+    //
+    // Problem: on window resize, if the position is not (0, 0), then the coordinates remain the same,
+    // but the render position changes.
+    //    - Is the offset being factored in where it shouldn't be, or is it left out somewhere?
+    //    - Is the offset not being translated properly?
+    public void render(Window window, State state, Model[] models) {
+        RenderState renderState = (RenderState) state;
+
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         glDisable(GL_CULL_FACE);
 
         shader.bind();
 
-        Vector3f viewportPos = updateViewport(window);
+        Vector3i viewportPos = updateViewport(window, renderState);
 
         int windowWidth = window.getResolution().getWidth();
         int windowHeight = window.getResolution().getHeight();
@@ -65,74 +67,33 @@ public class RetornRenderer {
         shader.setUniform2d("offset", translatedOffsetX, translatedOffsetY);
         shader.setUniform2f("window_size", windowWidth, windowHeight);
 
-        // Render models
         for (Model model : models) {
             shader.setUniformMatrix4f("model_matrix", model.getModelMatrix());
             model.render();
         }
 
         shader.unbind();
-
-        // TODO
-        if (!test) {
-
-            // TODO: Use different resolution
-            saveImage("test.png", "PNG", new Resolution(windowWidth, windowHeight), GL_FRAMEBUFFER);
-            test = true;
-        }
     }
 
-    public void saveImage(String path, String format, Resolution resolution, int source) {
-        int width = resolution.getWidth();
-        int height = resolution.getHeight();
-        int bpp = 4;
-
-        glReadBuffer(GL_FRAMEBUFFER);
-        ByteBuffer buffer = BufferUtils.createByteBuffer(resolution.getArea() * bpp);
-        glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-
-        File file = new File(path);
-        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-
-        for(int x = 0; x < width; x++)
-        {
-            for(int y = 0; y < height; y++)
-            {
-                int i = (x + (width * y)) * bpp;
-                int r = buffer.get(i) & 0xFF;
-                int g = buffer.get(i + 1) & 0xFF;
-                int b = buffer.get(i + 2) & 0xFF;
-                image.setRGB(x, height - (y + 1), (0xFF << 24) | (r << 16) | (g << 8) | b);
-            }
-        }
-
-        try {
-            ImageIO.write(image, format, file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private Vector3f updateViewport(Window window) {
-        int renderWidth = 1920; // TODO: Read from state
-        int renderHeight = 1080;
-        float renderAspectRatio = (float) renderWidth / renderHeight;
+    private Vector3i updateViewport(Window window, RenderState renderState) {
+        Resolution renderResolution = renderState.getRenderResolution();
+        float renderAspectRatio = (float) renderResolution.getAspectRatio();
 
         int windowWidth = window.getResolution().getWidth();
         int windowHeight = window.getResolution().getHeight();
-        int width = windowWidth;
-        int height = (int) (width / renderAspectRatio);
+        int viewportWidth = windowWidth;
+        int viewportHeight = (int) (viewportWidth / renderAspectRatio);
 
-        if (height > windowHeight) {
-            height = windowHeight;
-            width = (int) (height * renderAspectRatio);
+        if (viewportHeight > windowHeight) {
+            viewportHeight = windowHeight;
+            viewportWidth = (int) (viewportHeight * renderAspectRatio);
         }
 
-        int viewportX = (windowWidth - width) / 2;
-        int viewportY = (windowHeight - height) / 2;
+        int viewportX = (windowWidth - viewportWidth) / 2;
+        int viewportY = (windowHeight - viewportHeight) / 2;
 
-        glViewport(viewportX, viewportY, width, height);
+        glViewport(viewportX, viewportY, viewportWidth, viewportHeight);
 
-        return new Vector3f(viewportX, viewportY, 0.0f);
+        return new Vector3i(viewportX, viewportY, 0);
     }
 }
