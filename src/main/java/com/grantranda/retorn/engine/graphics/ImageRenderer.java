@@ -98,7 +98,7 @@ public class ImageRenderer {
         // Get viewport position
         IntBuffer viewportData = BufferUtils.createIntBuffer(4);
         glGetIntegerv(GL_VIEWPORT, viewportData);
-        int viewportX = viewportData.get(0);
+        int viewportX = viewportData.get(0); // TODO: Not needed?
         int viewportY = viewportData.get(1);
 
         window.setSize(renderWidth, renderHeight);
