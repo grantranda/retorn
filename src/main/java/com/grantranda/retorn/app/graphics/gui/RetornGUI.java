@@ -69,7 +69,7 @@ public class RetornGUI implements GUI {
     private Parameter<NumberFieldi> renderWidthParam;
     private Parameter<NumberFieldi> renderHeightParam;
     private ComboBox<String> resolutionParam;
-    private ToggleButton vSyncParam;
+    private CheckBox vSyncParam;
     private ColorSelector colorSelector;
     private Label fpsDisplay;
 
@@ -193,6 +193,7 @@ public class RetornGUI implements GUI {
 
     public void updateDisplayParameters(DisplayState state) {
         updateResolutionParameters(state.getWindowResolution(), state.isCustomResolution());
+        vSyncParam.setChecked(state.isVSync());
     }
 
     public void updateResolutionParameters(Resolution resolution, boolean customResolution) {
@@ -217,6 +218,7 @@ public class RetornGUI implements GUI {
     private void updateDisplayState(DisplayState state, Window window) {
         state.setWindowResolution(window.getResolution().getWidth(), window.getResolution().getHeight());
         state.setCustomResolution(customResolution);
+        state.setVSync(vSyncParam.isChecked());
     }
 
     @Override
@@ -282,6 +284,7 @@ public class RetornGUI implements GUI {
         widthParam.getControl().setNumber(width);
         heightParam.getControl().setNumber(height);
         window.setSize(width, height);
+        window.setVSync(vSyncParam.isChecked());
     }
 
     private void initResolutionSelection() {
@@ -351,7 +354,7 @@ public class RetornGUI implements GUI {
         loadButton = new Button("Load");
         applyButton = new Button("Apply");
         renderButton = new Button("Render");
-        vSyncParam = new ToggleButton("vSync");
+        vSyncParam = new CheckBox("vSync");
         colorSelector = new ColorSelector();
         fpsDisplay = new Label("FPS: " + window.getFpsCounter().getFps());
         fpsDisplay.setAlignment(Pos.BOTTOM_LEFT);
@@ -394,19 +397,22 @@ public class RetornGUI implements GUI {
     }
 
     private void setEventHandlers(Window window, ApplicationState state) {
+        DisplayState displayState = state.getDisplayState();
+        RenderState renderState = state.getRenderState();
+
         hideMenuButton.setOnAction(event -> hideMenu());
         showMenuButton.setOnAction(event -> showMenu());
         updateButton.setOnAction(event -> {
             applyRenderParameters();
-            updateRenderState(state.getRenderState());
+            updateRenderState(renderState);
         });
         resetButton.setOnAction(event -> {
-            state.getRenderState().reset();
-            updateRenderParameters(state.getRenderState());
+            renderState.reset();
+            updateRenderParameters(renderState);
         });
         saveButton.setOnAction(event -> {
             try {
-                StateUtils.saveStateDialog(state.getRenderState(), "retorn_parameters.json", "Save Parameters");
+                StateUtils.saveStateDialog(renderState, "retorn_parameters.json", "Save Parameters");
             } catch (IOException | JsonIOException e) {
                 LWJGUIDialog.showMessageDialog("Error", "Error saving parameters.", DialogIcon.ERROR);
             }
@@ -414,11 +420,16 @@ public class RetornGUI implements GUI {
         loadButton.setOnAction(event -> {
             try {
                 StateUtils.loadStateDialog(state, RenderState.class, "Load Parameters");
-                updateRenderParameters(state.getRenderState());
+                updateRenderParameters(renderState);
             } catch (IOException | JsonSyntaxException e) {
                 LWJGUIDialog.showMessageDialog("Error", "Error loading parameters.", DialogIcon.ERROR);
             }
         });
+        applyButton.setOnAction(event -> {
+            applyDisplayParameters(window);
+            updateDisplayState(displayState, window);
+        });
+        renderButton.setOnAction(event -> imageRenderer.render(window));
         resolutionParam.setOnAction(event -> {
             String value = resolutionParam.getValue();
             if (value.equals("Custom")) {
@@ -435,13 +446,6 @@ public class RetornGUI implements GUI {
                 heightParam.getControl().setDisabled(true);
             }
         });
-        resolutionParam.setValue(state.getDisplayState().getWindowResolution().toString());
-        applyButton.setOnAction(event -> {
-            applyDisplayParameters(window);
-            updateDisplayState(state.getDisplayState(), window);
-        });
-        renderButton.setOnAction(event -> {
-            imageRenderer.render(window);
-        });
+        resolutionParam.setValue(displayState.getWindowResolution().toString()); // Fire action event
     }
 }
