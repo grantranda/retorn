@@ -394,19 +394,22 @@ public class RetornGUI implements GUI {
     }
 
     private void setEventHandlers(Window window, ApplicationState state) {
+        DisplayState displayState = state.getDisplayState();
+        RenderState renderState = state.getRenderState();
+
         hideMenuButton.setOnAction(event -> hideMenu());
         showMenuButton.setOnAction(event -> showMenu());
         updateButton.setOnAction(event -> {
             applyRenderParameters();
-            updateRenderState(state.getRenderState());
+            updateRenderState(renderState);
         });
         resetButton.setOnAction(event -> {
-            state.getRenderState().reset();
-            updateRenderParameters(state.getRenderState());
+            renderState.reset();
+            updateRenderParameters(renderState);
         });
         saveButton.setOnAction(event -> {
             try {
-                StateUtils.saveStateDialog(state.getRenderState(), "retorn_parameters.json", "Save Parameters");
+                StateUtils.saveStateDialog(renderState, "retorn_parameters.json", "Save Parameters");
             } catch (IOException | JsonIOException e) {
                 LWJGUIDialog.showMessageDialog("Error", "Error saving parameters.", DialogIcon.ERROR);
             }
@@ -419,6 +422,11 @@ public class RetornGUI implements GUI {
                 LWJGUIDialog.showMessageDialog("Error", "Error loading parameters.", DialogIcon.ERROR);
             }
         });
+        applyButton.setOnAction(event -> {
+            applyDisplayParameters(window);
+            updateDisplayState(displayState, window);
+        });
+        renderButton.setOnAction(event -> imageRenderer.render(window));
         resolutionParam.setOnAction(event -> {
             String value = resolutionParam.getValue();
             if (value.equals("Custom")) {
@@ -435,13 +443,6 @@ public class RetornGUI implements GUI {
                 heightParam.getControl().setDisabled(true);
             }
         });
-        resolutionParam.setValue(state.getDisplayState().getWindowResolution().toString());
-        applyButton.setOnAction(event -> {
-            applyDisplayParameters(window);
-            updateDisplayState(state.getDisplayState(), window);
-        });
-        renderButton.setOnAction(event -> {
-            imageRenderer.render(window);
-        });
+        resolutionParam.setValue(displayState.getWindowResolution().toString()); // Fire action event
     }
 }
