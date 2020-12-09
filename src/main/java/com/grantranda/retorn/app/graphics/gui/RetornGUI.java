@@ -69,7 +69,7 @@ public class RetornGUI implements GUI {
     private Parameter<NumberFieldi> renderWidthParam;
     private Parameter<NumberFieldi> renderHeightParam;
     private ComboBox<String> resolutionParam;
-    private ToggleButton vSyncParam;
+    private CheckBox vSyncParam;
     private ColorSelector colorSelector;
     private Label fpsDisplay;
 
@@ -193,6 +193,7 @@ public class RetornGUI implements GUI {
 
     public void updateDisplayParameters(DisplayState state) {
         updateResolutionParameters(state.getWindowResolution(), state.isCustomResolution());
+        vSyncParam.setChecked(state.isVSync());
     }
 
     public void updateResolutionParameters(Resolution resolution, boolean customResolution) {
@@ -217,6 +218,7 @@ public class RetornGUI implements GUI {
     private void updateDisplayState(DisplayState state, Window window) {
         state.setWindowResolution(window.getResolution().getWidth(), window.getResolution().getHeight());
         state.setCustomResolution(customResolution);
+        state.setVSync(vSyncParam.isChecked());
     }
 
     @Override
@@ -282,6 +284,7 @@ public class RetornGUI implements GUI {
         widthParam.getControl().setNumber(width);
         heightParam.getControl().setNumber(height);
         window.setSize(width, height);
+        window.setVSync(vSyncParam.isChecked());
     }
 
     private void initResolutionSelection() {
@@ -351,7 +354,7 @@ public class RetornGUI implements GUI {
         loadButton = new Button("Load");
         applyButton = new Button("Apply");
         renderButton = new Button("Render");
-        vSyncParam = new ToggleButton("vSync");
+        vSyncParam = new CheckBox("vSync");
         colorSelector = new ColorSelector();
         fpsDisplay = new Label("FPS: " + window.getFpsCounter().getFps());
         fpsDisplay.setAlignment(Pos.BOTTOM_LEFT);
@@ -417,7 +420,7 @@ public class RetornGUI implements GUI {
         loadButton.setOnAction(event -> {
             try {
                 StateUtils.loadStateDialog(state, RenderState.class, "Load Parameters");
-                updateRenderParameters(state.getRenderState());
+                updateRenderParameters(renderState);
             } catch (IOException | JsonSyntaxException e) {
                 LWJGUIDialog.showMessageDialog("Error", "Error loading parameters.", DialogIcon.ERROR);
             }
