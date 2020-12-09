@@ -167,7 +167,7 @@ public class RetornGUI implements GUI {
     private void updateInput(Window window) {
         MouseInput mouseInput = window.getMouseInput();
         Vector3d mousePos = mouseInput.getCurrentPosition();
-        int width = window.getResolution().getWidth();
+        int width = window.getWidth();
         boolean mouseOverMenu = mouseInput.isMouseInWindow()
                 && isMenuShown()
                 && (mousePos.x >= width - MENU_WIDTH && mousePos.x <= width);
@@ -216,7 +216,7 @@ public class RetornGUI implements GUI {
     }
 
     private void updateDisplayState(DisplayState state, Window window) {
-        state.setWindowResolution(window.getResolution().getWidth(), window.getResolution().getHeight());
+        state.setWindowResolution(window.getWidth(), window.getHeight());
         state.setCustomResolution(customResolution);
         state.setVSync(vSyncParam.isChecked());
     }
@@ -228,8 +228,8 @@ public class RetornGUI implements GUI {
     }
 
     private void renderNvg(Window window) {
-        int width  = (int) (window.getResolution().getWidth() / window.getContentScaleX());
-        int height = (int) (window.getResolution().getHeight() / window.getContentScaleY());
+        int width  = (int) (window.getWidth() / window.getContentScaleX());
+        int height = (int) (window.getHeight() / window.getContentScaleY());
         int midX = width / 2;
         int midY = height / 2;
         int startX = midX - 50;
@@ -267,8 +267,8 @@ public class RetornGUI implements GUI {
     }
 
     private void applyDisplayParameters(Window window) {
-        int width = window.getResolution().getWidth();
-        int height = window.getResolution().getHeight();
+        int width = window.getWidth();
+        int height = window.getHeight();
 
         if (customResolution) {
             if (widthParam.getControl().validate() && heightParam.getControl().validate()) {
@@ -381,7 +381,7 @@ public class RetornGUI implements GUI {
         menu = new BorderPane();
         menu.setMinWidth(MENU_WIDTH);
         menu.setMaxWidth(MENU_WIDTH);
-        menu.setPrefHeight(window.getResolution().getHeight());
+        menu.setPrefHeight(window.getHeight());
         menu.setAlignment(Pos.TOP_LEFT);
         menu.setFillToParentHeight(true);
         menu.setBackgroundLegacy(new Color(.9, .9, .9, 0.95));
@@ -391,7 +391,7 @@ public class RetornGUI implements GUI {
 
     private void initRoot(Window window) {
         root = new BorderPane();
-        root.setPrefSize(window.getResolution().getWidth(), window.getResolution().getHeight());
+        root.setPrefSize(window.getWidth(), window.getHeight());
         root.setCenter(new StackPane()); // Set center so BorderPane alignment is correct
         root.setRight(menu);
     }

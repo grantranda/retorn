@@ -55,8 +55,8 @@ public class RetornRenderer implements Renderer {
 
         Vector3i viewportPos = updateViewport(window, renderState);
 
-        int windowWidth = window.getResolution().getWidth();
-        int windowHeight = window.getResolution().getHeight();
+        int windowWidth = window.getWidth();
+        int windowHeight = window.getHeight();
         double pixelWidth = 3.5f / (windowWidth - viewportPos.x * 2);
         double pixelHeight = 2.0f / (windowHeight - viewportPos.y * 2);
         double translatedOffsetX = renderState.getOffset().x * pixelWidth;
@@ -79,8 +79,8 @@ public class RetornRenderer implements Renderer {
         Resolution renderResolution = renderState.getRenderResolution();
         float renderAspectRatio = (float) renderResolution.getAspectRatio();
 
-        int windowWidth = window.getResolution().getWidth();
-        int windowHeight = window.getResolution().getHeight();
+        int windowWidth = window.getWidth();
+        int windowHeight = window.getHeight();
         int viewportWidth = windowWidth;
         int viewportHeight = (int) (viewportWidth / renderAspectRatio);
 

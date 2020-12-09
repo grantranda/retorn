@@ -51,6 +51,14 @@ public class Window {
         return resolution;
     }
 
+    public int getWidth() {
+        return resolution.getWidth();
+    }
+
+    public int getHeight() {
+        return resolution.getHeight();
+    }
+
     public FPSCounter getFpsCounter() {
         return fpsCounter;
     }
