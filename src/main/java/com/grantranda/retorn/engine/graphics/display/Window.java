@@ -122,6 +122,18 @@ public class Window {
         return glfwWindowShouldClose(windowID);
     }
 
+    public void moveToCenter() {
+        moveToCenter(glfwGetPrimaryMonitor());
+    }
+
+    public void moveToCenter(long monitor) {
+        GLFWVidMode vidMode = glfwGetVideoMode(monitor);
+        setPosition(
+                (vidMode.width() - getWidth()) / 2,
+                (vidMode.height() - getHeight()) / 2
+        );
+    }
+
     public void init() {
         GLFWErrorCallback.createPrint(System.err).set();
 
@@ -172,13 +184,7 @@ public class Window {
             contentScaleY = y.get(0);
         }
 
-        // Set the window position
-        GLFWVidMode vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-        glfwSetWindowPos(
-                windowID,
-                (vidMode.width() - resolution.getWidth()) / 2,
-                (vidMode.height() - resolution.getHeight()) / 2
-        );
+        moveToCenter();
 
         glfwShowWindow(windowID);
         if (isVSync()) glfwSwapInterval(1);
