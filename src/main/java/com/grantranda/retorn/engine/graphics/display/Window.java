@@ -58,6 +58,10 @@ public class Window {
         return resolution.getWidth();
     }
 
+    public int getHeight() {
+        return resolution.getHeight();
+    }
+
     public Vector3i getPosition() {
         return position;
     }
