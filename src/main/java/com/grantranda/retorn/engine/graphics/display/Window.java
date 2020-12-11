@@ -37,6 +37,7 @@ public class Window {
     private float contentScaleX;
     private float contentScaleY;
 
+    private boolean fullscreen;
     private boolean vSync;
     private boolean resized = false;
 

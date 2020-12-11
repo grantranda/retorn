@@ -7,6 +7,7 @@ public class DisplayState implements State {
 
     private final Resolution windowResolution = new Resolution(1280, 720);
     private boolean customResolution = false;
+    private boolean fullscreen = false;
     private boolean vSync = false;
 
     public DisplayState() {
@@ -29,6 +30,14 @@ public class DisplayState implements State {
         this.customResolution = customResolution;
     }
 
+    public boolean isFullscreen() {
+        return fullscreen;
+    }
+
+    public void setFullscreen(boolean fullscreen) {
+        this.fullscreen = fullscreen;
+    }
+
     public boolean isVSync() {
         return vSync;
     }
@@ -41,6 +50,7 @@ public class DisplayState implements State {
     public void reset() {
         setWindowResolution(1280, 720);
         setCustomResolution(false);
+        setFullscreen(false);
         setVSync(false);
     }
 }
