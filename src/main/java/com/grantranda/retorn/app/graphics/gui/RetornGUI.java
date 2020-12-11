@@ -289,6 +289,10 @@ public class RetornGUI implements GUI {
         window.resize(width, height);
         window.setFullscreen(fullscreenParam.isChecked());
         window.setVSync(vSyncParam.isChecked());
+
+        if (!fullscreenParam.isChecked()) {
+            window.moveToCenter();
+        }
     }
 
     private void initResolutionSelection() {
