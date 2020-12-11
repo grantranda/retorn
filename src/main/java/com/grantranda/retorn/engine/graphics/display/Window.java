@@ -2,6 +2,7 @@ package com.grantranda.retorn.engine.graphics.display;
 
 import com.grantranda.retorn.engine.input.KeyboardInput;
 import com.grantranda.retorn.engine.input.MouseInput;
+import com.grantranda.retorn.engine.math.Vector3i;
 import com.grantranda.retorn.engine.util.FPSCounter;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -13,6 +14,7 @@ import java.util.Objects;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.*;
@@ -24,6 +26,7 @@ public class Window {
 
     private final String title;
     private final Resolution resolution;
+    private final Vector3i position = new Vector3i();
     private final FPSCounter fpsCounter = new FPSCounter();
 
     private KeyboardInput keyboardInput;
@@ -55,8 +58,13 @@ public class Window {
         return resolution.getWidth();
     }
 
-    public int getHeight() {
-        return resolution.getHeight();
+    public Vector3i getPosition() {
+        return position;
+    }
+
+    public void setPosition(int x, int y) {
+        position.set(x, y, 0);
+        glfwSetWindowPos(windowID, x, y);
     }
 
     public FPSCounter getFpsCounter() {
@@ -135,6 +143,9 @@ public class Window {
         mouseInput = new MouseInput(windowID);
 
         // Set callbacks
+        glfwSetWindowPosCallback(windowID, (window, xpos, ypos) -> {
+            position.set(xpos, ypos, 0);
+        });
         glfwSetFramebufferSizeCallback(windowID, (window, width, height) -> {
             resize(width, height);
         });
