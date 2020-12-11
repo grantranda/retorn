@@ -170,6 +170,7 @@ public class Window {
             this.contentScaleY = contentScaleY;
         });
 
+        // Set initial size and content scale
         try (MemoryStack stack = stackPush()) {
             IntBuffer   w = stack.mallocInt(1);
             IntBuffer   h = stack.mallocInt(1);
