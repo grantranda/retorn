@@ -69,6 +69,7 @@ public class RetornGUI implements GUI {
     private Parameter<NumberFieldi> renderWidthParam;
     private Parameter<NumberFieldi> renderHeightParam;
     private ComboBox<String> resolutionParam;
+    private CheckBox fullscreenParam;
     private CheckBox vSyncParam;
     private ColorSelector colorSelector;
     private Label fpsDisplay;
@@ -193,6 +194,7 @@ public class RetornGUI implements GUI {
 
     public void updateDisplayParameters(DisplayState state) {
         updateResolutionParameters(state.getWindowResolution(), state.isCustomResolution());
+        fullscreenParam.setChecked(state.isFullscreen());
         vSyncParam.setChecked(state.isVSync());
     }
 
@@ -218,6 +220,7 @@ public class RetornGUI implements GUI {
     private void updateDisplayState(DisplayState state, Window window) {
         state.setWindowResolution(window.getWidth(), window.getHeight());
         state.setCustomResolution(customResolution);
+        state.setFullscreen(fullscreenParam.isChecked());
         state.setVSync(vSyncParam.isChecked());
     }
 
@@ -355,6 +358,7 @@ public class RetornGUI implements GUI {
         loadButton = new Button("Load");
         applyButton = new Button("Apply");
         renderButton = new Button("Render");
+        fullscreenParam = new CheckBox("Fullscreen");
         vSyncParam = new CheckBox("vSync");
         colorSelector = new ColorSelector();
         fpsDisplay = new Label("FPS: " + window.getFpsCounter().getFps());
@@ -370,6 +374,7 @@ public class RetornGUI implements GUI {
         top.getChildren().addAll(xParam, yParam);
         top.getChildren().add(resolutionParam);
         top.getChildren().addAll(widthParam, heightParam);
+        top.getChildren().add(fullscreenParam);
         top.getChildren().add(vSyncParam);
         top.getChildren().add(applyButton);
         top.getChildren().add(renderButton);
