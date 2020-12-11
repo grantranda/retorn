@@ -133,7 +133,7 @@ public class Window {
         glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
 
         // Create the window
-        windowID = glfwCreateWindow(resolution.getWidth(), resolution.getHeight(), title, NULL, NULL);
+        windowID = glfwCreateWindow(getWidth(), getHeight(), title, NULL, NULL);
         if (windowID == NULL) {
             terminate();
             throw new RuntimeException("Failed to create the GLFW window");
