@@ -283,7 +283,8 @@ public class RetornGUI implements GUI {
         }
         widthParam.getControl().setNumber(width);
         heightParam.getControl().setNumber(height);
-        window.setSize(width, height);
+        window.resize(width, height);
+        window.setFullscreen(fullscreenParam.isChecked());
         window.setVSync(vSyncParam.isChecked());
     }
 
