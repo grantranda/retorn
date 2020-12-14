@@ -36,14 +36,6 @@ public class RetornRenderer implements Renderer {
 
     }
 
-    // TODO: Alter coordinate system?
-    // Current coordinates are based on the viewport. If the viewport's size changes,
-    // the coordinates change respectively.
-    //
-    // Problem: on window resize, if the position is not (0, 0), then the coordinates remain the same,
-    // but the render position changes.
-    //    - Is the offset being factored in where it shouldn't be, or is it left out somewhere?
-    //    - Is the offset not being translated properly?
     public void render(Window window, State state, Model[] models) {
         RenderState renderState = (RenderState) state;
 
