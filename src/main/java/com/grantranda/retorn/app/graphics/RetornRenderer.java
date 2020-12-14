@@ -37,27 +37,25 @@ public class RetornRenderer implements Renderer {
     }
 
     public void render(Window window, State state, Model[] models) {
-        RenderState renderState = (RenderState) state;
-
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         glDisable(GL_CULL_FACE);
 
-        shader.bind();
+        RenderState renderState = (RenderState) state;
+        Resolution renderResolution = renderState.getRenderResolution();
+        Vector3i viewportPos = updateViewport(window, renderState); // TODO: Remove variable
 
-        Vector3i viewportPos = updateViewport(window, renderState);
-
-        int windowWidth = window.getWidth();
-        int windowHeight = window.getHeight();
-        double pixelWidth = 3.5f / (windowWidth - viewportPos.x * 2);
-        double pixelHeight = 2.0f / (windowHeight - viewportPos.y * 2);
+        double pixelWidth = 3.5f / renderResolution.getWidth(); //(windowWidth - viewportPos.x * 2);
+        double pixelHeight = 2.0f / renderResolution.getHeight(); //(windowHeight - viewportPos.y * 2);
         double translatedOffsetX = renderState.getOffset().x * pixelWidth;
         double translatedOffsetY = renderState.getOffset().y * pixelHeight;
+
+        shader.bind();
 
         shader.setUniform1i("max_iterations", renderState.getMaxIterations());
         shader.setUniform1d("scale", renderState.getScale());
         shader.setUniform2d("offset", translatedOffsetX, translatedOffsetY);
-        shader.setUniform2f("window_size", windowWidth, windowHeight);
+        shader.setUniform2f("window_size", window.getWidth(), window.getHeight());
 
         for (Model model : models) {
             shader.setUniformMatrix4f("model_matrix", model.getModelMatrix());
