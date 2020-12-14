@@ -179,7 +179,8 @@ public class RetornGUI implements GUI {
     private void updateGui(Window window, ApplicationState state) {
         fpsDisplay.setText("FPS: " + window.getFpsCounter().getFps());
 
-        if (window.isResized()) {
+        // TODO: This condition might have unintended consequences
+        if (window.isResized() && !fullscreenParam.isChecked()) {
             updateResolutionParameters(window.getResolution(), true);
             updateDisplayState(state.getDisplayState(), window);
         }
