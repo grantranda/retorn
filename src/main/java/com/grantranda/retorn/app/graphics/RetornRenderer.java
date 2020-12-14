@@ -69,7 +69,7 @@ public class RetornRenderer implements Renderer {
 
     private Vector3i updateViewport(Window window, RenderState renderState) {
         Resolution renderResolution = renderState.getRenderResolution();
-        float renderAspectRatio = (float) renderResolution.getAspectRatio();
+        double renderAspectRatio = renderResolution.getAspectRatio();
 
         int windowWidth = window.getWidth();
         int windowHeight = window.getHeight();
