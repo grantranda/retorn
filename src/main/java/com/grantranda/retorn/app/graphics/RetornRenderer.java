@@ -36,36 +36,26 @@ public class RetornRenderer implements Renderer {
 
     }
 
-    // TODO: Alter coordinate system?
-    // Current coordinates are based on the viewport. If the viewport's size changes,
-    // the coordinates change respectively.
-    //
-    // Problem: on window resize, if the position is not (0, 0), then the coordinates remain the same,
-    // but the render position changes.
-    //    - Is the offset being factored in where it shouldn't be, or is it left out somewhere?
-    //    - Is the offset not being translated properly?
     public void render(Window window, State state, Model[] models) {
-        RenderState renderState = (RenderState) state;
-
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         glDisable(GL_CULL_FACE);
 
-        shader.bind();
+        RenderState renderState = (RenderState) state;
+        Resolution renderResolution = renderState.getRenderResolution();
+        Vector3i viewportPos = updateViewport(window, renderState); // TODO: Remove variable
 
-        Vector3i viewportPos = updateViewport(window, renderState);
-
-        int windowWidth = window.getResolution().getWidth();
-        int windowHeight = window.getResolution().getHeight();
-        double pixelWidth = 3.5f / (windowWidth - viewportPos.x * 2);
-        double pixelHeight = 2.0f / (windowHeight - viewportPos.y * 2);
+        double pixelWidth = 3.5f / renderResolution.getWidth(); //(windowWidth - viewportPos.x * 2);
+        double pixelHeight = 2.0f / renderResolution.getHeight(); //(windowHeight - viewportPos.y * 2);
         double translatedOffsetX = renderState.getOffset().x * pixelWidth;
         double translatedOffsetY = renderState.getOffset().y * pixelHeight;
+
+        shader.bind();
 
         shader.setUniform1i("max_iterations", renderState.getMaxIterations());
         shader.setUniform1d("scale", renderState.getScale());
         shader.setUniform2d("offset", translatedOffsetX, translatedOffsetY);
-        shader.setUniform2f("window_size", windowWidth, windowHeight);
+        shader.setUniform2f("window_size", window.getWidth(), window.getHeight());
 
         for (Model model : models) {
             shader.setUniformMatrix4f("model_matrix", model.getModelMatrix());
@@ -77,10 +67,10 @@ public class RetornRenderer implements Renderer {
 
     private Vector3i updateViewport(Window window, RenderState renderState) {
         Resolution renderResolution = renderState.getRenderResolution();
-        float renderAspectRatio = (float) renderResolution.getAspectRatio();
+        double renderAspectRatio = renderResolution.getAspectRatio();
 
-        int windowWidth = window.getResolution().getWidth();
-        int windowHeight = window.getResolution().getHeight();
+        int windowWidth = window.getWidth();
+        int windowHeight = window.getHeight();
         int viewportWidth = windowWidth;
         int viewportHeight = (int) (viewportWidth / renderAspectRatio);
 

@@ -38,7 +38,7 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class RetornGUI implements GUI {
 
-    public static final int MENU_WIDTH = 400;
+    public static final int MENU_WIDTH = 350;
 
     private long nvgContext;
     private boolean mouseOver = false;
@@ -69,6 +69,7 @@ public class RetornGUI implements GUI {
     private Parameter<NumberFieldi> renderWidthParam;
     private Parameter<NumberFieldi> renderHeightParam;
     private ComboBox<String> resolutionParam;
+    private CheckBox fullscreenParam;
     private CheckBox vSyncParam;
     private ColorSelector colorSelector;
     private Label fpsDisplay;
@@ -167,7 +168,7 @@ public class RetornGUI implements GUI {
     private void updateInput(Window window) {
         MouseInput mouseInput = window.getMouseInput();
         Vector3d mousePos = mouseInput.getCurrentPosition();
-        int width = window.getResolution().getWidth();
+        int width = window.getWidth();
         boolean mouseOverMenu = mouseInput.isMouseInWindow()
                 && isMenuShown()
                 && (mousePos.x >= width - MENU_WIDTH && mousePos.x <= width);
@@ -178,7 +179,8 @@ public class RetornGUI implements GUI {
     private void updateGui(Window window, ApplicationState state) {
         fpsDisplay.setText("FPS: " + window.getFpsCounter().getFps());
 
-        if (window.isResized()) {
+        // TODO: This condition might have unintended consequences
+        if (window.isResized() && !fullscreenParam.isChecked()) {
             updateResolutionParameters(window.getResolution(), true);
             updateDisplayState(state.getDisplayState(), window);
         }
@@ -193,6 +195,7 @@ public class RetornGUI implements GUI {
 
     public void updateDisplayParameters(DisplayState state) {
         updateResolutionParameters(state.getWindowResolution(), state.isCustomResolution());
+        fullscreenParam.setChecked(state.isFullscreen());
         vSyncParam.setChecked(state.isVSync());
     }
 
@@ -216,8 +219,9 @@ public class RetornGUI implements GUI {
     }
 
     private void updateDisplayState(DisplayState state, Window window) {
-        state.setWindowResolution(window.getResolution().getWidth(), window.getResolution().getHeight());
+        state.setWindowResolution(window.getWidth(), window.getHeight());
         state.setCustomResolution(customResolution);
+        state.setFullscreen(fullscreenParam.isChecked());
         state.setVSync(vSyncParam.isChecked());
     }
 
@@ -228,8 +232,8 @@ public class RetornGUI implements GUI {
     }
 
     private void renderNvg(Window window) {
-        int width  = (int) (window.getResolution().getWidth() / window.getContentScaleX());
-        int height = (int) (window.getResolution().getHeight() / window.getContentScaleY());
+        int width  = (int) (window.getWidth() / window.getContentScaleX());
+        int height = (int) (window.getHeight() / window.getContentScaleY());
         int midX = width / 2;
         int midY = height / 2;
         int startX = midX - 50;
@@ -267,8 +271,8 @@ public class RetornGUI implements GUI {
     }
 
     private void applyDisplayParameters(Window window) {
-        int width = window.getResolution().getWidth();
-        int height = window.getResolution().getHeight();
+        int width = window.getWidth();
+        int height = window.getHeight();
 
         if (customResolution) {
             if (widthParam.getControl().validate() && heightParam.getControl().validate()) {
@@ -283,8 +287,13 @@ public class RetornGUI implements GUI {
         }
         widthParam.getControl().setNumber(width);
         heightParam.getControl().setNumber(height);
-        window.setSize(width, height);
+        window.resize(width, height);
+        window.setFullscreen(fullscreenParam.isChecked());
         window.setVSync(vSyncParam.isChecked());
+
+        if (!fullscreenParam.isChecked()) {
+            window.moveToCenter();
+        }
     }
 
     private void initResolutionSelection() {
@@ -354,6 +363,7 @@ public class RetornGUI implements GUI {
         loadButton = new Button("Load");
         applyButton = new Button("Apply");
         renderButton = new Button("Render");
+        fullscreenParam = new CheckBox("Fullscreen");
         vSyncParam = new CheckBox("vSync");
         colorSelector = new ColorSelector();
         fpsDisplay = new Label("FPS: " + window.getFpsCounter().getFps());
@@ -369,6 +379,7 @@ public class RetornGUI implements GUI {
         top.getChildren().addAll(xParam, yParam);
         top.getChildren().add(resolutionParam);
         top.getChildren().addAll(widthParam, heightParam);
+        top.getChildren().add(fullscreenParam);
         top.getChildren().add(vSyncParam);
         top.getChildren().add(applyButton);
         top.getChildren().add(renderButton);
@@ -381,7 +392,7 @@ public class RetornGUI implements GUI {
         menu = new BorderPane();
         menu.setMinWidth(MENU_WIDTH);
         menu.setMaxWidth(MENU_WIDTH);
-        menu.setPrefHeight(window.getResolution().getHeight());
+        menu.setPrefHeight(window.getHeight());
         menu.setAlignment(Pos.TOP_LEFT);
         menu.setFillToParentHeight(true);
         menu.setBackgroundLegacy(new Color(.9, .9, .9, 0.95));
@@ -391,7 +402,7 @@ public class RetornGUI implements GUI {
 
     private void initRoot(Window window) {
         root = new BorderPane();
-        root.setPrefSize(window.getResolution().getWidth(), window.getResolution().getHeight());
+        root.setPrefSize(window.getWidth(), window.getHeight());
         root.setCenter(new StackPane()); // Set center so BorderPane alignment is correct
         root.setRight(menu);
     }

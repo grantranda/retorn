@@ -89,8 +89,8 @@ public class ImageRenderer {
     }
 
     public void render(Window window) {
-        int windowWidth = window.getResolution().getWidth();
-        int windowHeight = window.getResolution().getHeight();
+        int windowWidth = window.getWidth();
+        int windowHeight = window.getHeight();
         int renderWidth = resolution.getWidth();
         int renderHeight = resolution.getHeight();
         int bytesPerPixel = 4;
@@ -101,7 +101,7 @@ public class ImageRenderer {
         int viewportX = viewportData.get(0); // TODO: Not needed?
         int viewportY = viewportData.get(1);
 
-        window.setSize(renderWidth, renderHeight);
+        window.resize(renderWidth, renderHeight);
         glfwHideWindow(window.getWindowID());
         glViewport(0, 0, renderWidth, renderHeight);
         renderer.render(window, state, models);
@@ -130,7 +130,7 @@ public class ImageRenderer {
             e.printStackTrace();
         }
 
-        window.setSize(windowWidth, windowHeight);
+        window.resize(windowWidth, windowHeight);
         glViewport(viewportX, viewportY, windowWidth, windowHeight);
         glfwShowWindow(window.getWindowID());
     }

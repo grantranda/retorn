@@ -2,6 +2,7 @@ package com.grantranda.retorn.engine.graphics.display;
 
 import com.grantranda.retorn.engine.input.KeyboardInput;
 import com.grantranda.retorn.engine.input.MouseInput;
+import com.grantranda.retorn.engine.math.Vector3i;
 import com.grantranda.retorn.engine.util.FPSCounter;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -13,6 +14,7 @@ import java.util.Objects;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.*;
@@ -24,6 +26,7 @@ public class Window {
 
     private final String title;
     private final Resolution resolution;
+    private final Vector3i position = new Vector3i();
     private final FPSCounter fpsCounter = new FPSCounter();
 
     private KeyboardInput keyboardInput;
@@ -34,6 +37,7 @@ public class Window {
     private float contentScaleX;
     private float contentScaleY;
 
+    private boolean fullscreen;
     private boolean vSync;
     private boolean resized = false;
 
@@ -49,6 +53,23 @@ public class Window {
 
     public Resolution getResolution() {
         return resolution;
+    }
+
+    public int getWidth() {
+        return resolution.getWidth();
+    }
+
+    public int getHeight() {
+        return resolution.getHeight();
+    }
+
+    public Vector3i getPosition() {
+        return position;
+    }
+
+    public void setPosition(int x, int y) {
+        position.set(x, y, 0);
+        glfwSetWindowPos(windowID, x, y);
     }
 
     public FPSCounter getFpsCounter() {
@@ -75,6 +96,26 @@ public class Window {
         return contentScaleY;
     }
 
+    public boolean isFullscreen() {
+        return fullscreen;
+    }
+
+    public void setFullscreen(boolean fullscreen) {
+        setFullscreen(fullscreen, glfwGetPrimaryMonitor());
+    }
+
+    public void setFullscreen(boolean fullscreen, long monitor) {
+        this.fullscreen = fullscreen;
+        GLFWVidMode vidMode = glfwGetVideoMode(monitor);
+
+        if (fullscreen) {
+            glfwSetWindowMonitor(windowID, monitor, 0, 0, getWidth(), getHeight(), vidMode.refreshRate());
+        } else {
+            glfwSetWindowMonitor(windowID, NULL, 0, 0, getWidth(), getHeight(), vidMode.refreshRate());
+            setPosition(position.x, position.y);
+        }
+    }
+
     public boolean isVSync() {
         return vSync;
     }
@@ -92,7 +133,7 @@ public class Window {
         this.resized = resized;
     }
 
-    public void setSize(int width, int height) {
+    public void resize(int width, int height) {
         resolution.set(width, height);
         setResized(true);
         glfwSetWindowSize(windowID, width, height);
@@ -100,6 +141,18 @@ public class Window {
 
     public boolean shouldClose() {
         return glfwWindowShouldClose(windowID);
+    }
+
+    public void moveToCenter() {
+        moveToCenter(glfwGetPrimaryMonitor());
+    }
+
+    public void moveToCenter(long monitor) {
+        GLFWVidMode vidMode = glfwGetVideoMode(monitor);
+        setPosition(
+                (vidMode.width() - getWidth()) / 2,
+                (vidMode.height() - getHeight()) / 2
+        );
     }
 
     public void init() {
@@ -111,9 +164,10 @@ public class Window {
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
         glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
+        glfwWindowHint(GLFW_AUTO_ICONIFY, GLFW_TRUE);
 
         // Create the window
-        windowID = glfwCreateWindow(resolution.getWidth(), resolution.getHeight(), title, NULL, NULL);
+        windowID = glfwCreateWindow(getWidth(), getHeight(), title, NULL, NULL);
         if (windowID == NULL) {
             terminate();
             throw new RuntimeException("Failed to create the GLFW window");
@@ -127,14 +181,18 @@ public class Window {
         mouseInput = new MouseInput(windowID);
 
         // Set callbacks
+        glfwSetWindowPosCallback(windowID, (window, xpos, ypos) -> {
+            position.set(xpos, ypos, 0);
+        });
         glfwSetFramebufferSizeCallback(windowID, (window, width, height) -> {
-            setSize(width, height);
+            resize(width, height);
         });
         glfwSetWindowContentScaleCallback(windowID, (window, contentScaleX, contentScaleY) -> {
             this.contentScaleX = contentScaleX;
             this.contentScaleY = contentScaleY;
         });
 
+        // Set initial size and content scale
         try (MemoryStack stack = stackPush()) {
             IntBuffer   w = stack.mallocInt(1);
             IntBuffer   h = stack.mallocInt(1);
@@ -149,13 +207,7 @@ public class Window {
             contentScaleY = y.get(0);
         }
 
-        // Set the window position
-        GLFWVidMode vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-        glfwSetWindowPos(
-                windowID,
-                (vidMode.width() - resolution.getWidth()) / 2,
-                (vidMode.height() - resolution.getHeight()) / 2
-        );
+        moveToCenter();
 
         glfwShowWindow(windowID);
         if (isVSync()) glfwSwapInterval(1);
