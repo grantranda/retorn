@@ -96,6 +96,26 @@ public class Window {
         return contentScaleY;
     }
 
+    public boolean isFullscreen() {
+        return fullscreen;
+    }
+
+    public void setFullscreen(boolean fullscreen) {
+        setFullscreen(fullscreen, glfwGetPrimaryMonitor());
+    }
+
+    public void setFullscreen(boolean fullscreen, long monitor) {
+        this.fullscreen = fullscreen;
+        GLFWVidMode vidMode = glfwGetVideoMode(monitor);
+
+        if (fullscreen) {
+            glfwSetWindowMonitor(windowID, monitor, 0, 0, getWidth(), getHeight(), vidMode.refreshRate());
+        } else {
+            glfwSetWindowMonitor(windowID, NULL, 0, 0, getWidth(), getHeight(), vidMode.refreshRate());
+            setPosition(position.x, position.y);
+        }
+    }
+
     public boolean isVSync() {
         return vSync;
     }
@@ -144,6 +164,7 @@ public class Window {
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
         glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
+        glfwWindowHint(GLFW_AUTO_ICONIFY, GLFW_TRUE);
 
         // Create the window
         windowID = glfwCreateWindow(getWidth(), getHeight(), title, NULL, NULL);
