@@ -7,6 +7,7 @@ import com.grantranda.retorn.app.graphics.gui.RetornGUI;
 import com.grantranda.retorn.app.input.RetornInputHandler;
 import com.grantranda.retorn.app.state.ApplicationState;
 import com.grantranda.retorn.app.state.DisplayState;
+import com.grantranda.retorn.app.state.RenderState;
 import com.grantranda.retorn.app.util.StateUtils;
 import com.grantranda.retorn.engine.Application;
 import com.grantranda.retorn.engine.graphics.ImageRenderer;
@@ -23,6 +24,9 @@ import java.io.IOException;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Retorn implements Application {
+
+    public static final String DISPLAY_STATE_PATH = "display_parameters.json";
+    public static final String RENDER_STATE_PATH = "render_parameters.json";
 
     private final ApplicationState state = new ApplicationState();
     private final RetornRenderer renderer = new RetornRenderer();
@@ -48,6 +52,7 @@ public class Retorn implements Application {
     @Override
     public void init(Window window) {
         loadDisplayState(state);
+        loadRenderState(state);
         renderer.init(window);
         gui.init(window, state);
 
@@ -83,6 +88,7 @@ public class Retorn implements Application {
     @Override
     public void terminate() {
         saveDisplayState(state);
+        saveRenderState(state);
         for (Model model : models) {
             model.delete();
         }
@@ -92,7 +98,10 @@ public class Retorn implements Application {
 
     @Override
     public void update(Window window) {
+        Resolution renderResolution = state.getRenderState().getRenderResolution();
+
         inputHandler.handle(window, state);
+        imageRenderer.setResolution(renderResolution.getWidth(), renderResolution.getHeight());
         imageRenderer.update(state.getRenderState(), models);
         gui.update(window, state);
     }
@@ -105,7 +114,7 @@ public class Retorn implements Application {
 
     public void loadDisplayState(ApplicationState state) {
         try {
-            StateUtils.loadState(state, DisplayState.class, new File("display_parameters.json"));
+            StateUtils.loadState(state, DisplayState.class, new File(DISPLAY_STATE_PATH));
         } catch (IOException | JsonSyntaxException e) {
             Main.logger.error("Error loading display state");
         }
@@ -113,9 +122,36 @@ public class Retorn implements Application {
 
     public void saveDisplayState(ApplicationState state) {
         try {
-            StateUtils.saveState(state.getDisplayState(), new File("display_parameters.json"));
+            StateUtils.saveState(state.getDisplayState(), new File(DISPLAY_STATE_PATH));
         } catch (IOException | JsonIOException e) {
             Main.logger.error("Error saving display state");
+        }
+    }
+
+    public void loadRenderState(ApplicationState state) {
+        try {
+            StateUtils.loadState(state, RenderState.class, new File(RENDER_STATE_PATH));
+
+            // Reset everything but render resolution
+            RenderState renderState = state.getRenderState();
+            Resolution renderResolution = renderState.getRenderResolution();
+            int renderWidth = renderResolution.getWidth();
+            int renderHeight = renderResolution.getHeight();
+            boolean customResolution = renderState.isCustomResolution();
+
+            renderState.reset();
+            renderState.setRenderResolution(renderWidth, renderHeight);
+            renderState.setCustomResolution(customResolution);
+        } catch (IOException | JsonSyntaxException e) {
+            Main.logger.error("Error loading render state");
+        }
+    }
+
+    public void saveRenderState(ApplicationState state) {
+        try {
+            StateUtils.saveState(state.getRenderState(), new File(RENDER_STATE_PATH));
+        } catch (IOException | JsonIOException e) {
+            Main.logger.error("Error saving render state");
         }
     }
 }

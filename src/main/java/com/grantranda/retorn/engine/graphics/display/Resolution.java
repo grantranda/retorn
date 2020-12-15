@@ -67,6 +67,6 @@ public class Resolution implements Comparable<Resolution> {
 
     @Override
     public String toString() {
-        return width + "x" + height;
+        return width + " x " + height;
     }
 }
