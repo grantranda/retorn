@@ -46,7 +46,7 @@ public class ResolutionSelection extends VBox {
                 setFieldsDisabled(true);
 
                 int xIndex = value.indexOf('x');
-                resolutionFromSelection.set(Integer.parseInt(value.substring(0, xIndex)), Integer.parseInt(value.substring(xIndex + 1)));
+                resolutionFromSelection.set(Integer.parseInt(value.substring(0, xIndex - 1)), Integer.parseInt(value.substring(xIndex + 2)));
             }
         });
 
