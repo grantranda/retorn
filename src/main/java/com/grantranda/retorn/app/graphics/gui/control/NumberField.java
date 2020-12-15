@@ -40,11 +40,12 @@ public abstract class NumberField<T extends Number & Comparable<T>> extends Text
         return number;
     }
 
-    public void setNumber(T number) {
-        if (number.compareTo(getMin()) < 0 || number.compareTo(getMax()) > 0) return;
+    public boolean setNumber(T number) {
+        if (number.compareTo(getMin()) < 0 || number.compareTo(getMax()) > 0) return false;
 
         this.number = number;
         setText(number.toString());
+        return true;
     }
 
     public T getMin() {
