@@ -10,6 +10,7 @@ public class RenderState implements State {
     private final Vector3d offset = new Vector3d();
     private int maxIterations = 100;
     private double scale = 1.0;
+    private boolean customResolution = false;
 
     // Palette class?
 
@@ -51,10 +52,20 @@ public class RenderState implements State {
         renderResolution.set(width, height);
     }
 
+    public boolean isCustomResolution() {
+        return customResolution;
+    }
+
+    public void setCustomResolution(boolean customResolution) {
+        this.customResolution = customResolution;
+    }
+
     @Override
     public void reset() {
         setMaxIterations(100);
         setScale(1.0);
         setOffset(0.0, 0.0, 0.0);
+        setRenderResolution(1280, 720);
+        setCustomResolution(false);
     }
 }
