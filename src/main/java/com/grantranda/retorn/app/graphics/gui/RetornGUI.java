@@ -66,6 +66,7 @@ public class RetornGUI implements GUI {
     private Parameter<NumberFieldd> xParam;
     private Parameter<NumberFieldd> yParam;
     private ResolutionSelection windowResolutionSelection;
+    private ResolutionSelection renderResolutionSelection;
     private CheckBox fullscreenParam;
     private CheckBox vSyncParam;
     private ColorSelector colorSelector;
@@ -132,7 +133,7 @@ public class RetornGUI implements GUI {
         guiWindow.setWindowAutoClear(false);
         guiWindow.show();
 
-        initMenu(window, state.getDisplayState());
+        initMenu(window, state);
         initRoot(window);
         setEventHandlers(window, state);
 
@@ -178,7 +179,7 @@ public class RetornGUI implements GUI {
 
         // TODO: This condition might have unintended consequences
         if (window.isResized() && !fullscreenParam.isChecked()) {
-            updateResolutionParameters(window.getResolution(), true);
+            updateWindowResolutionParameters(window.getResolution(), true);
             updateDisplayState(state.getDisplayState(), window);
         }
     }
@@ -191,16 +192,24 @@ public class RetornGUI implements GUI {
     }
 
     public void updateDisplayParameters(DisplayState state) {
-        updateResolutionParameters(state.getWindowResolution(), state.isCustomResolution());
+        updateWindowResolutionParameters(state.getWindowResolution(), state.isCustomResolution());
         fullscreenParam.setChecked(state.isFullscreen());
         vSyncParam.setChecked(state.isVSync());
     }
 
-    public void updateResolutionParameters(Resolution resolution, boolean customResolution) {
+    public void updateRenderResolutionParameters(Resolution resolution, boolean customResolution) {
+        renderResolutionSelection.setResolution(resolution, customResolution);
+    }
+
+    public void updateWindowResolutionParameters(Resolution resolution, boolean customResolution) {
         windowResolutionSelection.setResolution(resolution, customResolution);
     }
 
     private void updateRenderState(RenderState state) {
+        Resolution renderResolution = renderResolutionSelection.getResolution();
+
+        state.setRenderResolution(renderResolution.getWidth(), renderResolution.getHeight());
+        state.setCustomResolution(renderResolutionSelection.isCustomResolution());
         state.setMaxIterations(maxIterationsParam.getControl().getNumber());
         state.setScale(scaleParam.getControl().getNumber());
         state.setOffset(xParam.getControl().getNumber(), yParam.getControl().getNumber(), 0.0f);
@@ -270,7 +279,10 @@ public class RetornGUI implements GUI {
         }
     }
 
-    private void initResolutionSelection(DisplayState displayState) {
+    private void initResolutionSelection(ApplicationState state) {
+        DisplayState displayState = state.getDisplayState();
+        RenderState renderState = state.getRenderState();
+
         Resolution monitorResolution = DisplayUtils.getMonitorResolution();
         TreeSet<Resolution> monitorResolutions = DisplayUtils.getMonitorResolutions();
         LinkedList<Resolution> windowResolutions = new LinkedList<>();
@@ -285,6 +297,9 @@ public class RetornGUI implements GUI {
 
         windowResolutionSelection = new ResolutionSelection(MENU_WIDTH, windowResolutions);
         windowResolutionSelection.setResolution(displayState.getWindowResolution(), displayState.isCustomResolution());
+
+        renderResolutionSelection = new ResolutionSelection(MENU_WIDTH, windowResolutions);
+        renderResolutionSelection.setResolution(renderState.getRenderResolution(), renderState.isCustomResolution());
     }
 
     private void initColorSelector(Window window) {
@@ -319,8 +334,8 @@ public class RetornGUI implements GUI {
 //        root.getChildren().add(dragPane1);
     }
 
-    private void initMenu(Window window, DisplayState displayState) {
-        initResolutionSelection(displayState);
+    private void initMenu(Window window, ApplicationState state) {
+        initResolutionSelection(state);
         initColorSelector(window);
 
         maxIterationsParam = new Parameter<>(MENU_WIDTH, "Max Iterations", new NumberFieldi(100, 0, 100000));
@@ -350,6 +365,7 @@ public class RetornGUI implements GUI {
         top.getChildren().add(scaleParam);
         top.getChildren().addAll(xParam, yParam);
         top.getChildren().add(windowResolutionSelection);
+        top.getChildren().add(renderResolutionSelection);
         top.getChildren().add(fullscreenParam);
         top.getChildren().add(vSyncParam);
         top.getChildren().add(applyButton);
@@ -386,6 +402,7 @@ public class RetornGUI implements GUI {
         showMenuButton.setOnAction(event -> showMenu());
         updateButton.setOnAction(event -> {
             applyRenderParameters();
+            updateRenderResolutionParameters(renderResolutionSelection.getResolution(), renderResolutionSelection.isCustomResolution());
             updateRenderState(renderState);
         });
         resetButton.setOnAction(event -> {
@@ -409,7 +426,7 @@ public class RetornGUI implements GUI {
         });
         applyButton.setOnAction(event -> {
             applyDisplayParameters(window);
-            updateResolutionParameters(window.getResolution(), windowResolutionSelection.isCustomResolution());
+            updateWindowResolutionParameters(windowResolutionSelection.getResolution(), windowResolutionSelection.isCustomResolution());
             updateDisplayState(displayState, window);
         });
         renderButton.setOnAction(event -> imageRenderer.render(window));
