@@ -10,6 +10,7 @@ import com.grantranda.retorn.app.state.DisplayState;
 import com.grantranda.retorn.app.state.RenderState;
 import com.grantranda.retorn.app.util.StateUtils;
 import com.grantranda.retorn.engine.Application;
+import com.grantranda.retorn.engine.graphics.Framebuffer;
 import com.grantranda.retorn.engine.graphics.ImageRenderer;
 import com.grantranda.retorn.engine.graphics.Model;
 import com.grantranda.retorn.engine.graphics.Texture;
@@ -30,9 +31,9 @@ public class Retorn implements Application {
 
     private final ApplicationState state = new ApplicationState();
     private final RetornRenderer renderer = new RetornRenderer();
-    private final ImageRenderer imageRenderer = new ImageRenderer(renderer, new Resolution(1280, 720), "test.png", "PNG");
-    private final RetornGUI gui = new RetornGUI(imageRenderer);
-    private final RetornInputHandler inputHandler = new RetornInputHandler(gui);
+    private ImageRenderer imageRenderer;
+    private RetornGUI gui;
+    private RetornInputHandler inputHandler;
 
     private Model[] models;
 
@@ -53,6 +54,13 @@ public class Retorn implements Application {
     public void init(Window window) {
         loadDisplayState(state);
         loadRenderState(state);
+
+        Resolution renderResolution = state.getRenderState().getRenderResolution();
+        Framebuffer framebuffer = new Framebuffer(renderResolution);
+        imageRenderer = new ImageRenderer(renderer, framebuffer, renderResolution, "test.png", "PNG");
+        gui = new RetornGUI(imageRenderer);
+        inputHandler = new RetornInputHandler(gui);
+
         renderer.init(window);
         gui.init(window, state);
 
@@ -93,16 +101,17 @@ public class Retorn implements Application {
             model.delete();
         }
         renderer.terminate();
+        imageRenderer.terminate();
         gui.terminate();
     }
 
     @Override
     public void update(Window window) {
-        Resolution renderResolution = state.getRenderState().getRenderResolution();
+        RenderState renderState = state.getRenderState();
 
         inputHandler.handle(window, state);
-        imageRenderer.setResolution(renderResolution.getWidth(), renderResolution.getHeight());
-        imageRenderer.update(state.getRenderState(), models);
+        imageRenderer.setResolution(renderState.getRenderResolution());
+        imageRenderer.update(renderState, models);
         gui.update(window, state);
     }
 

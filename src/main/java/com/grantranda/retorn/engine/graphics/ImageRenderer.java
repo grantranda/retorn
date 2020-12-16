@@ -10,10 +10,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 
-import static org.lwjgl.glfw.GLFW.glfwHideWindow;
-import static org.lwjgl.glfw.GLFW.glfwShowWindow;
 import static org.lwjgl.opengl.GL30.*;
 
 public class ImageRenderer {
@@ -23,20 +20,22 @@ public class ImageRenderer {
     private State state;
     private Model[] models;
 
+    // Framebuffer data
+    private Framebuffer framebuffer;
+    private int source; // The source color buffer
+
     // Image data
     private final Resolution resolution;
     private String path;
     private String format;
 
-    // The source color buffer
-    private int source;
-
-    public ImageRenderer(Renderer renderer, Resolution resolution, String path, String format) {
-        this(renderer, resolution, path, format, GL_COLOR_ATTACHMENT0);
+    public ImageRenderer(Renderer renderer, Framebuffer framebuffer, Resolution resolution, String path, String format) {
+        this(renderer, framebuffer, GL_COLOR_ATTACHMENT0, resolution, path, format);
     }
 
-    public ImageRenderer(Renderer renderer, Resolution resolution, String path, String format, int source) {
+    public ImageRenderer(Renderer renderer, Framebuffer framebuffer, int source, Resolution resolution, String path, String format) {
         this.renderer = renderer;
+        this.framebuffer = framebuffer;
         this.resolution = new Resolution(resolution.getWidth(), resolution.getHeight());
         this.path = path;
         this.format = format;
@@ -51,12 +50,31 @@ public class ImageRenderer {
         this.renderer = renderer;
     }
 
+    public Framebuffer getFramebuffer() {
+        return framebuffer;
+    }
+
+    public void setFramebuffer(Framebuffer framebuffer) {
+        this.framebuffer = framebuffer;
+    }
+
+    public int getSource() {
+        return source;
+    }
+
+    public void setSource(int source) {
+        this.source = source;
+    }
+
     public Resolution getResolution() {
         return resolution;
     }
 
-    public void setResolution(int width, int height) {
-        resolution.set(width, height);
+    public void setResolution(Resolution resolution) {
+        if (this.resolution.compareTo(resolution) != 0) {
+            this.resolution.set(resolution.getWidth(), resolution.getHeight());
+            framebuffer.resize(GL_COLOR_ATTACHMENT0, resolution);
+        }
     }
 
     public String getPath() {
@@ -75,35 +93,17 @@ public class ImageRenderer {
         this.format = format;
     }
 
-    public int getSource() {
-        return source;
-    }
-
-    public void setSource(int source) {
-        this.source = source;
-    }
-
     public void update(State state, Model[] models) {
         this.state = state;
         this.models = models;
     }
 
-    public void render(Window window) {
-        int windowWidth = window.getWidth();
-        int windowHeight = window.getHeight();
+    public void render() {
         int renderWidth = resolution.getWidth();
         int renderHeight = resolution.getHeight();
         int bytesPerPixel = 4;
 
-        // Get viewport position
-        IntBuffer viewportData = BufferUtils.createIntBuffer(4);
-        glGetIntegerv(GL_VIEWPORT, viewportData);
-        int viewportX = viewportData.get(0); // TODO: Not needed?
-        int viewportY = viewportData.get(1);
-
-        window.resize(renderWidth, renderHeight);
-        glfwHideWindow(window.getWindowID());
-        glViewport(0, 0, renderWidth, renderHeight);
+        framebuffer.bind();
         renderer.render(resolution, state, models);
 
         glReadBuffer(source);
@@ -130,8 +130,10 @@ public class ImageRenderer {
             e.printStackTrace();
         }
 
-        window.resize(windowWidth, windowHeight);
-        glViewport(viewportX, viewportY, windowWidth, windowHeight);
-        glfwShowWindow(window.getWindowID());
+        framebuffer.unbind();
+    }
+
+    public void terminate() {
+        framebuffer.delete();
     }
 }
