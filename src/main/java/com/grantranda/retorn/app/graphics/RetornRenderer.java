@@ -7,7 +7,6 @@ import com.grantranda.retorn.engine.graphics.display.Resolution;
 import com.grantranda.retorn.engine.math.Matrix4f;
 import com.grantranda.retorn.engine.graphics.display.Window;
 import com.grantranda.retorn.engine.graphics.Shader;
-import com.grantranda.retorn.engine.math.Vector3i;
 import com.grantranda.retorn.engine.state.State;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -36,14 +35,14 @@ public class RetornRenderer implements Renderer {
 
     }
 
-    public void render(Window window, State state, Model[] models) {
+    public void render(Resolution resolution, State state, Model[] models) {
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         glDisable(GL_CULL_FACE);
 
         RenderState renderState = (RenderState) state;
         Resolution renderResolution = renderState.getRenderResolution();
-        Vector3i viewportPos = updateViewport(window, renderState); // TODO: Remove variable
+        updateViewport(resolution, renderState);
 
         double pixelWidth = 3.5f / renderResolution.getWidth(); //(windowWidth - viewportPos.x * 2);
         double pixelHeight = 2.0f / renderResolution.getHeight(); //(windowHeight - viewportPos.y * 2);
@@ -55,7 +54,6 @@ public class RetornRenderer implements Renderer {
         shader.setUniform1i("max_iterations", renderState.getMaxIterations());
         shader.setUniform1d("scale", renderState.getScale());
         shader.setUniform2d("offset", translatedOffsetX, translatedOffsetY);
-        shader.setUniform2f("window_size", window.getWidth(), window.getHeight());
 
         for (Model model : models) {
             shader.setUniformMatrix4f("model_matrix", model.getModelMatrix());
@@ -65,25 +63,23 @@ public class RetornRenderer implements Renderer {
         shader.unbind();
     }
 
-    private Vector3i updateViewport(Window window, RenderState renderState) {
+    private void updateViewport(Resolution maxResolution, RenderState renderState) {
         Resolution renderResolution = renderState.getRenderResolution();
         double renderAspectRatio = renderResolution.getAspectRatio();
 
-        int windowWidth = window.getWidth();
-        int windowHeight = window.getHeight();
-        int viewportWidth = windowWidth;
+        int maxWidth = maxResolution.getWidth();
+        int maxHeight = maxResolution.getHeight();
+        int viewportWidth = maxWidth;
         int viewportHeight = (int) (viewportWidth / renderAspectRatio);
 
-        if (viewportHeight > windowHeight) {
-            viewportHeight = windowHeight;
+        if (viewportHeight > maxHeight) {
+            viewportHeight = maxHeight;
             viewportWidth = (int) (viewportHeight * renderAspectRatio);
         }
 
-        int viewportX = (windowWidth - viewportWidth) / 2;
-        int viewportY = (windowHeight - viewportHeight) / 2;
+        int viewportX = (maxWidth - viewportWidth) / 2;
+        int viewportY = (maxHeight - viewportHeight) / 2;
 
         glViewport(viewportX, viewportY, viewportWidth, viewportHeight);
-
-        return new Vector3i(viewportX, viewportY, 0);
     }
 }

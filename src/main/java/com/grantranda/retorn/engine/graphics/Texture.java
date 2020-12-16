@@ -1,5 +1,6 @@
 package com.grantranda.retorn.engine.graphics;
 
+import com.grantranda.retorn.engine.graphics.display.Resolution;
 import org.lwjgl.system.MemoryStack;
 
 import java.io.File;
@@ -15,7 +16,8 @@ public class Texture {
     private final int ID;
     private final int type;
     private final int pixelFormat;
-    private int width, height;
+    private final Resolution resolution = new Resolution();
+    private ByteBuffer pixels = null;
 
     public Texture(int type, int pixelFormat, int minMagFilter, int width, int height) {
         this(type, pixelFormat, minMagFilter, width, height, null);
@@ -24,8 +26,8 @@ public class Texture {
     public Texture(int type, int pixelFormat, int minMagFilter, int width, int height, ByteBuffer pixels) {
         this.type = type;
         this.pixelFormat = pixelFormat;
-        this.width = width;
-        this.height = height;
+        this.resolution.set(width, height);
+        this.pixels = pixels;
         this.ID = createTexture(pixels);
 
         initParameters(minMagFilter);
@@ -43,12 +45,8 @@ public class Texture {
         return ID;
     }
 
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
+    public Resolution getResolution() {
+        return resolution;
     }
 
     public int getType() {
@@ -57,6 +55,14 @@ public class Texture {
 
     public int getPixelFormat() {
         return pixelFormat;
+    }
+
+    public void resize(int width, int height) {
+        resolution.set(width, height);
+
+        bind();
+        allocateStorage(pixels);
+        unbind();
     }
 
     public void setTexParameteri(int name, int param) {
@@ -92,15 +98,18 @@ public class Texture {
         setTexParameteri(GL_TEXTURE_MAX_LEVEL, 0);
     }
 
+    private void allocateStorage(ByteBuffer pixels) {
+        if (type == GL_TEXTURE_1D) {
+            glTexImage1D(type, 0, pixelFormat, resolution.getWidth(), 0, pixelFormat, GL_UNSIGNED_BYTE, pixels);
+        } else {
+            glTexImage2D(type, 0, pixelFormat, resolution.getWidth(), resolution.getHeight(), 0, pixelFormat, GL_UNSIGNED_BYTE, pixels);
+        }
+    }
+
     private int createTexture(ByteBuffer pixels) {
         int id = glGenTextures();
         glBindTexture(type, id);
-
-        if (type == GL_TEXTURE_1D) {
-            glTexImage1D(type, 0, pixelFormat, width, 0, pixelFormat, GL_UNSIGNED_BYTE, pixels);
-        } else {
-            glTexImage2D(type, 0, pixelFormat, width, height, 0, pixelFormat, GL_UNSIGNED_BYTE, pixels);
-        }
+        allocateStorage(pixels);
         return id;
     }
 
@@ -118,9 +127,7 @@ public class Texture {
             if (buffer == null) {
                 throw new RuntimeException("Unable to load texture '" + path + "':\n" + stbi_failure_reason());
             }
-
-            width = x.get();
-            height = y.get();
+            resolution.set(x.get(), y.get());
         } catch (Exception e) {
             e.printStackTrace();
         }

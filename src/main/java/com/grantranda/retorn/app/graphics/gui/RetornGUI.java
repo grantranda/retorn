@@ -429,6 +429,6 @@ public class RetornGUI implements GUI {
             updateWindowResolutionParameters(windowResolutionSelection.getResolution(), windowResolutionSelection.isCustomResolution());
             updateDisplayState(displayState, window);
         });
-        renderButton.setOnAction(event -> imageRenderer.render(window));
+        renderButton.setOnAction(event -> imageRenderer.render());
     }
 }
