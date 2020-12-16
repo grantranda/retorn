@@ -104,7 +104,7 @@ public class ImageRenderer {
         window.resize(renderWidth, renderHeight);
         glfwHideWindow(window.getWindowID());
         glViewport(0, 0, renderWidth, renderHeight);
-        renderer.render(window, state, models);
+        renderer.render(resolution, state, models);
 
         glReadBuffer(source);
         ByteBuffer buffer = BufferUtils.createByteBuffer(resolution.getArea() * bytesPerPixel);
