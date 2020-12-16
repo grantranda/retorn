@@ -1,7 +1,6 @@
 package com.grantranda.retorn.engine.graphics;
 
 import com.grantranda.retorn.engine.graphics.display.Resolution;
-import com.grantranda.retorn.engine.graphics.display.Window;
 import com.grantranda.retorn.engine.state.State;
 import org.lwjgl.BufferUtils;
 
