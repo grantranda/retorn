@@ -57,6 +57,14 @@ public class Texture {
         return pixelFormat;
     }
 
+    public void resize(int width, int height) {
+        resolution.set(width, height);
+
+        bind();
+        allocateStorage(pixels);
+        unbind();
+    }
+
     public void setTexParameteri(int name, int param) {
         bind();
         glTexParameteri(type, name, param);
@@ -90,15 +98,18 @@ public class Texture {
         setTexParameteri(GL_TEXTURE_MAX_LEVEL, 0);
     }
 
+    private void allocateStorage(ByteBuffer pixels) {
+        if (type == GL_TEXTURE_1D) {
+            glTexImage1D(type, 0, pixelFormat, resolution.getWidth(), 0, pixelFormat, GL_UNSIGNED_BYTE, pixels);
+        } else {
+            glTexImage2D(type, 0, pixelFormat, resolution.getWidth(), resolution.getHeight(), 0, pixelFormat, GL_UNSIGNED_BYTE, pixels);
+        }
+    }
+
     private int createTexture(ByteBuffer pixels) {
         int id = glGenTextures();
         glBindTexture(type, id);
-
-        if (type == GL_TEXTURE_1D) {
-            glTexImage1D(type, 0, pixelFormat, width, 0, pixelFormat, GL_UNSIGNED_BYTE, pixels);
-        } else {
-            glTexImage2D(type, 0, pixelFormat, width, height, 0, pixelFormat, GL_UNSIGNED_BYTE, pixels);
-        }
+        allocateStorage(pixels);
         return id;
     }
 
