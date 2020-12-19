@@ -1,6 +1,7 @@
 package com.grantranda.retorn.engine.graphics;
 
 import com.grantranda.retorn.engine.graphics.display.Resolution;
+import com.grantranda.retorn.engine.graphics.display.Window;
 import com.grantranda.retorn.engine.state.State;
 import org.lwjgl.BufferUtils;
 
@@ -97,7 +98,7 @@ public class ImageRenderer {
         this.models = models;
     }
 
-    public void render() {
+    public void render(Window window) {
         int renderWidth = resolution.getWidth();
         int renderHeight = resolution.getHeight();
         int bytesPerPixel = 4;
