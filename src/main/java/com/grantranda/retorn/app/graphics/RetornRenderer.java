@@ -70,13 +70,20 @@ public class RetornRenderer implements Renderer {
         glDisable(GL_CULL_FACE);
 
         RenderState renderState = (RenderState) state;
-        Resolution renderResolution = renderState.getRenderResolution();
-        updateViewport(resolution, renderState);
 
-        double pixelWidth = 3.5f / renderResolution.getWidth(); //(windowWidth - viewportPos.x * 2);
-        double pixelHeight = 2.0f / renderResolution.getHeight(); //(windowHeight - viewportPos.y * 2);
-        double translatedOffsetX = renderState.getOffset().x * pixelWidth;
-        double translatedOffsetY = renderState.getOffset().y * pixelHeight;
+        // If true, then resize the viewport to fit within the window bounds and maintain the fractal aspect ratio.
+        // This is optional to allow for cases in which the viewport size should not be tied to window size, such as
+        // when rendering to an image.
+        if (updateViewport) {
+            updateViewport(window.getResolution(), fractalAspectRatio.x / fractalAspectRatio.y);
+            viewportPixelSize.set(
+                    fractalAspectRatio.x / viewportResolution.getWidth(),
+                    fractalAspectRatio.y / viewportResolution.getHeight()
+            );
+        }
+
+        double translatedOffsetX = renderState.getOffset().x * viewportPixelSize.x;
+        double translatedOffsetY = renderState.getOffset().y * viewportPixelSize.y;
 
         shader.bind();
 
