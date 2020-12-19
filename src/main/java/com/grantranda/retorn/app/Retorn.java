@@ -117,7 +117,7 @@ public class Retorn implements Application {
 
     @Override
     public void render(Window window) {
-        renderer.render(window.getResolution(), state.getRenderState(), models);
+        renderer.render(window, state.getRenderState(), models, true);
         gui.render(window);
     }
 

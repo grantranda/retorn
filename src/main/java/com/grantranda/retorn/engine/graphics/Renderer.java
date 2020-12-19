@@ -14,5 +14,5 @@ public interface Renderer {
 
     void terminate();
 
-    void render(Resolution resolution, State state, Model[] models);
+    void render(Window window, State state, Model[] models, boolean updateViewport);
 }

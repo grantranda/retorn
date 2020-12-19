@@ -51,11 +51,13 @@ public class RetornRenderer implements Renderer {
         shader.setUniform1i("palette_texture", 0);
     }
 
+    @Override
     public void terminate() {
 
     }
 
-    public void render(Resolution resolution, State state, Model[] models) {
+    @Override
+    public void render(Window window, State state, Model[] models, boolean updateViewport) {
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         glDisable(GL_CULL_FACE);
