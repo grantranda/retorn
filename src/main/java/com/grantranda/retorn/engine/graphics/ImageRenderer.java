@@ -1,6 +1,7 @@
 package com.grantranda.retorn.engine.graphics;
 
 import com.grantranda.retorn.engine.graphics.display.Resolution;
+import com.grantranda.retorn.engine.graphics.display.Window;
 import com.grantranda.retorn.engine.state.State;
 import org.lwjgl.BufferUtils;
 
@@ -97,17 +98,23 @@ public class ImageRenderer {
         this.models = models;
     }
 
-    public void render() {
+    public void render(Window window) {
         int renderWidth = resolution.getWidth();
         int renderHeight = resolution.getHeight();
         int bytesPerPixel = 4;
 
         framebuffer.bind();
-        renderer.render(resolution, state, models);
+
+        Resolution viewportResolution = renderer.getViewportResolution();
+        int originalViewportWidth = viewportResolution.getWidth();
+        int originalViewportHeight = viewportResolution.getHeight();
+
+        renderer.setViewport(0, 0, renderWidth, renderHeight);
+        renderer.render(window, state, models, false);
+        renderer.setViewport(0, 0, originalViewportWidth, originalViewportHeight);
 
         glReadBuffer(source);
         ByteBuffer buffer = BufferUtils.createByteBuffer(resolution.getArea() * bytesPerPixel);
-
         glReadPixels(0, 0, renderWidth, renderHeight, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
 
         File file = new File(path);
