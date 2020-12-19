@@ -92,18 +92,15 @@ public class RetornRenderer implements Renderer {
         shader.unbind();
     }
 
-    private void updateViewport(Resolution maxResolution, RenderState renderState) {
-        Resolution renderResolution = renderState.getRenderResolution();
-        double renderAspectRatio = renderResolution.getAspectRatio();
-
+    private void updateViewport(Resolution maxResolution, double targetAspectRatio) {
         int maxWidth = maxResolution.getWidth();
         int maxHeight = maxResolution.getHeight();
         int viewportWidth = maxWidth;
-        int viewportHeight = (int) (viewportWidth / renderAspectRatio);
+        int viewportHeight = (int) (viewportWidth / targetAspectRatio);
 
         if (viewportHeight > maxHeight) {
             viewportHeight = maxHeight;
-            viewportWidth = (int) (viewportHeight * renderAspectRatio);
+            viewportWidth = (int) (viewportHeight * targetAspectRatio);
         }
 
         int viewportX = (maxWidth - viewportWidth) / 2;
