@@ -7,6 +7,7 @@ import com.grantranda.retorn.engine.graphics.display.Resolution;
 import com.grantranda.retorn.engine.math.Matrix4f;
 import com.grantranda.retorn.engine.graphics.display.Window;
 import com.grantranda.retorn.engine.graphics.Shader;
+import com.grantranda.retorn.engine.math.Vector2d;
 import com.grantranda.retorn.engine.state.State;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -14,6 +15,10 @@ import static org.lwjgl.opengl.GL11.*;
 public class RetornRenderer implements Renderer {
 
     private Shader shader;
+
+    private final Resolution viewportResolution = new Resolution();
+    private final Vector2d viewportPixelSize = new Vector2d();
+    private final Vector2d fractalAspectRatio = new Vector2d();
 
     public RetornRenderer() {
 
@@ -45,6 +50,8 @@ public class RetornRenderer implements Renderer {
     @Override
     public void init() {
         Matrix4f projection_matrix = Matrix4f.orthographic(-2.5f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f);
+
+        setFractalAspectRatio(3.5, 2.0); // TODO: Remove
 
         shader = new Shader("shaders/vertex.vert", "shaders/fragment.frag");
         shader.setUniformMatrix4f("projection_matrix", projection_matrix);
@@ -102,6 +109,6 @@ public class RetornRenderer implements Renderer {
         int viewportX = (maxWidth - viewportWidth) / 2;
         int viewportY = (maxHeight - viewportHeight) / 2;
 
-        glViewport(viewportX, viewportY, viewportWidth, viewportHeight);
+        setViewport(viewportX, viewportY, viewportWidth, viewportHeight);
     }
 }
