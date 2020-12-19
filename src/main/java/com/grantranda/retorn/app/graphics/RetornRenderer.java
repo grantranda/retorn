@@ -23,7 +23,27 @@ public class RetornRenderer implements Renderer {
         return shader;
     }
 
-    public void init(Window window) {
+    public Vector2d getFractalAspectRatio() {
+        return fractalAspectRatio;
+    }
+
+    public void setFractalAspectRatio(double aspectWidth, double aspectHeight) {
+        this.fractalAspectRatio.set(aspectWidth, aspectHeight);
+    }
+
+    @Override
+    public Resolution getViewportResolution() {
+        return viewportResolution;
+    }
+
+    @Override
+    public void setViewport(int x, int y, int width, int height) {
+        glViewport(x, y, width, height);
+        viewportResolution.set(width, height);
+    }
+
+    @Override
+    public void init() {
         Matrix4f projection_matrix = Matrix4f.orthographic(-2.5f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f);
 
         shader = new Shader("shaders/vertex.vert", "shaders/fragment.frag");
