@@ -60,6 +60,11 @@ public class Shader {
         glUniform1i(glGetUniformLocation(PROGRAM_ID, name), x);
     }
 
+    public void setUniform2i(String name, int x, int y) {
+        bind();
+        glUniform2i(glGetUniformLocation(PROGRAM_ID, name), x, y);
+    }
+
     private int create(String vertexPath, String fragmentPath) {
         String vertexSource = FileUtils.fileToString(vertexPath);
         String fragmentSource = FileUtils.fileToString(fragmentPath);
