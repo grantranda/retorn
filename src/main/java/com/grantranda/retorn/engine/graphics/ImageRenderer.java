@@ -104,11 +104,17 @@ public class ImageRenderer {
         int bytesPerPixel = 4;
 
         framebuffer.bind();
-        renderer.render(resolution, state, models);
+
+        Resolution viewportResolution = renderer.getViewportResolution();
+        int originalViewportWidth = viewportResolution.getWidth();
+        int originalViewportHeight = viewportResolution.getHeight();
+
+        renderer.setViewport(0, 0, renderWidth, renderHeight);
+        renderer.render(window, state, models, false);
+        renderer.setViewport(0, 0, originalViewportWidth, originalViewportHeight);
 
         glReadBuffer(source);
         ByteBuffer buffer = BufferUtils.createByteBuffer(resolution.getArea() * bytesPerPixel);
-
         glReadPixels(0, 0, renderWidth, renderHeight, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
 
         File file = new File(path);
