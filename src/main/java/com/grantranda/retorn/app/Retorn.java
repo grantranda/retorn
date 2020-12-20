@@ -26,8 +26,11 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class Retorn implements Application {
 
+    public static final String VERTEX_SHADER_PATH = "shaders/vertex.vert";
+    public static final String FRAGMENT_SHADER_PATH = "shaders/fragment.frag";
     public static final String DISPLAY_STATE_PATH = "display_parameters.json";
     public static final String RENDER_STATE_PATH = "render_parameters.json";
+    public static final String SAVE_PARAMETERS_PATH = "retorn_parameters.json";
 
     private final ApplicationState state = new ApplicationState();
     private final RetornRenderer renderer = new RetornRenderer();
@@ -61,7 +64,7 @@ public class Retorn implements Application {
         gui = new RetornGUI(imageRenderer);
         inputHandler = new RetornInputHandler(gui);
 
-        renderer.init();
+        renderer.init(VERTEX_SHADER_PATH, FRAGMENT_SHADER_PATH);
         gui.init(window, state);
 
         // Vertices of mesh corners

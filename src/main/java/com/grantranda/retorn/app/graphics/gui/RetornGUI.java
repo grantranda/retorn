@@ -2,6 +2,7 @@ package com.grantranda.retorn.app.graphics.gui;
 
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
+import com.grantranda.retorn.app.Retorn;
 import com.grantranda.retorn.app.graphics.gui.control.ColorSelector;
 import com.grantranda.retorn.app.graphics.gui.control.NumberFieldd;
 import com.grantranda.retorn.app.graphics.gui.control.NumberFieldi;
@@ -411,7 +412,7 @@ public class RetornGUI implements GUI {
         });
         saveButton.setOnAction(event -> {
             try {
-                StateUtils.saveStateDialog(renderState, "retorn_parameters.json", "Save Parameters");
+                StateUtils.saveStateDialog(renderState, Retorn.SAVE_PARAMETERS_PATH, "Save Parameters");
             } catch (IOException | JsonIOException e) {
                 LWJGUIDialog.showMessageDialog("Error", "Error saving parameters.", DialogIcon.ERROR);
             }
