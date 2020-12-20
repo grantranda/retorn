@@ -12,7 +12,7 @@ public interface Renderer {
 
     void setViewport(int x, int y, int width, int height);
 
-    void init();
+    void init(String vertexShaderPath, String fragmentShaderPath);
 
     void terminate();
 

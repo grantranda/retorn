@@ -49,12 +49,12 @@ public class RetornRenderer implements Renderer {
     }
 
     @Override
-    public void init() {
+    public void init(String vertexShaderPath, String fragmentShaderPath) {
         Matrix4f projection_matrix = Matrix4f.orthographic(-2.5f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f);
 
         setFractalAspectRatio(3.5, 2.0); // TODO: Remove
 
-        shader = new Shader("shaders/vertex.vert", "shaders/fragment.frag");
+        shader = new Shader(vertexShaderPath, fragmentShaderPath);
         shader.setUniformMatrix4f("projection_matrix", projection_matrix);
         shader.setUniform1i("palette_texture", 0);
     }
