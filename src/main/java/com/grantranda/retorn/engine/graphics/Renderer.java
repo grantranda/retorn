@@ -6,6 +6,8 @@ import com.grantranda.retorn.engine.state.State;
 
 public interface Renderer {
 
+    Shader getShader();
+
     Resolution getViewportResolution();
 
     void setViewport(int x, int y, int width, int height);

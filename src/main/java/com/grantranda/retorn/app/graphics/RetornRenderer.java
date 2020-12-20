@@ -24,16 +24,17 @@ public class RetornRenderer implements Renderer {
 
     }
 
-    public Shader getShader() {
-        return shader;
-    }
-
     public Vector2d getFractalAspectRatio() {
         return fractalAspectRatio;
     }
 
     public void setFractalAspectRatio(double aspectWidth, double aspectHeight) {
         this.fractalAspectRatio.set(aspectWidth, aspectHeight);
+    }
+
+    @Override
+    public Shader getShader() {
+        return shader;
     }
 
     @Override
