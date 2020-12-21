@@ -206,9 +206,9 @@ public class RetornGUI implements GUI {
         scaleParam.getControl().setNumber(state.getScale());
 
         if (state.isFractalAspectRatioMaintained()) {
-            selectAspectRatioToggle(fractalAspectRatioToggle, fractalResolutions);
+            selectAspectRatioToggle(fractalAspectRatioToggle, fractalResolutions, state.isCustomResolution());
         } else {
-            selectAspectRatioToggle(monitorAspectRatioToggle, windowResolutions);
+            selectAspectRatioToggle(monitorAspectRatioToggle, windowResolutions, state.isCustomResolution());
         }
     }
 
@@ -336,10 +336,10 @@ public class RetornGUI implements GUI {
         scaleParam.getControl().setNumber(state.getScale());
     }
 
-    private void selectAspectRatioToggle(RadioButton aspectRatioToggle, LinkedList<Resolution> renderResolutions) {
+    private void selectAspectRatioToggle(RadioButton aspectRatioToggle, LinkedList<Resolution> renderResolutions, boolean customResolution) {
         if (!aspectRatioToggle.isSelected()) {
             aspectRatioToggle.setSelected(true);
-            renderResolutionSelection.setResolutions(renderResolutions, renderResolutionSelection.getResolutionFromFields(), true);
+            renderResolutionSelection.setResolutions(renderResolutions, renderResolutionSelection.getResolutionFromFields(), customResolution);
         }
     }
 
@@ -488,7 +488,7 @@ public class RetornGUI implements GUI {
             updateDisplayState(displayState, window);
         });
         renderButton.setOnAction(event -> imageRenderer.render(window));
-        monitorAspectRatioToggle.setOnAction(event -> selectAspectRatioToggle(monitorAspectRatioToggle, windowResolutions));
-        fractalAspectRatioToggle.setOnAction(event -> selectAspectRatioToggle(fractalAspectRatioToggle, fractalResolutions));
+        monitorAspectRatioToggle.setOnAction(event -> selectAspectRatioToggle(monitorAspectRatioToggle, windowResolutions, true));
+        fractalAspectRatioToggle.setOnAction(event -> selectAspectRatioToggle(fractalAspectRatioToggle, fractalResolutions, true));
     }
 }
