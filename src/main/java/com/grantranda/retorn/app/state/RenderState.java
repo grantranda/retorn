@@ -17,6 +17,7 @@ public class RenderState implements State {
     private int maxIterations = DEFAULT_MAX_ITERATIONS;
     private double scale = DEFAULT_SCALE;
     private boolean customResolution = false;
+    private boolean fractalAspectRatioMaintained = true;
 
     // Palette class?
 
@@ -66,6 +67,14 @@ public class RenderState implements State {
         this.customResolution = customResolution;
     }
 
+    public boolean isFractalAspectRatioMaintained() {
+        return fractalAspectRatioMaintained;
+    }
+
+    public void setFractalAspectRatioMaintained(boolean fractalAspectRatioMaintained) {
+        this.fractalAspectRatioMaintained = fractalAspectRatioMaintained;
+    }
+
     @Override
     public void reset() {
         setMaxIterations(DEFAULT_MAX_ITERATIONS);
@@ -73,5 +82,6 @@ public class RenderState implements State {
         setOffset(DEFAULT_OFFSET, DEFAULT_OFFSET, DEFAULT_OFFSET);
         setRenderResolution(DEFAULT_WIDTH, DEFAULT_HEIGHT);
         setCustomResolution(false);
+        setFractalAspectRatioMaintained(true);
     }
 }

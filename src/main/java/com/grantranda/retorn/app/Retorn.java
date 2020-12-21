@@ -150,10 +150,12 @@ public class Retorn implements Application {
             int renderWidth = renderResolution.getWidth();
             int renderHeight = renderResolution.getHeight();
             boolean customResolution = renderState.isCustomResolution();
+            boolean fractalAspectRatioMaintained = renderState.isFractalAspectRatioMaintained();
 
             renderState.reset();
             renderState.setRenderResolution(renderWidth, renderHeight);
             renderState.setCustomResolution(customResolution);
+            renderState.setFractalAspectRatioMaintained(fractalAspectRatioMaintained);
         } catch (IOException | JsonSyntaxException e) {
             Main.logger.error("Error loading render state");
         }
