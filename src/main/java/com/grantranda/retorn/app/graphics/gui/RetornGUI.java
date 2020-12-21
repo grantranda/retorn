@@ -3,6 +3,7 @@ package com.grantranda.retorn.app.graphics.gui;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.grantranda.retorn.app.Retorn;
+import com.grantranda.retorn.app.graphics.RetornRenderer;
 import com.grantranda.retorn.app.graphics.gui.control.ColorSelector;
 import com.grantranda.retorn.app.graphics.gui.control.NumberFieldd;
 import com.grantranda.retorn.app.graphics.gui.control.NumberFieldi;
@@ -49,6 +50,7 @@ public class RetornGUI implements GUI {
     private boolean menuShown = true;
 
     private lwjgui.scene.Window guiWindow;
+    private RetornRenderer retornRenderer;
     private ImageRenderer imageRenderer;
 
     private BorderPane root;
@@ -73,7 +75,11 @@ public class RetornGUI implements GUI {
     private ColorSelector colorSelector;
     private Label fpsDisplay;
 
-    public RetornGUI(ImageRenderer imageRenderer) {
+    private LinkedList<Resolution> windowResolutions = new LinkedList<>();
+    private LinkedList<Resolution> fractalResolutions = new LinkedList<>();
+
+    public RetornGUI(RetornRenderer retornRenderer, ImageRenderer imageRenderer) {
+        this.retornRenderer = retornRenderer;
         this.imageRenderer = imageRenderer;
     }
 
