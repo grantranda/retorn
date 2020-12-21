@@ -1,6 +1,7 @@
 package com.grantranda.retorn.engine.util;
 
 import com.grantranda.retorn.engine.graphics.display.Resolution;
+import com.grantranda.retorn.engine.math.Fraction;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.glfw.GLFWVidMode.Buffer;
 
@@ -32,5 +33,10 @@ public class DisplayUtils {
         }
 
         return resolutions;
+    }
+
+    public static Fraction getMonitorAspectRatio() {
+        Resolution monitorResolution = getMonitorResolution();
+        return new Fraction(monitorResolution.getWidth(), monitorResolution.getHeight()).simplify();
     }
 }

@@ -61,7 +61,7 @@ public class Retorn implements Application {
         Resolution renderResolution = state.getRenderState().getRenderResolution();
         Framebuffer framebuffer = new Framebuffer(renderResolution);
         imageRenderer = new ImageRenderer(renderer, framebuffer, renderResolution, "test.png", "PNG");
-        gui = new RetornGUI(imageRenderer);
+        gui = new RetornGUI(renderer, imageRenderer);
         inputHandler = new RetornInputHandler(gui);
 
         renderer.init(VERTEX_SHADER_PATH, FRAGMENT_SHADER_PATH);
@@ -150,10 +150,12 @@ public class Retorn implements Application {
             int renderWidth = renderResolution.getWidth();
             int renderHeight = renderResolution.getHeight();
             boolean customResolution = renderState.isCustomResolution();
+            boolean fractalAspectRatioMaintained = renderState.isFractalAspectRatioMaintained();
 
             renderState.reset();
             renderState.setRenderResolution(renderWidth, renderHeight);
             renderState.setCustomResolution(customResolution);
+            renderState.setFractalAspectRatioMaintained(fractalAspectRatioMaintained);
         } catch (IOException | JsonSyntaxException e) {
             Main.logger.error("Error loading render state");
         }

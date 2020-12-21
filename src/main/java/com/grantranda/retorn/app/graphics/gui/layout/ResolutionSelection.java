@@ -104,6 +104,11 @@ public class ResolutionSelection extends VBox {
         resolutionComboBox.getItems().add(CUSTOM_OPTION);
     }
 
+    public void setResolutions(Collection<Resolution> resolutions, Resolution selectedResolution, boolean customResolution) {
+        setResolutions(resolutions);
+        setResolution(selectedResolution, customResolution);
+    }
+
     public Resolution getResolution() {
         Resolution resolution;
 

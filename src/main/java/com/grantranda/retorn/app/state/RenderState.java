@@ -6,11 +6,18 @@ import com.grantranda.retorn.engine.state.State;
 
 public class RenderState implements State {
 
-    private final Resolution renderResolution = new Resolution(1280, 720);
-    private final Vector3d offset = new Vector3d();
-    private int maxIterations = 100;
-    private double scale = 1.0;
+    public static final int DEFAULT_WIDTH = 1280;
+    public static final int DEFAULT_HEIGHT = 720;
+    public static final int DEFAULT_MAX_ITERATIONS = 100;
+    public static final double DEFAULT_OFFSET = 0.0;
+    public static final double DEFAULT_SCALE = 1.0;
+
+    private final Resolution renderResolution = new Resolution(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+    private final Vector3d offset = new Vector3d(DEFAULT_OFFSET, DEFAULT_OFFSET, DEFAULT_OFFSET);
+    private int maxIterations = DEFAULT_MAX_ITERATIONS;
+    private double scale = DEFAULT_SCALE;
     private boolean customResolution = false;
+    private boolean fractalAspectRatioMaintained = true;
 
     // Palette class?
 
@@ -60,12 +67,21 @@ public class RenderState implements State {
         this.customResolution = customResolution;
     }
 
+    public boolean isFractalAspectRatioMaintained() {
+        return fractalAspectRatioMaintained;
+    }
+
+    public void setFractalAspectRatioMaintained(boolean fractalAspectRatioMaintained) {
+        this.fractalAspectRatioMaintained = fractalAspectRatioMaintained;
+    }
+
     @Override
     public void reset() {
-        setMaxIterations(100);
-        setScale(1.0);
-        setOffset(0.0, 0.0, 0.0);
-        setRenderResolution(1280, 720);
+        setMaxIterations(DEFAULT_MAX_ITERATIONS);
+        setScale(DEFAULT_SCALE);
+        setOffset(DEFAULT_OFFSET, DEFAULT_OFFSET, DEFAULT_OFFSET);
+        setRenderResolution(DEFAULT_WIDTH, DEFAULT_HEIGHT);
         setCustomResolution(false);
+        setFractalAspectRatioMaintained(true);
     }
 }
