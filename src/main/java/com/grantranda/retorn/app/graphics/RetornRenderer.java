@@ -4,6 +4,7 @@ import com.grantranda.retorn.app.state.RenderState;
 import com.grantranda.retorn.engine.graphics.Model;
 import com.grantranda.retorn.engine.graphics.Renderer;
 import com.grantranda.retorn.engine.graphics.display.Resolution;
+import com.grantranda.retorn.engine.math.Fraction;
 import com.grantranda.retorn.engine.math.Matrix4f;
 import com.grantranda.retorn.engine.graphics.display.Window;
 import com.grantranda.retorn.engine.graphics.Shader;
@@ -18,17 +19,17 @@ public class RetornRenderer implements Renderer {
 
     private final Resolution viewportResolution = new Resolution();
     private final Vector2d viewportPixelSize = new Vector2d();
-    private final Vector2d fractalAspectRatio = new Vector2d();
+    private final Fraction fractalAspectRatio = new Fraction();
 
     public RetornRenderer() {
 
     }
 
-    public Vector2d getFractalAspectRatio() {
+    public Fraction getFractalAspectRatio() {
         return fractalAspectRatio;
     }
 
-    public void setFractalAspectRatio(double aspectWidth, double aspectHeight) {
+    public void setFractalAspectRatio(int aspectWidth, int aspectHeight) {
         this.fractalAspectRatio.set(aspectWidth, aspectHeight);
     }
 
@@ -52,7 +53,7 @@ public class RetornRenderer implements Renderer {
     public void init(String vertexShaderPath, String fragmentShaderPath) {
         Matrix4f projection_matrix = Matrix4f.orthographic(-2.5f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f);
 
-        setFractalAspectRatio(3.5, 2.0); // TODO: Remove
+        setFractalAspectRatio(7, 4); // TODO: Remove
 
         shader = new Shader(vertexShaderPath, fragmentShaderPath);
         shader.setUniformMatrix4f("projection_matrix", projection_matrix);
@@ -76,10 +77,12 @@ public class RetornRenderer implements Renderer {
         // This is optional to allow for cases in which the viewport size should not be tied to window size, such as
         // when rendering to an image.
         if (updateViewport) {
-            updateViewport(window.getResolution(), fractalAspectRatio.x / fractalAspectRatio.y);
+            updateViewport(window.getResolution(), fractalAspectRatio.getRatio());
+
+            // TODO: Potentially remove division by 2.0 and find alternate solution
             viewportPixelSize.set(
-                    fractalAspectRatio.x / viewportResolution.getWidth(),
-                    fractalAspectRatio.y / viewportResolution.getHeight()
+                    (fractalAspectRatio.getNumerator() / 2.0) / viewportResolution.getWidth(),
+                    (fractalAspectRatio.getDenominator() / 2.0) / viewportResolution.getHeight()
             );
         }
 
