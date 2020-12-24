@@ -8,7 +8,6 @@ uniform double scale;
 uniform dvec2 offset;
 uniform sampler1D palette_texture;
 
-// Function declarations
 vec4 mandelbrot(int max_iterations);
 int calc_mandelbrot_iterations(int max_iterations);
 
@@ -28,8 +27,6 @@ vec4 mandelbrot(int max_iterations) {
 }
 
 int calc_mandelbrot_iterations(int max_iterations) {
-    // TODO: Render fractal at separate resolution than window
-    // TODO: Draw outline around render area
     int iterations = 0;
     double x0 = pos.x * scale + offset.x;
     double y0 = pos.y * scale + offset.y;
