@@ -2,12 +2,9 @@ package com.grantranda.retorn.app.graphics;
 
 import com.grantranda.retorn.app.state.RenderState;
 import com.grantranda.retorn.engine.graphics.Model;
-import com.grantranda.retorn.engine.graphics.Renderer;
-import com.grantranda.retorn.engine.graphics.display.Resolution;
-import com.grantranda.retorn.engine.math.Fraction;
-import com.grantranda.retorn.engine.math.Matrix4f;
-import com.grantranda.retorn.engine.graphics.display.Window;
 import com.grantranda.retorn.engine.graphics.Shader;
+import com.grantranda.retorn.engine.math.Fraction;
+import com.grantranda.retorn.engine.graphics.display.Window;
 import com.grantranda.retorn.engine.math.Vector2d;
 import com.grantranda.retorn.engine.state.State;
 
@@ -61,10 +58,7 @@ public class RetornRenderer extends AbstractRenderer {
         mandelbrotRenderer.init();
         juliaRenderer.init();
         setFractalAspectRatio(7, 4); // TODO: Remove
-
-        shader = new Shader(vertexShaderPath, fragmentShaderPath);
-        shader.setUniformMatrix4f("projection_matrix", projection_matrix);
-        shader.setUniform1i("palette_texture", 0);
+        useMandelbrotRenderer(); // TODO
     }
 
     @Override
@@ -87,8 +81,8 @@ public class RetornRenderer extends AbstractRenderer {
 
             // TODO: Potentially remove division by 2.0 and find alternate solution
             viewportPixelSize.set(
-                    (fractalAspectRatio.getNumerator() / 2.0) / viewportResolution.getWidth(),
-                    (fractalAspectRatio.getDenominator() / 2.0) / viewportResolution.getHeight()
+                    (fractalAspectRatio.getNumerator() / 2.0) / VIEWPORT_RESOLUTION.getWidth(),
+                    (fractalAspectRatio.getDenominator() / 2.0) / VIEWPORT_RESOLUTION.getHeight()
             );
         }
 
