@@ -13,7 +13,7 @@ import com.grantranda.retorn.engine.state.State;
 
 import static org.lwjgl.opengl.GL11.*;
 
-public class RetornRenderer implements Renderer {
+public class RetornRenderer extends AbstractRenderer {
 
     public static final String MANDELBROT_VERTEX_PATH = "shaders/mandelbrot.vert";
     public static final String MANDELBROT_FRAGMENT_PATH = "shaders/mandelbrot.frag";
@@ -25,7 +25,7 @@ public class RetornRenderer implements Renderer {
     private final Fraction fractalAspectRatio = new Fraction();
 
     public RetornRenderer() {
-
+        super();
     }
 
     public Fraction getFractalAspectRatio() {
