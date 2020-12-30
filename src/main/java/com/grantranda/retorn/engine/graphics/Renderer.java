@@ -6,7 +6,7 @@ import com.grantranda.retorn.engine.state.State;
 
 public interface Renderer {
 
-    Shader getShader();
+    Shader getActiveShader();
 
     Resolution getViewportResolution();
 
