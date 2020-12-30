@@ -6,13 +6,13 @@ import com.grantranda.retorn.engine.state.State;
 
 public interface Renderer {
 
-    Shader getShader();
+    Shader getActiveShader();
 
     Resolution getViewportResolution();
 
     void setViewport(int x, int y, int width, int height);
 
-    void init(String vertexShaderPath, String fragmentShaderPath);
+    void init();
 
     void terminate();
 
