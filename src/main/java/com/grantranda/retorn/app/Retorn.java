@@ -26,10 +26,6 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class Retorn implements Application {
 
-    public static final String MANDELBROT_VERTEX_PATH = "shaders/mandelbrot.vert";
-    public static final String MANDELBROT_FRAGMENT_PATH = "shaders/mandelbrot.frag";
-    public static final String JULIA_VERTEX_PATH = "shaders/julia.vert";
-    public static final String JULIA_FRAGMENT_PATH = "shaders/julia.frag";
     public static final String DISPLAY_STATE_PATH = "display_parameters.json";
     public static final String RENDER_STATE_PATH = "render_parameters.json";
     public static final String SAVE_PARAMETERS_PATH = "retorn_parameters.json";
@@ -66,7 +62,7 @@ public class Retorn implements Application {
         gui = new RetornGUI(renderer, imageRenderer);
         inputHandler = new RetornInputHandler(gui);
 
-        renderer.init(JULIA_VERTEX_PATH, JULIA_FRAGMENT_PATH);
+        renderer.init();
         gui.init(window, state);
 
         // Vertices of mesh corners

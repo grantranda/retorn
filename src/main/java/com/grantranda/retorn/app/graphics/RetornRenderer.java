@@ -15,7 +15,10 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class RetornRenderer implements Renderer {
 
-    private Shader shader;
+    public static final String MANDELBROT_VERTEX_PATH = "shaders/mandelbrot.vert";
+    public static final String MANDELBROT_FRAGMENT_PATH = "shaders/mandelbrot.frag";
+    public static final String JULIA_VERTEX_PATH = "shaders/julia.vert";
+    public static final String JULIA_FRAGMENT_PATH = "shaders/julia.frag";
 
     private final Resolution viewportResolution = new Resolution();
     private final Vector2d viewportPixelSize = new Vector2d();
