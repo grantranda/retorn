@@ -10,8 +10,8 @@ uniform double scale;
 uniform dvec2 offset;
 uniform sampler1D palette_texture;
 
-vec4 mandelbrot(int max_iterations);
-int calc_mandelbrot_iterations(int max_iterations);
+vec4 mandelbrot(int max_iterations, int escape_radius);
+int calc_mandelbrot_iterations(int max_iterations, int escape_radius);
 
 vec4 mandelbrot(int max_iterations, int escape_radius) {
     vec4 color;
