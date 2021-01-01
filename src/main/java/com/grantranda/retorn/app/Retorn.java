@@ -29,6 +29,8 @@ public class Retorn implements Application {
     public static final String DISPLAY_STATE_PATH = "display_parameters.json";
     public static final String RENDER_STATE_PATH = "render_parameters.json";
     public static final String SAVE_PARAMETERS_PATH = "retorn_parameters.json";
+    public static final String MANDELBROT_SET = "Mandelbrot Set";
+    public static final String JULIA_SET = "Julia Set";
 
     private final ApplicationState state = new ApplicationState();
     private final RetornRenderer renderer = new RetornRenderer();
@@ -142,9 +144,10 @@ public class Retorn implements Application {
         try {
             StateUtils.loadState(state, RenderState.class, new File(RENDER_STATE_PATH));
 
-            // Reset everything but render resolution
+            // Reset nonpersistent fields
             RenderState renderState = state.getRenderState();
             Resolution renderResolution = renderState.getRenderResolution();
+            String fractalAlgorithm = renderState.getFractalAlgorithm();
             int renderWidth = renderResolution.getWidth();
             int renderHeight = renderResolution.getHeight();
             boolean customResolution = renderState.isCustomResolution();
@@ -152,6 +155,7 @@ public class Retorn implements Application {
 
             renderState.reset();
             renderState.setRenderResolution(renderWidth, renderHeight);
+            renderState.setFractalAlgorithm(fractalAlgorithm);
             renderState.setCustomResolution(customResolution);
             renderState.setFractalAspectRatioMaintained(fractalAspectRatioMaintained);
         } catch (IOException | JsonSyntaxException e) {

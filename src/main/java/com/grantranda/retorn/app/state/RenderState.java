@@ -1,11 +1,13 @@
 package com.grantranda.retorn.app.state;
 
+import com.grantranda.retorn.app.Retorn;
 import com.grantranda.retorn.engine.graphics.display.Resolution;
 import com.grantranda.retorn.engine.math.Vector3d;
 import com.grantranda.retorn.engine.state.State;
 
 public class RenderState implements State {
 
+    public static final String DEFAULT_FRACTAL_ALGORITHM = Retorn.MANDELBROT_SET;
     public static final int DEFAULT_WIDTH = 1280;
     public static final int DEFAULT_HEIGHT = 720;
     public static final int DEFAULT_MAX_ITERATIONS = 100;
@@ -14,6 +16,7 @@ public class RenderState implements State {
 
     private final Resolution renderResolution = new Resolution(DEFAULT_WIDTH, DEFAULT_HEIGHT);
     private final Vector3d offset = new Vector3d(DEFAULT_OFFSET, DEFAULT_OFFSET, DEFAULT_OFFSET);
+    private String fractalAlgorithm = DEFAULT_FRACTAL_ALGORITHM;
     private int maxIterations = DEFAULT_MAX_ITERATIONS;
     private double scale = DEFAULT_SCALE;
     private boolean customResolution = false;
@@ -23,6 +26,14 @@ public class RenderState implements State {
 
     public RenderState() {
 
+    }
+
+    public String getFractalAlgorithm() {
+        return fractalAlgorithm;
+    }
+
+    public void setFractalAlgorithm(String fractalAlgorithm) {
+        this.fractalAlgorithm = fractalAlgorithm;
     }
 
     public int getMaxIterations() {
@@ -77,6 +88,7 @@ public class RenderState implements State {
 
     @Override
     public void reset() {
+        setFractalAlgorithm(DEFAULT_FRACTAL_ALGORITHM);
         setMaxIterations(DEFAULT_MAX_ITERATIONS);
         setScale(DEFAULT_SCALE);
         setOffset(DEFAULT_OFFSET, DEFAULT_OFFSET, DEFAULT_OFFSET);
