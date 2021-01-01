@@ -3,6 +3,7 @@ package com.grantranda.retorn.app.graphics.gui;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.grantranda.retorn.app.Retorn;
+import com.grantranda.retorn.app.graphics.AbstractFractalRenderer;
 import com.grantranda.retorn.app.graphics.RetornRenderer;
 import com.grantranda.retorn.app.graphics.gui.control.ColorSelector;
 import com.grantranda.retorn.app.graphics.gui.control.NumberFieldd;
@@ -23,6 +24,8 @@ import com.grantranda.retorn.engine.state.State;
 import com.grantranda.retorn.engine.util.DisplayUtils;
 import lwjgui.LWJGUIDialog;
 import lwjgui.LWJGUIDialog.DialogIcon;
+import lwjgui.event.ActionEvent;
+import lwjgui.event.EventHelper;
 import lwjgui.geometry.Insets;
 import lwjgui.geometry.Pos;
 import lwjgui.paint.Color;
@@ -33,7 +36,10 @@ import lwjgui.scene.layout.StackPane;
 import lwjgui.scene.layout.VBox;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeSet;
 
 import static org.lwjgl.nanovg.NanoVG.*;
@@ -49,9 +55,9 @@ public class RetornGUI implements GUI {
     private boolean mousePressed = false;
     private boolean menuShown = true;
 
+    private final RetornRenderer retornRenderer;
+    private final ImageRenderer imageRenderer;
     private lwjgui.scene.Window guiWindow;
-    private RetornRenderer retornRenderer;
-    private ImageRenderer imageRenderer;
 
     private BorderPane root;
     private BorderPane menu;
@@ -68,6 +74,7 @@ public class RetornGUI implements GUI {
     private Parameter<NumberFieldd> scaleParam;
     private Parameter<NumberFieldd> xParam;
     private Parameter<NumberFieldd> yParam;
+    private ComboBox<String> fractalAlgorithmSelection;
     private ResolutionSelection windowResolutionSelection;
     private ResolutionSelection renderResolutionSelection;
     private CheckBox fullscreenToggle;
@@ -79,8 +86,9 @@ public class RetornGUI implements GUI {
     private ColorSelector colorSelector;
     private Label fpsDisplay;
 
-    private LinkedList<Resolution> windowResolutions = new LinkedList<>();
-    private LinkedList<Resolution> fractalResolutions = new LinkedList<>();
+    private final Map<String, AbstractFractalRenderer> fractalRenderers = new HashMap<>();
+    private final LinkedList<Resolution> windowResolutions = new LinkedList<>();
+    private final LinkedList<Resolution> fractalResolutions = new LinkedList<>();
 
     public RetornGUI(RetornRenderer retornRenderer, ImageRenderer imageRenderer) {
         this.retornRenderer = retornRenderer;
@@ -144,6 +152,7 @@ public class RetornGUI implements GUI {
         guiWindow.setWindowAutoClear(false);
         guiWindow.show();
 
+        updateFractalAlgorithms();
         updateWindowResolutions();
         updateRenderResolutions();
 
@@ -153,15 +162,140 @@ public class RetornGUI implements GUI {
 
         guiWindow.getScene().setRoot(root);
 
-        updateRenderParameters(state.getRenderState());
         updateDisplayParameters(state.getDisplayState());
-        applyRenderParameters();
-        applyDisplayParameters(window);
+        updateRenderParameters(state.getRenderState());
+
+        EventHelper.fireEvent(applyButton.getOnAction(), new ActionEvent());
+        EventHelper.fireEvent(updateButton.getOnAction(), new ActionEvent());
     }
 
     private void initNvg(Window window) {
         nvgContext = nvgCreate(0); // TODO: Change flags?
         if (nvgContext == NULL) throw new RuntimeException("Failed to create a NanoVG context");
+    }
+
+    private void initFractalAlgorithmSelection(RenderState state) {
+        fractalAlgorithmSelection = new ComboBox<>();
+        fractalAlgorithmSelection.setPrefWidth(200); // TODO: Remove constant
+
+        for (Entry<String, AbstractFractalRenderer> entry : fractalRenderers.entrySet()) {
+            fractalAlgorithmSelection.getItems().add(entry.getKey());
+        }
+        fractalAlgorithmSelection.setValue(state.getFractalAlgorithm());
+    }
+
+    private void initResolutionSelection(ApplicationState state) {
+        DisplayState displayState = state.getDisplayState();
+        RenderState renderState = state.getRenderState();
+
+        windowResolutionSelection = new ResolutionSelection(MENU_WIDTH, windowResolutions);
+        windowResolutionSelection.setResolution(displayState.getWindowResolution(), displayState.isCustomResolution());
+
+        renderResolutionSelection = new ResolutionSelection(MENU_WIDTH, fractalResolutions);
+        renderResolutionSelection.setResolution(renderState.getRenderResolution(), renderState.isCustomResolution());
+    }
+
+    private void initColorSelector(Window window) {
+
+        // TODO: Remove following commented color selector code
+//        DraggablePane dragPane1 = new DraggablePane();
+//        dragPane1.setBackgroundLegacy(Color.DARK_GRAY);
+//        dragPane1.setPrefHeight(64);
+//        dragPane1.setPrefWidth(50);
+//
+//        dragPane1.setOnMouseEntered(event -> {
+//            setMouseOver(true);
+//        });
+//        dragPane1.setOnMouseExited(event -> {
+//            setMouseOver(false);
+//        });
+//
+//        //Put pane in center of screen
+//        dragPane1.setAbsolutePosition(window.getWidth() / 2.0f, window.getHeight() / 2.0f);
+//
+//        //Add text
+//        ColorSelector colorPicker = new ColorSelector();
+//        dragPane1.getChildren().add(colorPicker);
+////        Label label = new Label("I'm draggable!");
+////        label.setMouseTransparent(true);
+////        dragPane1.getChildren().add(label);
+//
+//        //Test that it is sticky!
+//        dragPane1.setAbsolutePosition(0, 0);
+//
+//        //Add it to root
+//        root.getChildren().add(dragPane1);
+    }
+
+    private void initMenu(Window window, ApplicationState state) {
+        initFractalAlgorithmSelection(state.getRenderState());
+        initResolutionSelection(state);
+        initColorSelector(window);
+
+        String monitorAspectRatio = "(" + DisplayUtils.getMonitorAspectRatio().toRatio() + ")";
+        String fractalAspectRatio = "(" + retornRenderer.getFractalAspectRatio().toRatio() + ")";
+
+        maxIterationsParam = new Parameter<>(MENU_WIDTH, "Max Iterations", new NumberFieldi(100, 0, 100000));
+        scaleParam = new Parameter<>(MENU_WIDTH, "Scale", new NumberFieldd(1.0));
+        xParam = new Parameter<>(MENU_WIDTH, "X", new NumberFieldd(0.0));
+        yParam = new Parameter<>(MENU_WIDTH, "Y", new NumberFieldd(0.0));
+        hideMenuButton = new Button("X");
+        showMenuButton = new Button("|||");
+        updateButton = new Button("Update");
+        resetButton = new Button("Reset");
+        saveButton = new Button("Save");
+        loadButton = new Button("Load");
+        applyButton = new Button("Apply");
+        renderButton = new Button("Render");
+        fullscreenToggle = new CheckBox("Fullscreen");
+        vSyncToggle = new CheckBox("vSync");
+        aspectRatioToggleLabel = new Label("Render Aspect Ratio:");
+        aspectRatioToggleGroup = new ToggleGroup();
+        monitorAspectRatioToggle = new RadioButton("Monitor " + monitorAspectRatio, aspectRatioToggleGroup);
+        fractalAspectRatioToggle = new RadioButton("Fractal " + fractalAspectRatio, aspectRatioToggleGroup);
+        colorSelector = new ColorSelector();
+        fpsDisplay = new Label("FPS: " + window.getFpsCounter().getFps());
+        fpsDisplay.setAlignment(Pos.BOTTOM_LEFT);
+        fpsDisplay.setFillToParentWidth(true);
+
+        VBox top = new VBox();
+        top.setAlignment(Pos.TOP_LEFT);
+        top.setPadding(new Insets(0, 10, 0, 0));
+        top.getChildren().add(hideMenuButton);
+        top.getChildren().add(fractalAlgorithmSelection);
+        top.getChildren().add(maxIterationsParam);
+        top.getChildren().add(scaleParam);
+        top.getChildren().addAll(xParam, yParam);
+        top.getChildren().add(windowResolutionSelection);
+        top.getChildren().add(aspectRatioToggleLabel);
+        top.getChildren().addAll(monitorAspectRatioToggle, fractalAspectRatioToggle);
+        top.getChildren().add(renderResolutionSelection);
+        top.getChildren().add(fullscreenToggle);
+        top.getChildren().add(vSyncToggle);
+        top.getChildren().add(applyButton);
+        top.getChildren().add(renderButton);
+        top.getChildren().add(colorSelector);
+        top.getChildren().add(updateButton);
+        top.getChildren().add(resetButton);
+        top.getChildren().add(saveButton);
+        top.getChildren().add(loadButton);
+
+        menu = new BorderPane();
+        menu.setMinWidth(MENU_WIDTH);
+        menu.setMaxWidth(MENU_WIDTH);
+        menu.setPrefHeight(window.getHeight());
+        menu.setAlignment(Pos.TOP_LEFT);
+        menu.setFillToParentHeight(true);
+        menu.setBackgroundLegacy(new Color(.9, .9, .9, 0.95));
+        menu.setBottom(fpsDisplay);
+        menu.setTop(top);
+    }
+
+    private void initRoot(Window window) {
+        root = new BorderPane();
+        root.setPrefSize(window.getWidth(), window.getHeight());
+        root.setCenter(new StackPane()); // Set center so BorderPane alignment is correct
+        root.setRight(menu);
     }
 
     @Override
@@ -198,8 +332,22 @@ public class RetornGUI implements GUI {
         }
     }
 
+    public void updateDisplayParameters(DisplayState state) {
+        updateWindowResolutionParameters(state.getWindowResolution(), state.isCustomResolution());
+        fullscreenToggle.setChecked(state.isFullscreen());
+        vSyncToggle.setChecked(state.isVSync());
+    }
+
+    private void updateDisplayState(DisplayState state, Window window) {
+        state.setWindowResolution(window.getWidth(), window.getHeight());
+        state.setCustomResolution(windowResolutionSelection.isCustomResolution());
+        state.setFullscreen(fullscreenToggle.isChecked());
+        state.setVSync(vSyncToggle.isChecked());
+    }
+
     public void updateRenderParameters(RenderState state) {
         updateRenderResolutionParameters(state.getRenderResolution(), state.isCustomResolution());
+        fractalAlgorithmSelection.setValue(state.getFractalAlgorithm());
         maxIterationsParam.getControl().setNumber(state.getMaxIterations());
         xParam.getControl().setNumber(state.getOffset().x);
         yParam.getControl().setNumber(state.getOffset().y);
@@ -210,12 +358,6 @@ public class RetornGUI implements GUI {
         } else {
             selectAspectRatioToggle(monitorAspectRatioToggle, windowResolutions, state.isCustomResolution());
         }
-    }
-
-    public void updateDisplayParameters(DisplayState state) {
-        updateWindowResolutionParameters(state.getWindowResolution(), state.isCustomResolution());
-        fullscreenToggle.setChecked(state.isFullscreen());
-        vSyncToggle.setChecked(state.isVSync());
     }
 
     public void updateRenderResolutionParameters(Resolution resolution, boolean customResolution) {
@@ -232,16 +374,17 @@ public class RetornGUI implements GUI {
         state.setRenderResolution(renderResolution.getWidth(), renderResolution.getHeight());
         state.setCustomResolution(renderResolutionSelection.isCustomResolution());
         state.setFractalAspectRatioMaintained(fractalAspectRatioToggle.isSelected());
+        state.setFractalAlgorithm(fractalAlgorithmSelection.getValue());
         state.setMaxIterations(maxIterationsParam.getControl().getNumber());
         state.setScale(scaleParam.getControl().getNumber());
         state.setOffset(xParam.getControl().getNumber(), yParam.getControl().getNumber(), 0.0f);
     }
 
-    private void updateDisplayState(DisplayState state, Window window) {
-        state.setWindowResolution(window.getWidth(), window.getHeight());
-        state.setCustomResolution(windowResolutionSelection.isCustomResolution());
-        state.setFullscreen(fullscreenToggle.isChecked());
-        state.setVSync(vSyncToggle.isChecked());
+    private void updateFractalAlgorithms() {
+        fractalRenderers.clear();
+
+        fractalRenderers.put(Retorn.MANDELBROT_SET, retornRenderer.getMandelbrotRenderer());
+        fractalRenderers.put(Retorn.JULIA_SET, retornRenderer.getJuliaRenderer());
     }
 
     private void updateWindowResolutions() {
@@ -343,118 +486,6 @@ public class RetornGUI implements GUI {
         }
     }
 
-    private void initResolutionSelection(ApplicationState state) {
-        DisplayState displayState = state.getDisplayState();
-        RenderState renderState = state.getRenderState();
-
-        windowResolutionSelection = new ResolutionSelection(MENU_WIDTH, windowResolutions);
-        windowResolutionSelection.setResolution(displayState.getWindowResolution(), displayState.isCustomResolution());
-
-        renderResolutionSelection = new ResolutionSelection(MENU_WIDTH, fractalResolutions);
-        renderResolutionSelection.setResolution(renderState.getRenderResolution(), renderState.isCustomResolution());
-    }
-
-    private void initColorSelector(Window window) {
-
-        // TODO: Remove following commented color selector code
-//        DraggablePane dragPane1 = new DraggablePane();
-//        dragPane1.setBackgroundLegacy(Color.DARK_GRAY);
-//        dragPane1.setPrefHeight(64);
-//        dragPane1.setPrefWidth(50);
-//
-//        dragPane1.setOnMouseEntered(event -> {
-//            setMouseOver(true);
-//        });
-//        dragPane1.setOnMouseExited(event -> {
-//            setMouseOver(false);
-//        });
-//
-//        //Put pane in center of screen
-//        dragPane1.setAbsolutePosition(window.getWidth() / 2.0f, window.getHeight() / 2.0f);
-//
-//        //Add text
-//        ColorSelector colorPicker = new ColorSelector();
-//        dragPane1.getChildren().add(colorPicker);
-////        Label label = new Label("I'm draggable!");
-////        label.setMouseTransparent(true);
-////        dragPane1.getChildren().add(label);
-//
-//        //Test that it is sticky!
-//        dragPane1.setAbsolutePosition(0, 0);
-//
-//        //Add it to root
-//        root.getChildren().add(dragPane1);
-    }
-
-    private void initMenu(Window window, ApplicationState state) {
-        initResolutionSelection(state);
-        initColorSelector(window);
-
-        String monitorAspectRatio = "(" + DisplayUtils.getMonitorAspectRatio().toRatio() + ")";
-        String fractalAspectRatio = "(" + retornRenderer.getFractalAspectRatio().toRatio() + ")";
-
-        maxIterationsParam = new Parameter<>(MENU_WIDTH, "Max Iterations", new NumberFieldi(100, 0, 100000));
-        scaleParam = new Parameter<>(MENU_WIDTH, "Scale", new NumberFieldd(1.0));
-        xParam = new Parameter<>(MENU_WIDTH, "X", new NumberFieldd(0.0));
-        yParam = new Parameter<>(MENU_WIDTH, "Y", new NumberFieldd(0.0));
-        hideMenuButton = new Button("X");
-        showMenuButton = new Button("|||");
-        updateButton = new Button("Update");
-        resetButton = new Button("Reset");
-        saveButton = new Button("Save");
-        loadButton = new Button("Load");
-        applyButton = new Button("Apply");
-        renderButton = new Button("Render");
-        fullscreenToggle = new CheckBox("Fullscreen");
-        vSyncToggle = new CheckBox("vSync");
-        aspectRatioToggleLabel = new Label("Render Aspect Ratio:");
-        aspectRatioToggleGroup = new ToggleGroup();
-        monitorAspectRatioToggle = new RadioButton("Monitor " + monitorAspectRatio, aspectRatioToggleGroup);
-        fractalAspectRatioToggle = new RadioButton("Fractal " + fractalAspectRatio, aspectRatioToggleGroup);
-        colorSelector = new ColorSelector();
-        fpsDisplay = new Label("FPS: " + window.getFpsCounter().getFps());
-        fpsDisplay.setAlignment(Pos.BOTTOM_LEFT);
-        fpsDisplay.setFillToParentWidth(true);
-
-        VBox top = new VBox();
-        top.setAlignment(Pos.TOP_LEFT);
-        top.setPadding(new Insets(0, 10, 0, 0));
-        top.getChildren().add(hideMenuButton);
-        top.getChildren().add(maxIterationsParam);
-        top.getChildren().add(scaleParam);
-        top.getChildren().addAll(xParam, yParam);
-        top.getChildren().add(windowResolutionSelection);
-        top.getChildren().add(aspectRatioToggleLabel);
-        top.getChildren().addAll(monitorAspectRatioToggle, fractalAspectRatioToggle);
-        top.getChildren().add(renderResolutionSelection);
-        top.getChildren().add(fullscreenToggle);
-        top.getChildren().add(vSyncToggle);
-        top.getChildren().add(applyButton);
-        top.getChildren().add(renderButton);
-        top.getChildren().add(colorSelector);
-        top.getChildren().add(updateButton);
-        top.getChildren().add(resetButton);
-        top.getChildren().add(saveButton);
-        top.getChildren().add(loadButton);
-
-        menu = new BorderPane();
-        menu.setMinWidth(MENU_WIDTH);
-        menu.setMaxWidth(MENU_WIDTH);
-        menu.setPrefHeight(window.getHeight());
-        menu.setAlignment(Pos.TOP_LEFT);
-        menu.setFillToParentHeight(true);
-        menu.setBackgroundLegacy(new Color(.9, .9, .9, 0.95));
-        menu.setBottom(fpsDisplay);
-        menu.setTop(top);
-    }
-
-    private void initRoot(Window window) {
-        root = new BorderPane();
-        root.setPrefSize(window.getWidth(), window.getHeight());
-        root.setCenter(new StackPane()); // Set center so BorderPane alignment is correct
-        root.setRight(menu);
-    }
-
     private void setEventHandlers(Window window, ApplicationState state) {
         DisplayState displayState = state.getDisplayState();
         RenderState renderState = state.getRenderState();
@@ -465,6 +496,7 @@ public class RetornGUI implements GUI {
             applyRenderParameters();
             updateRenderResolutionParameters(renderResolutionSelection.getResolution(), renderResolutionSelection.isCustomResolution());
             updateRenderState(renderState);
+            retornRenderer.setActiveRenderer(fractalRenderers.get(fractalAlgorithmSelection.getValue()));
         });
         resetButton.setOnAction(event -> resetPosition(renderState));
         saveButton.setOnAction(event -> {
