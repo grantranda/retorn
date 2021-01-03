@@ -65,6 +65,7 @@ public class RetornInputHandler implements InputHandler {
         if (keyboardInput.isKeyPressed(GLFW_KEY_ESCAPE)) {
             glfwSetWindowShouldClose(window.getWindowID(), true);
         }
+
         if (keyboardInput.isKeyPressed(GLFW_KEY_SPACE)) {
             if (!menuToggled) {
                 gui.toggleMenu();
@@ -73,6 +74,7 @@ public class RetornInputHandler implements InputHandler {
         } else {
             menuToggled = false;
         }
+
         if (keyboardInput.isKeyPressed(GLFW_KEY_LEFT_SHIFT)) {
             scaleDirection = -1.0f;
         } else {
@@ -88,9 +90,11 @@ public class RetornInputHandler implements InputHandler {
                 Vector3d mousePos = mouseInput.getCurrentPosition();
                 dragOrigin.set(mousePos.x, mousePos.y);
             }
+
             if (gui.isMouseOver()) {
                 gui.setMousePressed(true);
             }
+
             if (mouseInput.isMouseInWindow() && !gui.isMousePressed()) {
                 cursorDisabled = true;
                 draggable = true;
@@ -100,6 +104,7 @@ public class RetornInputHandler implements InputHandler {
             cursorDisabled = false;
             draggable = false;
         }
+
         if ((mouseInput.isButtonPressed(GLFW_MOUSE_BUTTON_2) && (!gui.isMouseOver() || draggable))) {
             scalable = true;
             scaleFactor = SCALE_FACTOR_BUTTON;
