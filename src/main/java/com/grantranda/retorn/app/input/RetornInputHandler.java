@@ -11,11 +11,15 @@ import com.grantranda.retorn.engine.math.Vector2d;
 import com.grantranda.retorn.engine.math.Vector3d;
 import com.grantranda.retorn.engine.state.State;
 
+import static org.lwjgl.glfw.GLFW.GLFW_CURSOR;
+import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_DISABLED;
+import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_NORMAL;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_1;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_2;
+import static org.lwjgl.glfw.GLFW.glfwSetInputMode;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 
 public class RetornInputHandler implements InputHandler {
@@ -34,6 +38,7 @@ public class RetornInputHandler implements InputHandler {
 
     private boolean stateChanged = false;
     private boolean menuToggled = false;
+    private boolean cursorDisabled = false;
     private boolean draggable = false;
     private boolean scalable = false;
 
@@ -87,19 +92,29 @@ public class RetornInputHandler implements InputHandler {
                 gui.setMousePressed(true);
             }
             if (mouseInput.isMouseInWindow() && !gui.isMousePressed()) {
+                cursorDisabled = true;
                 draggable = true;
             }
         } else {
             gui.setMousePressed(false);
+            cursorDisabled = false;
             draggable = false;
         }
-        if (mouseInput.isButtonPressed(GLFW_MOUSE_BUTTON_2)) {
+        if ((mouseInput.isButtonPressed(GLFW_MOUSE_BUTTON_2) && (!gui.isMouseOver() || draggable))) {
             scalable = true;
             scaleFactor = SCALE_FACTOR_BUTTON;
         } else if (draggable || (mouseInput.isMouseInWindow() && !gui.isMouseOver())) {
             scalable = mouseInput.isScrolling();
             scaleFactor = SCALE_FACTOR_SCROLL;
             scaleDirection = mouseInput.getScrollDirection().y;
+        }
+
+        cursorDisabled = cursorDisabled || scaleFactor == SCALE_FACTOR_BUTTON;
+        glfwSetInputMode(window.getWindowID(), GLFW_CURSOR, cursorDisabled ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
+        if (gui.isMouseOver()) {
+            window.setCursorID(Window.DEFAULT_CURSOR);
+        } else {
+            window.setCursorID(cursorID);
         }
     }
 
