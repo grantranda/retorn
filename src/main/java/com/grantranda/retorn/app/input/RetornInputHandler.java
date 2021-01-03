@@ -25,7 +25,7 @@ import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 public class RetornInputHandler implements InputHandler {
 
     public static final float VELOCITY_FACTOR = 0.008f;
-    public static final float SCALE_FACTOR_BUTTON = -0.005f;
+    public static final float SCALE_FACTOR_BUTTON = -0.007f;
     public static final float SCALE_FACTOR_SCROLL = -0.025f;
 
     private final RetornGUI gui;
