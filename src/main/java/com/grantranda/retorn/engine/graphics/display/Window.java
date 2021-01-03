@@ -8,21 +8,25 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
+
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.Objects;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.GL_STENCIL_TEST;
+import static org.lwjgl.opengl.GL11.glClearColor;
+import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.system.MemoryStack.stackPush;
-import static org.lwjgl.system.MemoryUtil.*;
+import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class Window {
 
     public static final int MIN_WIDTH = 400;
     public static final int MIN_HEIGHT = 400;
+    public static final long DEFAULT_CURSOR = NULL;
 
     private final String title;
     private final Resolution resolution;
@@ -33,6 +37,7 @@ public class Window {
     private MouseInput mouseInput;
 
     private long windowID;
+    private long cursorID = DEFAULT_CURSOR;
 
     private float contentScaleX;
     private float contentScaleY;
@@ -86,6 +91,14 @@ public class Window {
 
     public long getWindowID() {
         return windowID;
+    }
+
+    public long getCursorID() {
+        return cursorID;
+    }
+
+    public void setCursorID(long cursorID) {
+        this.cursorID = cursorID;
     }
 
     public float getContentScaleX() {
@@ -220,6 +233,9 @@ public class Window {
 
     public void terminate() {
         glfwFreeCallbacks(windowID);
+        if (cursorID != DEFAULT_CURSOR) {
+            glfwDestroyCursor(cursorID);
+        }
         glfwDestroyWindow(windowID);
         glfwTerminate();
         Objects.requireNonNull(glfwSetErrorCallback(null)).free();
@@ -229,6 +245,7 @@ public class Window {
         mouseInput.update();
         fpsCounter.update();
         setResized(false);
+        glfwSetCursor(windowID, cursorID);
         glfwSwapBuffers(windowID);
         glfwPollEvents();
     }

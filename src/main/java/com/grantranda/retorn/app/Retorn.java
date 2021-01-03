@@ -12,23 +12,35 @@ import com.grantranda.retorn.app.util.StateUtils;
 import com.grantranda.retorn.engine.Application;
 import com.grantranda.retorn.engine.graphics.Framebuffer;
 import com.grantranda.retorn.engine.graphics.ImageRenderer;
+import com.grantranda.retorn.engine.graphics.Mesh;
 import com.grantranda.retorn.engine.graphics.Model;
 import com.grantranda.retorn.engine.graphics.Texture;
 import com.grantranda.retorn.engine.graphics.display.Resolution;
 import com.grantranda.retorn.engine.graphics.display.Window;
-import com.grantranda.retorn.engine.graphics.Mesh;
 import com.grantranda.retorn.engine.graphics.gui.GUI;
+import org.lwjgl.glfw.GLFWImage;
+import org.lwjgl.system.MemoryStack;
+import org.lwjgl.system.MemoryUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.glfw.GLFW.glfwCreateCursor;
+import static org.lwjgl.opengl.GL11.GL_NEAREST;
+import static org.lwjgl.opengl.GL11.GL_RGBA;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_1D;
+import static org.lwjgl.stb.STBImage.stbi_failure_reason;
+import static org.lwjgl.stb.STBImage.stbi_image_free;
+import static org.lwjgl.stb.STBImage.stbi_load;
 
 public class Retorn implements Application {
 
     public static final String DISPLAY_STATE_PATH = "display_parameters.json";
     public static final String RENDER_STATE_PATH = "render_parameters.json";
     public static final String SAVE_PARAMETERS_PATH = "retorn_parameters.json";
+    public static final String CURSOR_PATH = "textures/cursor.png";
     public static final String MANDELBROT_SET = "Mandelbrot Set";
     public static final String JULIA_SET = "Julia Set";
 
@@ -58,11 +70,13 @@ public class Retorn implements Application {
         loadDisplayState(state);
         loadRenderState(state);
 
+        window.setCursorID(createCursor(CURSOR_PATH));
+
         Resolution renderResolution = state.getRenderState().getRenderResolution();
         Framebuffer framebuffer = new Framebuffer(renderResolution);
         imageRenderer = new ImageRenderer(renderer, framebuffer, renderResolution, "test.png", "PNG");
         gui = new RetornGUI(renderer, imageRenderer);
-        inputHandler = new RetornInputHandler(gui);
+        inputHandler = new RetornInputHandler(gui, window.getCursorID());
 
         renderer.init();
         gui.init(window, state);
@@ -169,5 +183,31 @@ public class Retorn implements Application {
         } catch (IOException | JsonIOException e) {
             Main.logger.error("Error saving render state");
         }
+    }
+
+    private long createCursor(String path) {
+        long cursorID = MemoryUtil.NULL;
+
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            IntBuffer x = stack.mallocInt(1);
+            IntBuffer y = stack.mallocInt(1);
+            IntBuffer channels = stack.mallocInt(1);
+
+            File file = new File(getClass().getClassLoader().getResource(path).getFile());
+            ByteBuffer buffer = stbi_load(file.getAbsolutePath(), x, y, channels, 0);
+
+            if (buffer == null) {
+                throw new RuntimeException("Unable to load cursor image '" + path + "':\n" + stbi_failure_reason());
+            }
+
+            GLFWImage cursorImage = GLFWImage.create();
+            cursorImage.set(x.get(), y.get(), buffer);
+            cursorID = glfwCreateCursor(cursorImage, 7, 7);
+
+            stbi_image_free(buffer);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return cursorID;
     }
 }
