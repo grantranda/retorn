@@ -1,22 +1,28 @@
 package com.grantranda.retorn.app.input;
 
+import com.grantranda.retorn.app.graphics.gui.RetornGUI;
 import com.grantranda.retorn.app.state.ApplicationState;
 import com.grantranda.retorn.app.state.RenderState;
 import com.grantranda.retorn.engine.graphics.display.Window;
-import com.grantranda.retorn.app.graphics.gui.RetornGUI;
 import com.grantranda.retorn.engine.input.InputHandler;
 import com.grantranda.retorn.engine.input.KeyboardInput;
 import com.grantranda.retorn.engine.input.MouseInput;
+import com.grantranda.retorn.engine.math.Vector2d;
 import com.grantranda.retorn.engine.math.Vector3d;
 import com.grantranda.retorn.engine.state.State;
 
-import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
+import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_1;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 
 public class RetornInputHandler implements InputHandler {
 
+    public static final double VELOCITY_FACTOR = 0.008;
     public static final double SCALE_FACTOR = -0.025;
 
     private final RetornGUI gui;
+    private final Vector2d dragOrigin = new Vector2d();
 
     private boolean stateChanged = false;
     private boolean menuToggled = false;
@@ -58,6 +64,10 @@ public class RetornInputHandler implements InputHandler {
         MouseInput mouseInput = window.getMouseInput();
 
         if (mouseInput.isButtonPressed(GLFW_MOUSE_BUTTON_1)) {
+            if (!draggable) {
+                Vector3d mousePos = mouseInput.getCurrentPosition();
+                dragOrigin.set(mousePos.x, mousePos.y);
+            }
             if (gui.isMouseOver()) {
                 gui.setMousePressed(true);
             }
@@ -82,14 +92,17 @@ public class RetornInputHandler implements InputHandler {
         double scale = renderState.getScale();
 
         if (draggable) {
-            double previousX = offsetX;
-            double previousY = offsetY;
+            Vector3d mousePos = mouseInput.getCurrentPosition();
 
-            Vector3d mouseDelta = mouseInput.getDelta();
-            offsetX -= mouseDelta.x * scale;
-            offsetY += mouseDelta.y * scale;
+            double velocityX = (mousePos.x - dragOrigin.x) * VELOCITY_FACTOR;
+            double velocityY = (mousePos.y - dragOrigin.y) * VELOCITY_FACTOR;
+            double previousOffsetX = offsetX;
+            double previousOffsetY = offsetY;
 
-            if (previousX != offsetX || previousY != offsetY) {
+            offsetX += velocityX * scale;
+            offsetY -= velocityY * scale;
+
+            if (previousOffsetX != offsetX || previousOffsetY != offsetY) {
                 renderState.setOffset(offsetX, offsetY, 0.0f);
                 stateChanged = true;
             }
