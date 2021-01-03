@@ -115,7 +115,14 @@ public class RetornInputHandler implements InputHandler {
         }
 
         cursorDisabled = cursorDisabled || scaleFactor == SCALE_FACTOR_BUTTON;
-        glfwSetInputMode(window.getWindowID(), GLFW_CURSOR, cursorDisabled ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
+        if (cursorDisabled) {
+            glfwSetInputMode(window.getWindowID(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+            gui.setMenuDisabled(true);
+        } else {
+            glfwSetInputMode(window.getWindowID(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            gui.setMenuDisabled(false);
+        }
+
         if (gui.isMouseOver()) {
             window.setCursorID(Window.DEFAULT_CURSOR);
         } else {
