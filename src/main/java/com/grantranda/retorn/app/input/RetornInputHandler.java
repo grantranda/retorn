@@ -12,17 +12,23 @@ import com.grantranda.retorn.engine.math.Vector3d;
 import com.grantranda.retorn.engine.state.State;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_1;
+import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_2;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 
 public class RetornInputHandler implements InputHandler {
 
-    public static final double VELOCITY_FACTOR = 0.008;
-    public static final double SCALE_FACTOR = -0.025;
+    public static final float VELOCITY_FACTOR = 0.008f;
+    public static final float SCALE_FACTOR_BUTTON = -0.005f;
+    public static final float SCALE_FACTOR_SCROLL = -0.025f;
 
     private final RetornGUI gui;
     private final Vector2d dragOrigin = new Vector2d();
+
+    private float scaleFactor = 0.0f;
+    private float scaleDirection = 0.0f;
 
     private boolean stateChanged = false;
     private boolean menuToggled = false;
@@ -50,13 +56,19 @@ public class RetornInputHandler implements InputHandler {
 
         if (keyboardInput.isKeyPressed(GLFW_KEY_ESCAPE)) {
             glfwSetWindowShouldClose(window.getWindowID(), true);
-        } else if (keyboardInput.isKeyPressed(GLFW_KEY_SPACE)) {
+        }
+        if (keyboardInput.isKeyPressed(GLFW_KEY_SPACE)) {
             if (!menuToggled) {
                 gui.toggleMenu();
                 menuToggled = true;
             }
         } else {
             menuToggled = false;
+        }
+        if (keyboardInput.isKeyPressed(GLFW_KEY_LEFT_SHIFT)) {
+            scaleDirection = -1.0f;
+        } else {
+            scaleDirection = 1.0f;
         }
     }
 
@@ -78,9 +90,13 @@ public class RetornInputHandler implements InputHandler {
             gui.setMousePressed(false);
             draggable = false;
         }
-
-        if (draggable || (mouseInput.isMouseInWindow() && !gui.isMouseOver())) {
+        if (mouseInput.isButtonPressed(GLFW_MOUSE_BUTTON_2)) {
+            scalable = true;
+            scaleFactor = SCALE_FACTOR_BUTTON;
+        } else if (draggable || (mouseInput.isMouseInWindow() && !gui.isMouseOver())) {
             scalable = mouseInput.isScrolling();
+            scaleFactor = SCALE_FACTOR_SCROLL;
+            scaleDirection = mouseInput.getScrollDirection().y;
         }
     }
 
@@ -110,7 +126,7 @@ public class RetornInputHandler implements InputHandler {
 
         if (scalable) {
             double previousScale = scale;
-            scale *= 1 + mouseInput.getScrollDirection().y * SCALE_FACTOR;
+            scale *= 1 + scaleDirection * scaleFactor;
 
             if (previousScale != scale) {
                 renderState.setScale(scale);
