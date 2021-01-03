@@ -70,16 +70,13 @@ public class Retorn implements Application {
         loadDisplayState(state);
         loadRenderState(state);
 
-        long cursorID = createCursor(CURSOR_PATH);
-        if (cursorID != MemoryUtil.NULL) {
-            window.setCursorID(cursorID);
-        }
+        window.setCursorID(createCursor(CURSOR_PATH));
 
         Resolution renderResolution = state.getRenderState().getRenderResolution();
         Framebuffer framebuffer = new Framebuffer(renderResolution);
         imageRenderer = new ImageRenderer(renderer, framebuffer, renderResolution, "test.png", "PNG");
         gui = new RetornGUI(renderer, imageRenderer);
-        inputHandler = new RetornInputHandler(gui);
+        inputHandler = new RetornInputHandler(gui, window.getCursorID());
 
         renderer.init();
         gui.init(window, state);

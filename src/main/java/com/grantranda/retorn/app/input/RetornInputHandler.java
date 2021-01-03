@@ -27,6 +27,8 @@ public class RetornInputHandler implements InputHandler {
     private final RetornGUI gui;
     private final Vector2d dragOrigin = new Vector2d();
 
+    private final long cursorID;
+
     private float scaleFactor = 0.0f;
     private float scaleDirection = 0.0f;
 
@@ -35,8 +37,9 @@ public class RetornInputHandler implements InputHandler {
     private boolean draggable = false;
     private boolean scalable = false;
 
-    public RetornInputHandler(RetornGUI gui) {
+    public RetornInputHandler(RetornGUI gui, long cursorID) {
         this.gui = gui;
+        this.cursorID = cursorID;
     }
 
     @Override
