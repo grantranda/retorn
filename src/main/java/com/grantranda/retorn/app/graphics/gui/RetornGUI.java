@@ -54,6 +54,7 @@ public class RetornGUI implements GUI {
     private boolean mouseOver = false;
     private boolean mousePressed = false;
     private boolean menuShown = true;
+    private boolean menuDisabled = false;
 
     private final RetornRenderer retornRenderer;
     private final ImageRenderer imageRenderer;
@@ -61,6 +62,8 @@ public class RetornGUI implements GUI {
 
     private BorderPane root;
     private BorderPane menu;
+    private StackPane menuContainer;
+    private StackPane menuCover;
 
     private Button hideMenuButton;
     private Button showMenuButton;
@@ -111,12 +114,12 @@ public class RetornGUI implements GUI {
         this.mousePressed = mousePressed;
     }
 
-    public boolean isMenuShown() {
-        return menuShown;
-    }
-
     public lwjgui.scene.Window getGuiWindow() {
         return guiWindow;
+    }
+
+    public boolean isMenuShown() {
+        return menuShown;
     }
 
     public void hideMenu() {
@@ -128,7 +131,7 @@ public class RetornGUI implements GUI {
 
     public void showMenu() {
         showMenuButton.setVisible(false);
-        root.setRight(menu);
+        root.setRight(menuContainer);
         menu.setVisible(true);
         menuShown = true;
     }
@@ -138,6 +141,21 @@ public class RetornGUI implements GUI {
             hideMenu();
         } else {
             showMenu();
+        }
+    }
+
+    public boolean isMenuDisabled() {
+        return menuDisabled;
+    }
+
+    public void setMenuDisabled(boolean menuDisabled) {
+        if (menuDisabled == this.menuDisabled) return;
+
+        this.menuDisabled = menuDisabled;
+        if (menuDisabled) {
+            menuContainer.getChildren().add(menuCover);
+        } else {
+            menuContainer.getChildren().remove(menuCover);
         }
     }
 
@@ -289,13 +307,26 @@ public class RetornGUI implements GUI {
         menu.setBackgroundLegacy(new Color(.9, .9, .9, 0.95));
         menu.setBottom(fpsDisplay);
         menu.setTop(top);
+
+        menuContainer = new StackPane();
+        menuContainer.setMinWidth(MENU_WIDTH);
+        menuContainer.setMaxWidth(MENU_WIDTH);
+        menuContainer.setPrefHeight(window.getHeight());
+        menuContainer.setFillToParentHeight(true);
+        menuContainer.getChildren().add(menu);
+
+        menuCover = new StackPane();
+        menuCover.setMinWidth(MENU_WIDTH);
+        menuCover.setMaxWidth(MENU_WIDTH);
+        menuCover.setPrefHeight(window.getHeight());
+        menuCover.setFillToParentHeight(true);
     }
 
     private void initRoot(Window window) {
         root = new BorderPane();
         root.setPrefSize(window.getWidth(), window.getHeight());
         root.setCenter(new StackPane()); // Set center so BorderPane alignment is correct
-        root.setRight(menu);
+        root.setRight(menuContainer);
     }
 
     @Override
