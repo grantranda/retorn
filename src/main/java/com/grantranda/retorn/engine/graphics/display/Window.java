@@ -26,7 +26,7 @@ public class Window {
 
     public static final int MIN_WIDTH = 400;
     public static final int MIN_HEIGHT = 400;
-    public static final int DEFAULT_CURSOR = GLFW_ARROW_CURSOR;
+    public static final long DEFAULT_CURSOR = NULL;
 
     private final String title;
     private final Resolution resolution;
@@ -233,6 +233,7 @@ public class Window {
 
     public void terminate() {
         glfwFreeCallbacks(windowID);
+        glfwDestroyCursor(cursorID);
         glfwDestroyWindow(windowID);
         glfwTerminate();
         Objects.requireNonNull(glfwSetErrorCallback(null)).free();
