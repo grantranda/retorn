@@ -233,7 +233,9 @@ public class Window {
 
     public void terminate() {
         glfwFreeCallbacks(windowID);
-        glfwDestroyCursor(cursorID);
+        if (cursorID != DEFAULT_CURSOR) {
+            glfwDestroyCursor(cursorID);
+        }
         glfwDestroyWindow(windowID);
         glfwTerminate();
         Objects.requireNonNull(glfwSetErrorCallback(null)).free();
