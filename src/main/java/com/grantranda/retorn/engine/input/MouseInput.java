@@ -1,6 +1,7 @@
 package com.grantranda.retorn.engine.input;
 
 import com.grantranda.retorn.engine.math.Vector3d;
+import com.grantranda.retorn.engine.math.Vector3f;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -10,7 +11,7 @@ public class MouseInput {
     private final Vector3d PREVIOUS_POSITION = new Vector3d();
     private final Vector3d CURRENT_POSITION = new Vector3d();
     private final Vector3d DELTA = new Vector3d();
-    private final Vector3d SCROLL_DIRECTION = new Vector3d();
+    private final Vector3f SCROLL_DIRECTION = new Vector3f();
     private final long WINDOW_ID;
     private boolean mouseInWindow = false;
     private boolean scrolling = false;
@@ -25,7 +26,7 @@ public class MouseInput {
             CURRENT_POSITION.set(xpos, ypos, 0.0f);
         });
         glfwSetScrollCallback(windowID, (long window, double xoffset, double yoffset) -> {
-            SCROLL_DIRECTION.set(xoffset, yoffset, 0.0f);
+            SCROLL_DIRECTION.set((float) xoffset, (float) yoffset, 0.0f);
             scrolling = true;
         });
         glfwSetCursorEnterCallback(windowID, (long window, boolean entered) -> {
@@ -45,7 +46,7 @@ public class MouseInput {
         return DELTA;
     }
 
-    public Vector3d getScrollDirection() {
+    public Vector3f getScrollDirection() {
         return SCROLL_DIRECTION;
     }
 
