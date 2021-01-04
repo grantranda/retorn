@@ -1,6 +1,7 @@
 package com.grantranda.retorn.engine.util;
 
 import com.grantranda.retorn.engine.graphics.display.Resolution;
+import com.grantranda.retorn.engine.graphics.display.Sync;
 import com.grantranda.retorn.engine.math.Fraction;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.glfw.GLFWVidMode.Buffer;
@@ -12,6 +13,8 @@ import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
 import static org.lwjgl.glfw.GLFW.glfwGetVideoModes;
 
 public class DisplayUtils {
+
+    private static final Sync sync = new Sync();
 
     private DisplayUtils() {
 
@@ -38,5 +41,9 @@ public class DisplayUtils {
     public static Fraction getMonitorAspectRatio() {
         Resolution monitorResolution = getMonitorResolution();
         return new Fraction(monitorResolution.getWidth(), monitorResolution.getHeight()).simplify();
+    }
+
+    public static void sync(int fps) {
+        sync.sync(fps);
     }
 }

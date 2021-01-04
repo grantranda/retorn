@@ -3,6 +3,7 @@ package com.grantranda.retorn.engine.graphics.display;
 import com.grantranda.retorn.engine.input.KeyboardInput;
 import com.grantranda.retorn.engine.input.MouseInput;
 import com.grantranda.retorn.engine.math.Vector3i;
+import com.grantranda.retorn.engine.util.DisplayUtils;
 import com.grantranda.retorn.engine.util.FPSCounter;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -38,6 +39,8 @@ public class Window {
 
     private long windowID;
     private long cursorID = DEFAULT_CURSOR;
+
+    private int fpsLimit = 0;
 
     private float contentScaleX;
     private float contentScaleY;
@@ -79,6 +82,14 @@ public class Window {
 
     public FPSCounter getFpsCounter() {
         return fpsCounter;
+    }
+
+    public int getFpsLimit() {
+        return fpsLimit;
+    }
+
+    public void setFpsLimit(int fpsLimit) {
+        this.fpsLimit = fpsLimit;
     }
 
     public KeyboardInput getKeyboardInput() {
@@ -248,6 +259,7 @@ public class Window {
         glfwSetCursor(windowID, cursorID);
         glfwSwapBuffers(windowID);
         glfwPollEvents();
+        DisplayUtils.sync(fpsLimit);
     }
 
     public void render() {
