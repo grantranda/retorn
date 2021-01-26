@@ -138,6 +138,7 @@ public class Window {
             glfwSetWindowMonitor(windowID, NULL, 0, 0, getWidth(), getHeight(), vidMode.refreshRate());
             setPosition(position.x, position.y);
         }
+        setVSync(isVSync()); // vSync needs to be set again after switching between windowed and fullscreen
     }
 
     public boolean isVSync() {

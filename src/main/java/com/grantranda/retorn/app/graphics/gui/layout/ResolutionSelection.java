@@ -169,6 +169,10 @@ public class ResolutionSelection extends VBox {
         setResolutionSelection(resolution.getWidth(), resolution.getHeight());
     }
 
+    public void setComboBoxDisabled(boolean comboBoxDisabled) {
+        resolutionComboBox.setDisabled(comboBoxDisabled);
+    }
+
     public void setWidthFieldDisabled(boolean widthFieldDisabled) {
         widthParam.getControl().setEditable(!widthFieldDisabled);
         widthParam.getControl().setDisabled(widthFieldDisabled);

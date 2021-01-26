@@ -39,6 +39,10 @@ public class Resolution implements Comparable<Resolution> {
         setHeight(height);
     }
 
+    public void set(Resolution resolution) {
+        set(resolution.getWidth(), resolution.getHeight());
+    }
+
     public int getArea() {
         return width * height;
     }

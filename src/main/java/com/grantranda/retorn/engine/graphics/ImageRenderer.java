@@ -72,7 +72,7 @@ public class ImageRenderer {
 
     public void setResolution(Resolution resolution) {
         if (this.resolution.compareTo(resolution) != 0) {
-            this.resolution.set(resolution.getWidth(), resolution.getHeight());
+            this.resolution.set(resolution);
             framebuffer.resize(GL_COLOR_ATTACHMENT0, resolution);
         }
     }
