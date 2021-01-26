@@ -354,12 +354,19 @@ public class RetornGUI implements GUI {
     }
 
     private void updateGui(Window window, ApplicationState state) {
+        DisplayState displayState = state.getDisplayState();
         fpsDisplay.setText("FPS: " + window.getFpsCounter().getFps());
 
         // TODO: This condition might have unintended consequences
-        if (window.isResized() && !fullscreenToggle.isChecked()) {
-            updateWindowResolutionParameters(window.getResolution(), true);
-            updateDisplayState(state.getDisplayState(), window);
+        if (window.isResized()) {
+            if (window.isFullscreen()) {
+                Resolution monitorResolution = DisplayUtils.getMonitorResolution();
+                displayState.setWindowResolution(monitorResolution.getWidth(), monitorResolution.getHeight());
+                displayState.setCustomResolution(false);
+            } else {
+                updateWindowResolutionParameters(window.getResolution(), true);
+                updateDisplayState(displayState, window);
+            }
         }
     }
 
@@ -425,7 +432,7 @@ public class RetornGUI implements GUI {
         TreeSet<Resolution> monitorResolutions = DisplayUtils.getMonitorResolutions();
 
         for (Resolution resolution : monitorResolutions) {
-            if (resolution.getArea() <= monitorResolution.getArea()) {
+            if (resolution.getArea() < monitorResolution.getArea()) {
                 if (resolution.getWidth() >= resolution.getHeight()) {
                     windowResolutions.add(resolution);
                 }
@@ -491,12 +498,23 @@ public class RetornGUI implements GUI {
 
     private void applyDisplayParameters(Window window) {
         Resolution windowResolution = windowResolutionSelection.getResolution();
+        Resolution monitorResolution = DisplayUtils.getMonitorResolution();
 
-        window.resize(windowResolution.getWidth(), windowResolution.getHeight());
-        window.setFullscreen(fullscreenToggle.isChecked());
         window.setVSync(vSyncToggle.isChecked());
 
-        if (!fullscreenToggle.isChecked()) {
+        if (fullscreenToggle.isChecked()) {
+            windowResolutionSelection.setComboBoxDisabled(true);
+            windowResolutionSelection.setResolution(monitorResolution, false);
+            window.resize(monitorResolution.getWidth(), monitorResolution.getHeight());
+            window.setFullscreen(true);
+        } else {
+            windowResolutionSelection.setComboBoxDisabled(false);
+
+            if (windowResolution.compareTo(monitorResolution) >= 0) {
+                windowResolution.set(windowResolutions.getLast());
+            }
+            window.setFullscreen(false);
+            window.resize(windowResolution.getWidth(), windowResolution.getHeight());
             window.moveToCenter();
         }
     }
