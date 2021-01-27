@@ -70,7 +70,7 @@ public class Retorn implements Application {
         loadDisplayState(state);
         loadRenderState(state);
 
-        window.setFpsLimit(60); // TODO: Read limit from state
+        window.setFpsLimit(state.getDisplayState().getFpsLimit());
         window.setCursorID(createCursor(CURSOR_PATH));
 
         Resolution renderResolution = state.getRenderState().getRenderResolution();
