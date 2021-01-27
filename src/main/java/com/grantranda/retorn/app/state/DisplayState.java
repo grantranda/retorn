@@ -6,6 +6,7 @@ import com.grantranda.retorn.engine.state.State;
 public class DisplayState implements State {
 
     private final Resolution windowResolution = new Resolution(1280, 720);
+    private int fpsLimit = 0;
     private boolean customResolution = false;
     private boolean fullscreen = false;
     private boolean vSync = false;
@@ -20,6 +21,14 @@ public class DisplayState implements State {
 
     public void setWindowResolution(int width, int height) {
         windowResolution.set(width, height);
+    }
+
+    public int getFpsLimit() {
+        return fpsLimit;
+    }
+
+    public void setFpsLimit(int fpsLimit) {
+        this.fpsLimit = fpsLimit;
     }
 
     public boolean isCustomResolution() {
@@ -49,6 +58,7 @@ public class DisplayState implements State {
     @Override
     public void reset() {
         setWindowResolution(1280, 720);
+        setFpsLimit(0);
         setCustomResolution(false);
         setFullscreen(false);
         setVSync(false);
