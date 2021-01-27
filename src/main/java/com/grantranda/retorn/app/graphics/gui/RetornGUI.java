@@ -32,6 +32,7 @@ import lwjgui.paint.Color;
 import lwjgui.scene.WindowManager;
 import lwjgui.scene.control.*;
 import lwjgui.scene.layout.BorderPane;
+import lwjgui.scene.layout.HBox;
 import lwjgui.scene.layout.StackPane;
 import lwjgui.scene.layout.VBox;
 
@@ -49,6 +50,7 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 public class RetornGUI implements GUI {
 
     public static final int MENU_WIDTH = 350;
+    public static final int MAX_FPS_LIMIT = 260;
 
     private long nvgContext;
     private boolean mouseOver = false;
@@ -87,6 +89,8 @@ public class RetornGUI implements GUI {
     private RadioButton monitorAspectRatioToggle;
     private RadioButton fractalAspectRatioToggle;
     private ColorSelector colorSelector;
+    private Slider fpsLimitSlider;
+    private Label fpsLimitLabel;
     private Label fpsDisplay;
 
     private final Map<String, AbstractFractalRenderer> fractalRenderers = new HashMap<>();
@@ -272,9 +276,20 @@ public class RetornGUI implements GUI {
         monitorAspectRatioToggle = new RadioButton("Monitor " + monitorAspectRatio, aspectRatioToggleGroup);
         fractalAspectRatioToggle = new RadioButton("Fractal " + fractalAspectRatio, aspectRatioToggleGroup);
         colorSelector = new ColorSelector();
+        fpsLimitSlider = new Slider(10, MAX_FPS_LIMIT, 10, 10);
+        fpsLimitSlider.setFillToParentWidth(true);
+        fpsLimitLabel = new Label("10");
+        fpsLimitLabel.setPrefWidth(80);
+        fpsLimitLabel.setAlignment(Pos.CENTER);
         fpsDisplay = new Label("FPS: " + window.getFpsCounter().getFps());
         fpsDisplay.setAlignment(Pos.BOTTOM_LEFT);
         fpsDisplay.setFillToParentWidth(true);
+
+        HBox fpsLimitHBox = new HBox();
+        fpsLimitHBox.setFillToParentWidth(true);
+        fpsLimitHBox.setAlignment(Pos.CENTER);
+        fpsLimitHBox.setPadding(new Insets(0, 0, 0, 10));
+        fpsLimitHBox.getChildren().addAll(fpsLimitSlider, fpsLimitLabel);
 
         VBox top = new VBox();
         top.setAlignment(Pos.TOP_LEFT);
@@ -290,6 +305,7 @@ public class RetornGUI implements GUI {
         top.getChildren().add(renderResolutionSelection);
         top.getChildren().add(fullscreenToggle);
         top.getChildren().add(vSyncToggle);
+        top.getChildren().add(fpsLimitHBox);
         top.getChildren().add(applyButton);
         top.getChildren().add(renderButton);
         top.getChildren().add(colorSelector);
@@ -374,6 +390,7 @@ public class RetornGUI implements GUI {
         updateWindowResolutionParameters(state.getWindowResolution(), state.isCustomResolution());
         fullscreenToggle.setChecked(state.isFullscreen());
         vSyncToggle.setChecked(state.isVSync());
+        fpsLimitSlider.setValue(state.getFpsLimit());
     }
 
     private void updateDisplayState(DisplayState state, Window window) {
@@ -381,6 +398,7 @@ public class RetornGUI implements GUI {
         state.setCustomResolution(windowResolutionSelection.isCustomResolution());
         state.setFullscreen(fullscreenToggle.isChecked());
         state.setVSync(vSyncToggle.isChecked());
+        state.setFpsLimit((int) fpsLimitSlider.getValue());
     }
 
     public void updateRenderParameters(RenderState state) {
@@ -500,7 +518,9 @@ public class RetornGUI implements GUI {
         Resolution windowResolution = windowResolutionSelection.getResolution();
         Resolution monitorResolution = DisplayUtils.getMonitorResolution();
 
+        int fpsLimit = (int) fpsLimitSlider.getValue();
         window.setVSync(vSyncToggle.isChecked());
+        window.setFpsLimit(fpsLimit < MAX_FPS_LIMIT ? fpsLimit : 0);
 
         if (fullscreenToggle.isChecked()) {
             windowResolutionSelection.setComboBoxDisabled(true);
@@ -571,5 +591,13 @@ public class RetornGUI implements GUI {
         renderButton.setOnAction(event -> imageRenderer.render(window));
         monitorAspectRatioToggle.setOnAction(event -> selectAspectRatioToggle(monitorAspectRatioToggle, windowResolutions, true));
         fractalAspectRatioToggle.setOnAction(event -> selectAspectRatioToggle(fractalAspectRatioToggle, fractalResolutions, true));
+        fpsLimitSlider.setOnValueChangedEvent(event -> {
+            int fpsLimit = (int) fpsLimitSlider.getValue();
+            if (fpsLimit >= MAX_FPS_LIMIT) {
+                fpsLimitLabel.setText("Unlimited");
+            } else {
+                fpsLimitLabel.setText(String.valueOf(fpsLimit));
+            }
+        });
     }
 }
