@@ -461,12 +461,14 @@ public class RetornGUI implements GUI {
     private void updateRenderResolutions() {
         fractalResolutions.clear();
 
+        Resolution monitorResolution = DisplayUtils.getMonitorResolution();
         double fractalAspectRatio = retornRenderer.getFractalAspectRatio().getRatio();
 
         for (Resolution resolution : windowResolutions) {
             int height = (int) (resolution.getWidth() / fractalAspectRatio);
             fractalResolutions.add(new Resolution(resolution.getWidth(), height));
         }
+        fractalResolutions.add(new Resolution(monitorResolution.getWidth(), (int) (monitorResolution.getWidth() / fractalAspectRatio)));
     }
 
     @Override
