@@ -95,7 +95,8 @@ public class RetornGUI implements GUI {
 
     private final Map<String, AbstractFractalRenderer> fractalRenderers = new HashMap<>();
     private final LinkedList<Resolution> windowResolutions = new LinkedList<>();
-    private final LinkedList<Resolution> fractalResolutions = new LinkedList<>();
+    private final LinkedList<Resolution> monitorRenderResolutions = new LinkedList<>();
+    private final LinkedList<Resolution> fractalRenderResolutions = new LinkedList<>();
 
     public RetornGUI(RetornRenderer retornRenderer, ImageRenderer imageRenderer) {
         this.retornRenderer = retornRenderer;
@@ -197,8 +198,6 @@ public class RetornGUI implements GUI {
     }
 
     private void initFractalAlgorithms() {
-        fractalRenderers.clear();
-
         fractalRenderers.put(Retorn.MANDELBROT_SET, retornRenderer.getMandelbrotRenderer());
         fractalRenderers.put(Retorn.JULIA_SET, retornRenderer.getJuliaRenderer());
     }
@@ -214,8 +213,6 @@ public class RetornGUI implements GUI {
     }
 
     private void initWindowResolutions() {
-        windowResolutions.clear();
-
         Resolution monitorResolution = DisplayUtils.getMonitorResolution();
         TreeSet<Resolution> monitorResolutions = DisplayUtils.getMonitorResolutions();
 
@@ -229,16 +226,16 @@ public class RetornGUI implements GUI {
     }
 
     private void initRenderResolutions() {
-        fractalResolutions.clear();
-
         Resolution monitorResolution = DisplayUtils.getMonitorResolution();
         double fractalAspectRatio = retornRenderer.getFractalAspectRatio().getRatio();
 
         for (Resolution resolution : windowResolutions) {
             int height = (int) (resolution.getWidth() / fractalAspectRatio);
-            fractalResolutions.add(new Resolution(resolution.getWidth(), height));
+            monitorRenderResolutions.add(new Resolution(resolution.getWidth(), resolution.getHeight()));
+            fractalRenderResolutions.add(new Resolution(resolution.getWidth(), height));
         }
-        fractalResolutions.add(new Resolution(monitorResolution.getWidth(), (int) (monitorResolution.getWidth() / fractalAspectRatio)));
+        monitorRenderResolutions.add(new Resolution(monitorResolution.getWidth(), monitorResolution.getHeight()));
+        fractalRenderResolutions.add(new Resolution(monitorResolution.getWidth(), (int) (monitorResolution.getWidth() / fractalAspectRatio)));
     }
 
     private void initResolutionSelection(ApplicationState state) {
@@ -248,7 +245,7 @@ public class RetornGUI implements GUI {
         windowResolutionSelection = new ResolutionSelection(MENU_WIDTH, windowResolutions);
         windowResolutionSelection.setResolution(displayState.getWindowResolution(), displayState.isCustomResolution());
 
-        renderResolutionSelection = new ResolutionSelection(MENU_WIDTH, fractalResolutions);
+        renderResolutionSelection = new ResolutionSelection(MENU_WIDTH, fractalRenderResolutions);
         renderResolutionSelection.setResolution(renderState.getRenderResolution(), renderState.isCustomResolution());
     }
 
@@ -445,9 +442,9 @@ public class RetornGUI implements GUI {
         scaleParam.getControl().setNumber(state.getScale());
 
         if (state.isFractalAspectRatioMaintained()) {
-            selectAspectRatioToggle(fractalAspectRatioToggle, fractalResolutions, state.isCustomResolution());
+            selectAspectRatioToggle(fractalAspectRatioToggle, fractalRenderResolutions, state.isCustomResolution());
         } else {
-            selectAspectRatioToggle(monitorAspectRatioToggle, windowResolutions, state.isCustomResolution());
+            selectAspectRatioToggle(monitorAspectRatioToggle, monitorRenderResolutions, state.isCustomResolution());
         }
     }
 
@@ -591,8 +588,8 @@ public class RetornGUI implements GUI {
             updateDisplayState(displayState, window);
         });
         renderButton.setOnAction(event -> imageRenderer.render(window));
-        monitorAspectRatioToggle.setOnAction(event -> selectAspectRatioToggle(monitorAspectRatioToggle, windowResolutions, true));
-        fractalAspectRatioToggle.setOnAction(event -> selectAspectRatioToggle(fractalAspectRatioToggle, fractalResolutions, true));
+        monitorAspectRatioToggle.setOnAction(event -> selectAspectRatioToggle(monitorAspectRatioToggle, monitorRenderResolutions, true));
+        fractalAspectRatioToggle.setOnAction(event -> selectAspectRatioToggle(fractalAspectRatioToggle, fractalRenderResolutions, true));
         fpsLimitSlider.setOnValueChangedEvent(event -> {
             int fpsLimit = (int) fpsLimitSlider.getValue();
             if (fpsLimit >= MAX_FPS_LIMIT) {
