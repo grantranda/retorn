@@ -1,8 +1,10 @@
 package com.grantranda.retorn.app.graphics;
 
+import com.grantranda.retorn.app.graphics.gui.RetornGUI;
 import com.grantranda.retorn.app.state.RenderState;
 import com.grantranda.retorn.engine.graphics.Model;
 import com.grantranda.retorn.engine.graphics.Shader;
+import com.grantranda.retorn.engine.graphics.display.Resolution;
 import com.grantranda.retorn.engine.math.Fraction;
 import com.grantranda.retorn.engine.graphics.display.Window;
 import com.grantranda.retorn.engine.math.Vector2d;
@@ -21,11 +23,20 @@ public class RetornRenderer extends AbstractRenderer {
     private final JuliaRenderer juliaRenderer = new JuliaRenderer(JULIA_VERTEX_PATH, JULIA_FRAGMENT_PATH);
     private AbstractFractalRenderer activeRenderer;
 
+    private final Resolution targetViewportResolution = new Resolution();
     private final Vector2d viewportPixelSize = new Vector2d();
     private final Fraction fractalAspectRatio = new Fraction();
 
     public RetornRenderer() {
         super();
+    }
+
+    public Resolution getTargetViewportResolution() {
+        return targetViewportResolution;
+    }
+
+    public void setTargetViewportResolution(int width, int height) {
+        this.targetViewportResolution.set(width, height);
     }
 
     public Fraction getFractalAspectRatio() {
@@ -54,9 +65,10 @@ public class RetornRenderer extends AbstractRenderer {
     }
 
     @Override
-    public void init() {
-        mandelbrotRenderer.init();
-        juliaRenderer.init();
+    public void init(Window window) {
+        mandelbrotRenderer.init(window);
+        juliaRenderer.init(window);
+        setTargetViewportResolution(window.getWidth(), window.getHeight());
         setFractalAspectRatio(7, 4); // TODO: Remove
         useMandelbrotRenderer(); // TODO
     }
@@ -77,7 +89,7 @@ public class RetornRenderer extends AbstractRenderer {
         // This is optional to allow for cases in which the viewport size should not be tied to window size, such as
         // when rendering to an image.
         if (updateViewport) {
-            updateViewport(window.getResolution(), fractalAspectRatio.getRatio());
+            updateViewport(targetViewportResolution, fractalAspectRatio.getRatio());
 
             // TODO: Potentially remove division by 2.0 and find alternate solution
             viewportPixelSize.set(

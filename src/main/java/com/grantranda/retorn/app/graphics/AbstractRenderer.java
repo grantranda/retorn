@@ -37,7 +37,7 @@ public abstract class AbstractRenderer implements Renderer {
     }
 
     @Override
-    public abstract void init();
+    public abstract void init(Window window);
 
     @Override
     public abstract void terminate();
@@ -46,7 +46,7 @@ public abstract class AbstractRenderer implements Renderer {
     public abstract void render(Window window, State state, Model[] models, boolean updateViewport);
 
     public void clear() {
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClearColor(0.10f, 0.10f, 0.10f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     }
 

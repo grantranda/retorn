@@ -34,7 +34,7 @@ public abstract class AbstractFractalRenderer extends AbstractRenderer {
     }
 
     @Override
-    public void init() {
+    public void init(Window window) {
         projectionMatrix = Matrix4f.orthographic(-2.5f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f);
 
         shader = new Shader(vertexShaderPath, fragmentShaderPath);

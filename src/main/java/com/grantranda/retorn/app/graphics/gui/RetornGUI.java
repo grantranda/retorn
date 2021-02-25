@@ -352,7 +352,7 @@ public class RetornGUI implements GUI {
         menu.setPrefHeight(window.getHeight());
         menu.setAlignment(Pos.TOP_LEFT);
         menu.setFillToParentHeight(true);
-        menu.setBackgroundLegacy(new Color(.9, .9, .9, 0.95));
+        menu.setBackgroundLegacy(new Color(0.9, 0.9, 0.9, 1.0));
         menu.setBottom(fpsDisplay);
         menu.setTop(top);
 
