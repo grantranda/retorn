@@ -1,8 +1,10 @@
 package com.grantranda.retorn.app.graphics;
 
+import com.grantranda.retorn.app.graphics.gui.RetornGUI;
 import com.grantranda.retorn.app.state.RenderState;
 import com.grantranda.retorn.engine.graphics.Model;
 import com.grantranda.retorn.engine.graphics.Shader;
+import com.grantranda.retorn.engine.graphics.display.Resolution;
 import com.grantranda.retorn.engine.math.Fraction;
 import com.grantranda.retorn.engine.graphics.display.Window;
 import com.grantranda.retorn.engine.math.Vector2d;
@@ -21,6 +23,7 @@ public class RetornRenderer extends AbstractRenderer {
     private final JuliaRenderer juliaRenderer = new JuliaRenderer(JULIA_VERTEX_PATH, JULIA_FRAGMENT_PATH);
     private AbstractFractalRenderer activeRenderer;
 
+    private final Resolution targetViewportResolution = new Resolution();
     private final Vector2d viewportPixelSize = new Vector2d();
     private final Fraction fractalAspectRatio = new Fraction();
 
@@ -59,6 +62,7 @@ public class RetornRenderer extends AbstractRenderer {
         juliaRenderer.init(window);
         setFractalAspectRatio(7, 4); // TODO: Remove
         useMandelbrotRenderer(); // TODO
+        targetViewportResolution.set(window.getResolution());
     }
 
     @Override
@@ -77,7 +81,8 @@ public class RetornRenderer extends AbstractRenderer {
         // This is optional to allow for cases in which the viewport size should not be tied to window size, such as
         // when rendering to an image.
         if (updateViewport) {
-            updateViewport(window.getResolution(), fractalAspectRatio.getRatio());
+            targetViewportResolution.set(window.getWidth() - RetornGUI.MENU_WIDTH, window.getHeight());
+            updateViewport(targetViewportResolution, fractalAspectRatio.getRatio());
 
             // TODO: Potentially remove division by 2.0 and find alternate solution
             viewportPixelSize.set(
