@@ -131,6 +131,12 @@ public class Retorn implements Application {
         imageRenderer.setResolution(renderState.getRenderResolution());
         imageRenderer.update(renderState, models);
         gui.update(window, state);
+
+        if (gui.isMenuShown()) {
+            renderer.setTargetViewportResolution(window.getWidth() - RetornGUI.MENU_WIDTH, window.getHeight());
+        } else {
+            renderer.setTargetViewportResolution(window.getWidth(), window.getHeight());
+        }
     }
 
     @Override

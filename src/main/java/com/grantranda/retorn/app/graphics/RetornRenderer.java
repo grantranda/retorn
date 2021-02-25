@@ -89,7 +89,6 @@ public class RetornRenderer extends AbstractRenderer {
         // This is optional to allow for cases in which the viewport size should not be tied to window size, such as
         // when rendering to an image.
         if (updateViewport) {
-            targetViewportResolution.set(window.getWidth() - RetornGUI.MENU_WIDTH, window.getHeight());
             updateViewport(targetViewportResolution, fractalAspectRatio.getRatio());
 
             // TODO: Potentially remove division by 2.0 and find alternate solution
