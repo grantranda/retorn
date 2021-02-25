@@ -37,7 +37,7 @@ public abstract class AbstractRenderer implements Renderer {
     }
 
     @Override
-    public abstract void init();
+    public abstract void init(Window window);
 
     @Override
     public abstract void terminate();

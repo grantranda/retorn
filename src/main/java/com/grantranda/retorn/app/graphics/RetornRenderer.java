@@ -54,9 +54,9 @@ public class RetornRenderer extends AbstractRenderer {
     }
 
     @Override
-    public void init() {
-        mandelbrotRenderer.init();
-        juliaRenderer.init();
+    public void init(Window window) {
+        mandelbrotRenderer.init(window);
+        juliaRenderer.init(window);
         setFractalAspectRatio(7, 4); // TODO: Remove
         useMandelbrotRenderer(); // TODO
     }

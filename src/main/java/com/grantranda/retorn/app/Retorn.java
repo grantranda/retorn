@@ -79,7 +79,7 @@ public class Retorn implements Application {
         gui = new RetornGUI(renderer, imageRenderer);
         inputHandler = new RetornInputHandler(gui, window.getCursorID());
 
-        renderer.init();
+        renderer.init(window);
         gui.init(window, state);
 
         // Vertices of mesh corners
