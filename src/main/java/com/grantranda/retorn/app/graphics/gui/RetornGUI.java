@@ -49,8 +49,13 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class RetornGUI implements GUI {
 
-    public static final int MENU_WIDTH = 350;
+    public static final int MENU_CONTENT_WIDTH = 350;
+    public static final int MENU_SCROLLBAR_WIDTH = 14;
+    public static final int MENU_TOTAL_WIDTH = MENU_CONTENT_WIDTH + MENU_SCROLLBAR_WIDTH;
+    public static final int MENU_CONTENT_HEIGHT = 700; // TODO: Determine final menu height
     public static final int MAX_FPS_LIMIT = 260;
+
+    public static final Color MENU_COLOR = new Color(0.9, 0.9, 0.9, 1.0);
 
     private long nvgContext;
     private boolean mouseOver = false;
@@ -242,10 +247,10 @@ public class RetornGUI implements GUI {
         DisplayState displayState = state.getDisplayState();
         RenderState renderState = state.getRenderState();
 
-        windowResolutionSelection = new ResolutionSelection(MENU_WIDTH, windowResolutions);
+        windowResolutionSelection = new ResolutionSelection(MENU_CONTENT_WIDTH, windowResolutions);
         windowResolutionSelection.setResolution(displayState.getWindowResolution(), displayState.isCustomResolution());
 
-        renderResolutionSelection = new ResolutionSelection(MENU_WIDTH, fractalRenderResolutions);
+        renderResolutionSelection = new ResolutionSelection(MENU_CONTENT_WIDTH, fractalRenderResolutions);
         renderResolutionSelection.setResolution(renderState.getRenderResolution(), renderState.isCustomResolution());
     }
 
@@ -289,10 +294,10 @@ public class RetornGUI implements GUI {
         String monitorAspectRatio = "(" + DisplayUtils.getMonitorAspectRatio().toRatio() + ")";
         String fractalAspectRatio = "(" + retornRenderer.getFractalAspectRatio().toRatio() + ")";
 
-        maxIterationsParam = new Parameter<>(MENU_WIDTH, "Max Iterations", new NumberFieldi(100, 0, 100000));
-        scaleParam = new Parameter<>(MENU_WIDTH, "Scale", new NumberFieldd(1.0));
-        xParam = new Parameter<>(MENU_WIDTH, "X", new NumberFieldd(0.0));
-        yParam = new Parameter<>(MENU_WIDTH, "Y", new NumberFieldd(0.0));
+        maxIterationsParam = new Parameter<>(MENU_CONTENT_WIDTH, "Max Iterations", new NumberFieldi(100, 0, 100000));
+        scaleParam = new Parameter<>(MENU_CONTENT_WIDTH, "Scale", new NumberFieldd(1.0));
+        xParam = new Parameter<>(MENU_CONTENT_WIDTH, "X", new NumberFieldd(0.0));
+        yParam = new Parameter<>(MENU_CONTENT_WIDTH, "Y", new NumberFieldd(0.0));
         hideMenuButton = new Button("X");
         showMenuButton = new Button("|||");
         updateButton = new Button("Update");
@@ -347,20 +352,15 @@ public class RetornGUI implements GUI {
         top.getChildren().add(loadButton);
 
         menu = new BorderPane();
-        menu.setMinWidth(MENU_WIDTH);
-        menu.setMaxWidth(MENU_WIDTH);
-        menu.setPrefHeight(window.getHeight());
+        menu.setMinWidth(MENU_CONTENT_WIDTH);
+        menu.setMaxWidth(MENU_CONTENT_WIDTH);
         menu.setAlignment(Pos.TOP_LEFT);
-        menu.setFillToParentHeight(true);
-        menu.setBackgroundLegacy(new Color(0.9, 0.9, 0.9, 1.0));
-        menu.setBottom(fpsDisplay);
+        menu.setBackgroundLegacy(MENU_COLOR);
         menu.setTop(top);
 
         menuContainer = new StackPane();
-        menuContainer.setMinWidth(MENU_WIDTH);
-        menuContainer.setMaxWidth(MENU_WIDTH);
-        menuContainer.setPrefHeight(window.getHeight());
-        menuContainer.setFillToParentHeight(true);
+        menuContainer.setMinWidth(MENU_CONTENT_WIDTH);
+        menuContainer.setMaxWidth(MENU_CONTENT_WIDTH);
         menuContainer.getChildren().add(menu);
 
         menuCover = new StackPane();
@@ -396,7 +396,7 @@ public class RetornGUI implements GUI {
         int width = window.getWidth();
         boolean mouseOverMenu = mouseInput.isMouseInWindow()
                 && isMenuShown()
-                && (mousePos.x >= width - MENU_WIDTH && mousePos.x <= width);
+                && (mousePos.x >= width - MENU_TOTAL_WIDTH && mousePos.x <= width);
 
         setMouseOver(mouseOverMenu);
     }

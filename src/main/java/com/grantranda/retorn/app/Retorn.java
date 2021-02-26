@@ -133,7 +133,7 @@ public class Retorn implements Application {
         gui.update(window, state);
 
         if (gui.isMenuShown()) {
-            renderer.setTargetViewportResolution(window.getWidth() - RetornGUI.MENU_WIDTH, window.getHeight());
+            renderer.setTargetViewportResolution(window.getWidth() - RetornGUI.MENU_CONTENT_WIDTH, window.getHeight());
         } else {
             renderer.setTargetViewportResolution(window.getWidth(), window.getHeight());
         }
