@@ -31,6 +31,7 @@ import lwjgui.geometry.Pos;
 import lwjgui.paint.Color;
 import lwjgui.scene.WindowManager;
 import lwjgui.scene.control.*;
+import lwjgui.scene.control.ScrollPane.ScrollBarPolicy;
 import lwjgui.scene.layout.BorderPane;
 import lwjgui.scene.layout.HBox;
 import lwjgui.scene.layout.StackPane;
@@ -71,6 +72,7 @@ public class RetornGUI implements GUI {
     private BorderPane menu;
     private StackPane menuContainer;
     private StackPane menuCover;
+    private ScrollPane menuScrollPane;
 
     private Button hideMenuButton;
     private Button showMenuButton;
@@ -141,7 +143,7 @@ public class RetornGUI implements GUI {
 
     public void showMenu() {
         showMenuButton.setVisible(false);
-        root.setRight(menuContainer);
+        root.setRight(menuScrollPane);
         menu.setVisible(true);
         menuShown = true;
     }
@@ -185,7 +187,7 @@ public class RetornGUI implements GUI {
         initRenderResolutions();
 
         initMenu(window, state);
-        initRoot(window);
+        initRoot();
         setEventHandlers(window, state);
 
         guiWindow.getScene().setRoot(root);
@@ -195,6 +197,8 @@ public class RetornGUI implements GUI {
 
         EventHelper.fireEvent(applyButton.getOnAction(), new ActionEvent());
         EventHelper.fireEvent(updateButton.getOnAction(), new ActionEvent());
+
+        updateGuiSize(window);
     }
 
     private void initNvg(Window window) {
@@ -319,7 +323,7 @@ public class RetornGUI implements GUI {
         fpsLimitLabel.setPrefWidth(80);
         fpsLimitLabel.setAlignment(Pos.CENTER);
         fpsDisplay = new Label("FPS: " + window.getFpsCounter().getFps());
-        fpsDisplay.setAlignment(Pos.BOTTOM_LEFT);
+        fpsDisplay.setAlignment(Pos.CENTER_RIGHT);
         fpsDisplay.setFillToParentWidth(true);
 
         HBox fpsLimitHBox = new HBox();
@@ -328,10 +332,14 @@ public class RetornGUI implements GUI {
         fpsLimitHBox.setPadding(new Insets(0, 0, 0, 10));
         fpsLimitHBox.getChildren().addAll(fpsLimitSlider, fpsLimitLabel);
 
+        HBox topHBox = new HBox();
+        topHBox.setFillToParentWidth(true);
+        topHBox.getChildren().addAll(hideMenuButton, fpsDisplay);
+
         VBox top = new VBox();
         top.setAlignment(Pos.TOP_LEFT);
         top.setPadding(new Insets(0, 10, 0, 0));
-        top.getChildren().add(hideMenuButton);
+        top.getChildren().add(topHBox);
         top.getChildren().add(fractalAlgorithmSelection);
         top.getChildren().add(maxIterationsParam);
         top.getChildren().add(scaleParam);
@@ -351,6 +359,8 @@ public class RetornGUI implements GUI {
         top.getChildren().add(saveButton);
         top.getChildren().add(loadButton);
 
+        Resolution windowResolution = windowResolutionSelection.getResolution();
+
         menu = new BorderPane();
         menu.setMinWidth(MENU_CONTENT_WIDTH);
         menu.setMaxWidth(MENU_CONTENT_WIDTH);
@@ -364,17 +374,23 @@ public class RetornGUI implements GUI {
         menuContainer.getChildren().add(menu);
 
         menuCover = new StackPane();
-        menuCover.setMinWidth(MENU_WIDTH);
-        menuCover.setMaxWidth(MENU_WIDTH);
-        menuCover.setPrefHeight(window.getHeight());
-        menuCover.setFillToParentHeight(true);
+        menuCover.setMinWidth(MENU_TOTAL_WIDTH);
+        menuCover.setMaxWidth(MENU_TOTAL_WIDTH);
+
+        menuScrollPane = new ScrollPane();
+        menuScrollPane.setContent(menuContainer);
+        menuScrollPane.setMinWidth(MENU_TOTAL_WIDTH);
+        menuScrollPane.setMaxWidth(MENU_TOTAL_WIDTH);
+        menuScrollPane.setPrefHeight(windowResolution.getHeight());
+        menuScrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
+        menuScrollPane.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
+        menuScrollPane.setBackgroundLegacy(MENU_COLOR);
     }
 
-    private void initRoot(Window window) {
+    private void initRoot() {
         root = new BorderPane();
-        root.setPrefSize(window.getWidth(), window.getHeight());
         root.setCenter(new StackPane()); // Set center so BorderPane alignment is correct
-        root.setRight(menuContainer);
+        root.setRight(menuScrollPane);
     }
 
     @Override
@@ -407,6 +423,8 @@ public class RetornGUI implements GUI {
 
         // TODO: This condition might have unintended consequences
         if (window.isResized()) {
+            updateGuiSize(window);
+
             if (window.isFullscreen()) {
                 Resolution monitorResolution = DisplayUtils.getMonitorResolution();
                 displayState.setWindowResolution(monitorResolution.getWidth(), monitorResolution.getHeight());
@@ -416,6 +434,14 @@ public class RetornGUI implements GUI {
                 updateDisplayState(displayState, window);
             }
         }
+    }
+
+    private void updateGuiSize(Window window) {
+        menu.setMinHeight(MENU_CONTENT_HEIGHT);
+        menu.setMaxHeight(MENU_CONTENT_HEIGHT);
+        menuContainer.setMinHeight(MENU_CONTENT_HEIGHT);
+        menuCover.setMinHeight(MENU_CONTENT_HEIGHT);
+        menuScrollPane.setMinHeight(window.getHeight());
     }
 
     public void updateDisplayParameters(DisplayState state) {
