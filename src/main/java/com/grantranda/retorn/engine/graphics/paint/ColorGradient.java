@@ -1,16 +1,10 @@
 package com.grantranda.retorn.engine.graphics.paint;
 
-import com.grantranda.retorn.engine.graphics.Texture;
 import com.grantranda.retorn.engine.util.ColorUtils;
 import com.grantranda.retorn.engine.util.MathUtils;
 import lwjgui.paint.Color;
 
-import java.nio.ByteBuffer;
 import java.util.LinkedList;
-
-import static org.lwjgl.opengl.GL11.GL_NEAREST;
-import static org.lwjgl.opengl.GL11.GL_RGBA;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_1D;
 
 public class ColorGradient {
 
@@ -68,8 +62,11 @@ public class ColorGradient {
         stops.get(index).setColor(color);
     }
 
-    public Texture toTexture(int width) {
-        ByteBuffer pixels = null; // TODO
-        return new Texture(GL_TEXTURE_1D, GL_RGBA, GL_NEAREST, width, 1, pixels);
+    public Color[] toArray(int width) {
+        Color[] colors = new Color[width];
+        for (int i = 0; i < width; i++) {
+            colors[i] = lerp(i * (1.0f / width));
+        }
+        return colors;
     }
 }
