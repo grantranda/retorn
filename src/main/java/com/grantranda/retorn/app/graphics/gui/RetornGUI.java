@@ -9,7 +9,7 @@ import com.grantranda.retorn.app.graphics.gui.control.ColorSelector;
 import com.grantranda.retorn.app.graphics.gui.control.NumberFieldd;
 import com.grantranda.retorn.app.graphics.gui.control.NumberFieldi;
 import com.grantranda.retorn.app.graphics.gui.control.Parameter;
-import com.grantranda.retorn.app.graphics.gui.layout.ResolutionSelection;
+import com.grantranda.retorn.app.graphics.gui.control.ResolutionSelection;
 import com.grantranda.retorn.app.state.ApplicationState;
 import com.grantranda.retorn.app.state.DisplayState;
 import com.grantranda.retorn.app.state.RenderState;

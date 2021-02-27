@@ -1,4 +1,4 @@
-package com.grantranda.retorn.app.graphics.gui.layout;
+package com.grantranda.retorn.app.graphics.gui.control;
 
 import com.grantranda.retorn.app.graphics.gui.control.NumberFieldi;
 import com.grantranda.retorn.app.graphics.gui.control.Parameter;
