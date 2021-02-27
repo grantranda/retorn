@@ -1,7 +1,5 @@
 package com.grantranda.retorn.app.graphics.gui.control;
 
-import com.grantranda.retorn.app.graphics.gui.control.NumberFieldi;
-import com.grantranda.retorn.app.graphics.gui.control.Parameter;
 import com.grantranda.retorn.engine.graphics.display.Resolution;
 import lwjgui.scene.control.ComboBox;
 import lwjgui.scene.layout.VBox;
