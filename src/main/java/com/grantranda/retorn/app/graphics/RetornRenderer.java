@@ -1,6 +1,5 @@
 package com.grantranda.retorn.app.graphics;
 
-import com.grantranda.retorn.app.graphics.gui.RetornGUI;
 import com.grantranda.retorn.app.state.RenderState;
 import com.grantranda.retorn.engine.graphics.Model;
 import com.grantranda.retorn.engine.graphics.Shader;
