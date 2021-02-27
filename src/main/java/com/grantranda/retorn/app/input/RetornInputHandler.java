@@ -123,10 +123,10 @@ public class RetornInputHandler implements InputHandler {
             gui.setMenuDisabled(false);
         }
 
-        if (gui.isMouseOver()) {
-            window.setCursorID(Window.DEFAULT_CURSOR);
-        } else {
-            window.setCursorID(cursorID);
+        if (!gui.isMouseOver()) {
+            window.setCursor(cursorID);
+        } else if (window.getCursor() == cursorID) {
+            window.setCursor(Window.DEFAULT_CURSOR);
         }
     }
 

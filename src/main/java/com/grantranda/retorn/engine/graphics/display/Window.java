@@ -104,12 +104,13 @@ public class Window {
         return windowID;
     }
 
-    public long getCursorID() {
+    public long getCursor() {
         return cursorID;
     }
 
-    public void setCursorID(long cursorID) {
+    public void setCursor(long cursorID) {
         this.cursorID = cursorID;
+        glfwSetCursor(windowID, cursorID);
     }
 
     public float getContentScaleX() {
@@ -257,7 +258,6 @@ public class Window {
         mouseInput.update();
         fpsCounter.update();
         setResized(false);
-        glfwSetCursor(windowID, cursorID);
         glfwSwapBuffers(windowID);
         glfwPollEvents();
         DisplayUtils.sync(fpsLimit);
