@@ -398,6 +398,46 @@ public class RetornGUI implements GUI {
         root.setRight(menuScrollPane);
     }
 
+    private VBox createMenuBorderPaneTop(Node... children) {
+        VBox top = new VBox();
+        top.setAlignment(Pos.TOP_LEFT);
+        top.setPadding(new Insets(0, 10, 0, 0));
+        top.getChildren().addAll(children);
+        return top;
+    }
+
+    private BorderPane createMenuBorderPane(Pane top) {
+        BorderPane fractalBorderPane = new BorderPane();
+        fractalBorderPane.setMinWidth(MENU_CONTENT_WIDTH);
+        fractalBorderPane.setMaxWidth(MENU_CONTENT_WIDTH);
+        fractalBorderPane.setAlignment(Pos.TOP_LEFT);
+        fractalBorderPane.setTop(top);
+        return fractalBorderPane;
+    }
+
+    private StackPane createMenuContainer(Pane content) {
+        StackPane container = new StackPane();
+        container.setMinWidth(MENU_CONTENT_WIDTH);
+        container.setMaxWidth(MENU_CONTENT_WIDTH);
+        container.setPadding(new Insets(0, 10, 0, 20));
+        container.getChildren().add(content);
+        return container;
+    }
+
+    private ScrollPane createMenuScrollPane(Pane content) {
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setContent(content);
+        scrollPane.setMinWidth(MENU_TOTAL_WIDTH);
+        scrollPane.setMaxWidth(MENU_TOTAL_WIDTH);
+        scrollPane.setPrefHeight(windowResolutionSelection.getResolution().getHeight());
+        scrollPane.setAlignment(Pos.TOP_CENTER);
+        scrollPane.setInternalPadding(new Insets(10, 0, 0, 0));
+        scrollPane.setBorderStyle(BorderStyle.NONE);
+        scrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
+        scrollPane.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
+        return scrollPane;
+    }
+
     @Override
     public void terminate() {
         WindowManager.dispose();
