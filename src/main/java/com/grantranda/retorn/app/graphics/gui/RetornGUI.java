@@ -204,8 +204,6 @@ public class RetornGUI implements GUI {
 
         EventHelper.fireEvent(applyButton.getOnAction(), new ActionEvent());
         EventHelper.fireEvent(updateButton.getOnAction(), new ActionEvent());
-
-        updateGuiSize(window);
     }
 
     private void initNvg(Window window) {
@@ -569,6 +567,8 @@ public class RetornGUI implements GUI {
             window.resize(windowResolution.getWidth(), windowResolution.getHeight());
             window.moveToCenter();
         }
+
+        updateGuiSize(window);
     }
 
     private void resetPosition(RenderState state) {
