@@ -29,11 +29,13 @@ import lwjgui.event.EventHelper;
 import lwjgui.geometry.Insets;
 import lwjgui.geometry.Pos;
 import lwjgui.paint.Color;
+import lwjgui.scene.Node;
 import lwjgui.scene.WindowManager;
 import lwjgui.scene.control.*;
 import lwjgui.scene.control.ScrollPane.ScrollBarPolicy;
 import lwjgui.scene.layout.BorderPane;
 import lwjgui.scene.layout.HBox;
+import lwjgui.scene.layout.Pane;
 import lwjgui.scene.layout.StackPane;
 import lwjgui.scene.layout.VBox;
 import lwjgui.style.BorderStyle;
@@ -73,10 +75,17 @@ public class RetornGUI implements GUI {
     private ThemeDark themeDark;
 
     private BorderPane root;
-    private BorderPane menu;
-    private StackPane menuContainer;
+    private BorderPane fractalBorderPane;
+    private StackPane fractalContainer;
+    private ScrollPane fractalScrollPane;
+    private BorderPane colorBorderPane;
+    private StackPane colorContainer;
+    private ScrollPane colorScrollPane;
+    private BorderPane displayBorderPane;
+    private StackPane displayContainer;
+    private ScrollPane displayScrollPane;
     private StackPane menuCover;
-    private ScrollPane menuScrollPane;
+    private TabPane menuTabPane;
 
     private Button hideMenuButton;
     private Button showMenuButton;
@@ -139,7 +148,7 @@ public class RetornGUI implements GUI {
     }
 
     public void hideMenu() {
-        menu.setVisible(false);
+        fractalBorderPane.setVisible(false);
         root.setRight(showMenuButton);
         showMenuButton.setVisible(true);
         menuShown = false;
@@ -147,8 +156,8 @@ public class RetornGUI implements GUI {
 
     public void showMenu() {
         showMenuButton.setVisible(false);
-        root.setRight(menuScrollPane);
-        menu.setVisible(true);
+        root.setRight(menuTabPane);
+        fractalBorderPane.setVisible(true);
         menuShown = true;
     }
 
@@ -169,9 +178,9 @@ public class RetornGUI implements GUI {
 
         this.menuDisabled = menuDisabled;
         if (menuDisabled) {
-            menuContainer.getChildren().add(menuCover);
+            fractalContainer.getChildren().add(menuCover);
         } else {
-            menuContainer.getChildren().remove(menuCover);
+            fractalContainer.getChildren().remove(menuCover);
         }
     }
 
@@ -303,6 +312,7 @@ public class RetornGUI implements GUI {
         String monitorAspectRatio = "(" + DisplayUtils.getMonitorAspectRatio().toRatio() + ")";
         String fractalAspectRatio = "(" + retornRenderer.getFractalAspectRatio().toRatio() + ")";
 
+        // Menu Elements
         maxIterationsParam = new Parameter<>(MENU_CONTENT_WIDTH, "Max Iterations", new NumberFieldi(100, 0, 100000));
         scaleParam = new Parameter<>(MENU_CONTENT_WIDTH, "Scale", new NumberFieldd(1.0));
         xParam = new Parameter<>(MENU_CONTENT_WIDTH, "X", new NumberFieldd(0.0));
@@ -331,71 +341,68 @@ public class RetornGUI implements GUI {
         fpsDisplay.setAlignment(Pos.CENTER_RIGHT);
         fpsDisplay.setFillToParentWidth(true);
 
+        HBox tabTopHBox = new HBox();
+        tabTopHBox.setFillToParentWidth(true);
+        tabTopHBox.getChildren().addAll(hideMenuButton, fpsDisplay);
+
+        // Fractal Tab
+        VBox fractalTopVBox = createMenuBorderPaneTop(
+                tabTopHBox, fractalAlgorithmSelection, maxIterationsParam, scaleParam, xParam, yParam,
+                aspectRatioToggleLabel, monitorAspectRatioToggle, fractalAspectRatioToggle, renderResolutionSelection,
+                renderButton, colorSelector, updateButton, resetButton, saveButton, loadButton
+        );
+
+        fractalBorderPane = createMenuBorderPane(fractalTopVBox);
+        fractalContainer = createMenuContainer(fractalBorderPane);
+        fractalScrollPane = createMenuScrollPane(fractalContainer);
+
+        // Color Tab
+        VBox colorTopVBox = createMenuBorderPaneTop(
+                tabTopHBox
+        );
+
+        colorBorderPane = createMenuBorderPane(colorTopVBox);
+        colorContainer = createMenuContainer(colorBorderPane);
+        colorScrollPane = createMenuScrollPane(colorContainer);
+
+        // Display Tab
         HBox fpsLimitHBox = new HBox();
         fpsLimitHBox.setFillToParentWidth(true);
         fpsLimitHBox.setAlignment(Pos.CENTER);
         fpsLimitHBox.setPadding(new Insets(0, 0, 0, 10));
         fpsLimitHBox.getChildren().addAll(fpsLimitSlider, fpsLimitLabel);
 
-        HBox topHBox = new HBox();
-        topHBox.setFillToParentWidth(true);
-        topHBox.getChildren().addAll(hideMenuButton, fpsDisplay);
+        VBox displayTopVBox = createMenuBorderPaneTop(
+                tabTopHBox, windowResolutionSelection, fullscreenToggle, vSyncToggle, fpsLimitHBox, applyButton
+        );
 
-        VBox top = new VBox();
-        top.setAlignment(Pos.TOP_LEFT);
-        top.setPadding(new Insets(0, 10, 0, 0));
-        top.getChildren().add(topHBox);
-        top.getChildren().add(fractalAlgorithmSelection);
-        top.getChildren().add(maxIterationsParam);
-        top.getChildren().add(scaleParam);
-        top.getChildren().addAll(xParam, yParam);
-        top.getChildren().add(windowResolutionSelection);
-        top.getChildren().add(aspectRatioToggleLabel);
-        top.getChildren().addAll(monitorAspectRatioToggle, fractalAspectRatioToggle);
-        top.getChildren().add(renderResolutionSelection);
-        top.getChildren().add(fullscreenToggle);
-        top.getChildren().add(vSyncToggle);
-        top.getChildren().add(fpsLimitHBox);
-        top.getChildren().add(applyButton);
-        top.getChildren().add(renderButton);
-        top.getChildren().add(colorSelector);
-        top.getChildren().add(updateButton);
-        top.getChildren().add(resetButton);
-        top.getChildren().add(saveButton);
-        top.getChildren().add(loadButton);
+        displayBorderPane = createMenuBorderPane(displayTopVBox);
+        displayContainer = createMenuContainer(displayBorderPane);
+        displayScrollPane = createMenuScrollPane(displayContainer);
 
-        Resolution windowResolution = windowResolutionSelection.getResolution();
-
-        menu = new BorderPane();
-        menu.setMinWidth(MENU_CONTENT_WIDTH);
-        menu.setMaxWidth(MENU_CONTENT_WIDTH);
-        menu.setAlignment(Pos.TOP_LEFT);
-        menu.setBackgroundLegacy(MENU_COLOR);
-        menu.setTop(top);
-
-        menuContainer = new StackPane();
-        menuContainer.setMinWidth(MENU_CONTENT_WIDTH);
-        menuContainer.setMaxWidth(MENU_CONTENT_WIDTH);
-        menuContainer.getChildren().add(menu);
+        // Tab Pane
+        menuTabPane = new TabPane();
+        menuTabPane.setFillToParentWidth(false);
+        menuTabPane.setFillToParentHeight(false);
+        menuTabPane.setMinWidth(MENU_TOTAL_WIDTH);
+        menuTabPane.setMaxWidth(MENU_TOTAL_WIDTH);
+        Tab fractalTab = new Tab("Fractal", false);
+        fractalTab.setContent(fractalScrollPane);
+        Tab colorTab = new Tab("Color", false);
+        colorTab.setContent(colorScrollPane);
+        Tab displayTab = new Tab("Display", false);
+        displayTab.setContent(displayScrollPane);
+        menuTabPane.getTabs().addAll(fractalTab, colorTab, displayTab);
 
         menuCover = new StackPane();
         menuCover.setMinWidth(MENU_TOTAL_WIDTH);
         menuCover.setMaxWidth(MENU_TOTAL_WIDTH);
-
-        menuScrollPane = new ScrollPane();
-        menuScrollPane.setContent(menuContainer);
-        menuScrollPane.setMinWidth(MENU_TOTAL_WIDTH);
-        menuScrollPane.setMaxWidth(MENU_TOTAL_WIDTH);
-        menuScrollPane.setPrefHeight(windowResolution.getHeight());
-        menuScrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
-        menuScrollPane.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
-        menuScrollPane.setBackgroundLegacy(MENU_COLOR);
     }
 
     private void initRoot() {
         root = new BorderPane();
         root.setCenter(new StackPane()); // Set center so BorderPane alignment is correct
-        root.setRight(menuScrollPane);
+        root.setRight(menuTabPane);
     }
 
     private VBox createMenuBorderPaneTop(Node... children) {
@@ -482,11 +489,18 @@ public class RetornGUI implements GUI {
     }
 
     private void updateGuiSize(Window window) {
-        menu.setMinHeight(MENU_CONTENT_HEIGHT);
-        menu.setMaxHeight(MENU_CONTENT_HEIGHT);
-        menuContainer.setMinHeight(MENU_CONTENT_HEIGHT);
+        int scrollPaneTopOffset = 45;
+        fractalBorderPane.setMinHeight(MENU_CONTENT_HEIGHT);
+        fractalBorderPane.setMaxHeight(MENU_CONTENT_HEIGHT);
+        fractalContainer.setMinHeight(MENU_CONTENT_HEIGHT);
         menuCover.setMinHeight(MENU_CONTENT_HEIGHT);
-        menuScrollPane.setMinHeight(window.getHeight());
+        fractalScrollPane.setMinHeight(window.getHeight() - scrollPaneTopOffset);
+        fractalScrollPane.setMaxHeight(window.getHeight() - scrollPaneTopOffset);
+        colorScrollPane.setMinHeight(window.getHeight() - scrollPaneTopOffset);
+        colorScrollPane.setMaxHeight(window.getHeight() - scrollPaneTopOffset);
+        displayScrollPane.setMinHeight(window.getHeight() - scrollPaneTopOffset);
+        displayScrollPane.setMaxHeight(window.getHeight() - scrollPaneTopOffset);
+        menuTabPane.setMinHeight(window.getHeight());
     }
 
     public void updateDisplayParameters(DisplayState state) {
