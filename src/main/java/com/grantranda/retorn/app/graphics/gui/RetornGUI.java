@@ -36,6 +36,9 @@ import lwjgui.scene.layout.BorderPane;
 import lwjgui.scene.layout.HBox;
 import lwjgui.scene.layout.StackPane;
 import lwjgui.scene.layout.VBox;
+import lwjgui.style.BorderStyle;
+import lwjgui.theme.Theme;
+import lwjgui.theme.ThemeDark;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -67,6 +70,7 @@ public class RetornGUI implements GUI {
     private final RetornRenderer retornRenderer;
     private final ImageRenderer imageRenderer;
     private lwjgui.scene.Window guiWindow;
+    private ThemeDark themeDark;
 
     private BorderPane root;
     private BorderPane menu;
@@ -181,6 +185,9 @@ public class RetornGUI implements GUI {
         guiWindow = WindowManager.generateWindow(window.getWindowID());
         guiWindow.setWindowAutoClear(false);
         guiWindow.show();
+
+        themeDark = new ThemeDark();
+        Theme.setTheme(themeDark);
 
         initFractalAlgorithms();
         initWindowResolutions();
