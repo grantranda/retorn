@@ -5,9 +5,11 @@ import com.grantranda.retorn.engine.util.MathUtils;
 import lwjgui.paint.Color;
 
 import java.util.LinkedList;
+import java.util.Random;
 
 public class ColorGradient {
 
+    private final Random random = new Random();
     private final LinkedList<ColorStop> stops = new LinkedList<>();
 
     public ColorGradient(Color startColor, Color endColor) {
@@ -73,6 +75,12 @@ public class ColorGradient {
 
     public void setStopColor(int index, Color color) {
         stops.get(index).setColor(color);
+    }
+
+    public void randomize() {
+        for (ColorStop stop : stops) {
+            stop.setColor(new Color(random.nextInt(254) + 1, random.nextInt(254) + 1, random.nextInt(254) + 1));
+        }
     }
 
     public Color[] toArray(int width) {
