@@ -37,6 +37,8 @@ import static org.lwjgl.stb.STBImage.stbi_load;
 
 public class Retorn implements Application {
 
+    public static Retorn INSTANCE;
+
     public static final String DISPLAY_STATE_PATH = "display_parameters.json";
     public static final String RENDER_STATE_PATH = "render_parameters.json";
     public static final String SAVE_PARAMETERS_PATH = "retorn_parameters.json";
@@ -50,10 +52,14 @@ public class Retorn implements Application {
     private RetornGUI gui;
     private RetornInputHandler inputHandler;
 
+    private Mesh mesh;
     private Model[] models;
 
     public Retorn(String[] args) {
-
+        if (INSTANCE != null) {
+            throw new RuntimeException("Instance of Retorn already exists");
+        }
+        INSTANCE = this;
     }
 
     public ApplicationState getState() {
@@ -63,6 +69,11 @@ public class Retorn implements Application {
     @Override
     public GUI getGui() {
         return gui;
+    }
+
+    public void setTexture(Texture texture) {
+        Model model = new Model(mesh, texture);
+        models = new Model[]{model};
     }
 
     @Override
@@ -104,11 +115,10 @@ public class Retorn implements Application {
                 3, 1, 2, // Second triangle
         };
 
-        Mesh mesh = new Mesh(vertices, textureCoordinates, indices);
-        Texture texture = new Texture(GL_TEXTURE_1D, GL_RGBA, GL_NEAREST, "textures/pal.png");
-        Model model = new Model(mesh, texture);
+        mesh = new Mesh(vertices, textureCoordinates, indices);
 
-        models = new Model[]{model};
+        File defaultPaletteFile = new File(getClass().getClassLoader().getResource("textures/pal.png").getFile());
+        setTexture(new Texture(GL_TEXTURE_1D, GL_RGBA, GL_NEAREST, defaultPaletteFile));
     }
 
     @Override
