@@ -35,27 +35,40 @@ public class ColorGradient {
         return ColorUtils.lerp(startStop.getColor(), endStop.getColor(), relativePosition);
     }
 
-    public void addStop(float position, Color color) {
-        ColorStop stop = new ColorStop(position, color);
+    public int addStop(float position, Color color) {
+        return addStop(new ColorStop(position, color));
+    }
+
+    public int addStop(ColorStop stop) {
         int i = 0;
         for (; i < stops.size(); i++) {
             if (stop.getPosition() < stops.get(i).getPosition()) {
                 break;
             }
         }
+
+        float increment = -0.001f;
+        while (!isValidPosition(stop.getPosition())) {
+            float position = stop.getPosition();
+            if (position == 0.0f || position == 1.0f) {
+                increment *= -1;
+            }
+            stop.setPosition(MathUtils.clamp(position + increment, 0.0f, 1.0f));
+        }
+
         stops.add(i, stop);
+        return i;
     }
 
     public void removeStop(int index) {
-        if (stops.size() >= 2) {
-            stops.remove(index);
-        }
+        stops.remove(index);
     }
 
-    public void setStopPosition(int index, float position) {
-        Color color = stops.get(index).getColor();
+    public int setStopPosition(int index, float position) {
+        ColorStop stop = stops.get(index);
         removeStop(index);
-        addStop(position, color);
+        stop.setPosition(position);
+        return addStop(stop);
     }
 
     public void setStopColor(int index, Color color) {
@@ -68,5 +81,14 @@ public class ColorGradient {
             colors[i] = lerp(i * (1.0f / width));
         }
         return colors;
+    }
+
+    private boolean isValidPosition(float position) {
+        for (ColorStop stop : stops) {
+            if (stop.getPosition() == position) {
+                return false;
+            }
+        }
+        return true;
     }
 }
