@@ -23,6 +23,5 @@ public class ColorSelector extends ColorPicker {
     public void setColor(Color color) {
         super.setColor(color);
         setText("");
-        // TODO: Change graphic size?
     }
 }
