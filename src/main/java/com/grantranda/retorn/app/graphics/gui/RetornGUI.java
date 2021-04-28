@@ -6,6 +6,7 @@ import com.grantranda.retorn.app.Retorn;
 import com.grantranda.retorn.app.graphics.AbstractFractalRenderer;
 import com.grantranda.retorn.app.graphics.RetornRenderer;
 import com.grantranda.retorn.app.graphics.gui.control.ColorSelector;
+import com.grantranda.retorn.app.graphics.gui.control.GradientEditor;
 import com.grantranda.retorn.app.graphics.gui.control.NumberFieldd;
 import com.grantranda.retorn.app.graphics.gui.control.NumberFieldi;
 import com.grantranda.retorn.app.graphics.gui.control.Parameter;
@@ -85,6 +86,9 @@ public class RetornGUI implements GUI {
     private StackPane displayContainer;
     private ScrollPane displayScrollPane;
     private StackPane menuCover;
+    private Tab fractalTab;
+    private Tab colorTab;
+    private Tab displayTab;
     private TabPane menuTabPane;
 
     private Button hideMenuButton;
@@ -112,6 +116,7 @@ public class RetornGUI implements GUI {
     private Slider fpsLimitSlider;
     private Label fpsLimitLabel;
     private Label fpsDisplay;
+    private GradientEditor gradientEditor;
 
     private final Map<String, AbstractFractalRenderer> fractalRenderers = new HashMap<>();
     private final LinkedList<Resolution> windowResolutions = new LinkedList<>();
@@ -272,42 +277,9 @@ public class RetornGUI implements GUI {
         renderResolutionSelection.setResolution(renderState.getRenderResolution(), renderState.isCustomResolution());
     }
 
-    private void initColorSelector(Window window) {
-
-        // TODO: Remove following commented color selector code
-//        DraggablePane dragPane1 = new DraggablePane();
-//        dragPane1.setBackgroundLegacy(Color.DARK_GRAY);
-//        dragPane1.setPrefHeight(64);
-//        dragPane1.setPrefWidth(50);
-//
-//        dragPane1.setOnMouseEntered(event -> {
-//            setMouseOver(true);
-//        });
-//        dragPane1.setOnMouseExited(event -> {
-//            setMouseOver(false);
-//        });
-//
-//        //Put pane in center of screen
-//        dragPane1.setAbsolutePosition(window.getWidth() / 2.0f, window.getHeight() / 2.0f);
-//
-//        //Add text
-//        ColorSelector colorPicker = new ColorSelector();
-//        dragPane1.getChildren().add(colorPicker);
-////        Label label = new Label("I'm draggable!");
-////        label.setMouseTransparent(true);
-////        dragPane1.getChildren().add(label);
-//
-//        //Test that it is sticky!
-//        dragPane1.setAbsolutePosition(0, 0);
-//
-//        //Add it to root
-//        root.getChildren().add(dragPane1);
-    }
-
     private void initMenu(Window window, ApplicationState state) {
         initFractalAlgorithmSelection(state.getRenderState());
         initResolutionSelection(state);
-        initColorSelector(window);
 
         String monitorAspectRatio = "(" + DisplayUtils.getMonitorAspectRatio().toRatio() + ")";
         String fractalAspectRatio = "(" + retornRenderer.getFractalAspectRatio().toRatio() + ")";
@@ -340,9 +312,12 @@ public class RetornGUI implements GUI {
         fpsDisplay = new Label("FPS: " + window.getFpsCounter().getFps());
         fpsDisplay.setAlignment(Pos.CENTER_RIGHT);
         fpsDisplay.setFillToParentWidth(true);
+        gradientEditor = new GradientEditor(guiWindow.getContext(), window.getMouseInput(), MENU_CONTENT_WIDTH - 20, 40);
+        gradientEditor.setPadding(new Insets(10, 0, 0, 0));
 
         HBox tabTopHBox = new HBox();
-        tabTopHBox.setFillToParentWidth(true);
+        tabTopHBox.setMinWidth(MENU_CONTENT_WIDTH);
+        tabTopHBox.setPadding(new Insets(0, 10, 0, 0));
         tabTopHBox.getChildren().addAll(hideMenuButton, fpsDisplay);
 
         // Fractal Tab
@@ -358,7 +333,7 @@ public class RetornGUI implements GUI {
 
         // Color Tab
         VBox colorTopVBox = createMenuBorderPaneTop(
-                tabTopHBox
+                tabTopHBox, gradientEditor
         );
 
         colorBorderPane = createMenuBorderPane(colorTopVBox);
@@ -386,11 +361,12 @@ public class RetornGUI implements GUI {
         menuTabPane.setFillToParentHeight(false);
         menuTabPane.setMinWidth(MENU_TOTAL_WIDTH);
         menuTabPane.setMaxWidth(MENU_TOTAL_WIDTH);
-        Tab fractalTab = new Tab("Fractal", false);
+        menuTabPane.setCanDrag(false);
+        fractalTab = new Tab("Fractal", false);
         fractalTab.setContent(fractalScrollPane);
-        Tab colorTab = new Tab("Color", false);
+        colorTab = new Tab("Color", false);
         colorTab.setContent(colorScrollPane);
-        Tab displayTab = new Tab("Display", false);
+        displayTab = new Tab("Display", false);
         displayTab.setContent(displayScrollPane);
         menuTabPane.getTabs().addAll(fractalTab, colorTab, displayTab);
 
@@ -556,37 +532,23 @@ public class RetornGUI implements GUI {
     @Override
     public void render(Window window) {
         guiWindow.render();
-        renderNvg(window);
+
+        if (menuShown) {
+            renderNvg(window);
+        }
     }
 
     private void renderNvg(Window window) {
         int width  = (int) (window.getWidth() / window.getContentScaleX());
         int height = (int) (window.getHeight() / window.getContentScaleY());
-        int midX = width / 2;
-        int midY = height / 2;
-        int startX = midX - 50;
-        int startY = midY - 30;
-        int endX = midX + 100;
-        int endY = midY + 60;
-        int w = 100;
-        int h = 60;
+        float minX = (float) menuTabPane.getX();
+        float startX = (float) gradientEditor.getX();
 
         nvgBeginFrame(nvgContext, width, height, Math.max(window.getContentScaleX(), window.getContentScaleY()));
 
-        // TODO: Gradient
-//        try (MemoryStack stack = MemoryStack.stackPush()) {
-//            NVGColor c1 = nvgRGBf(1.0f, 0.0f, 0.0f, NVGColor.callocStack(stack));
-//            NVGColor c2 = nvgRGBf(0.0f, 0.0f, 1.0f, NVGColor.callocStack(stack));
-//
-//            NVGPaint gradient = nvgLinearGradient(nvgContext, startX, startY, endX, endY, c1, c2, NVGPaint.callocStack(stack));
-//
-//            nvgBeginPath(nvgContext);
-//            NanoVG.nvgRoundedRectVarying(nvgContext, startX, startY+h*0.5f, w, h*0.5f, 0, 0, 4, 4);
-//
-//            nvgFillPaint(nvgContext, gradient);
-//            nvgFill(nvgContext);
-//            nvgClosePath(nvgContext);
-//        }
+        if (menuTabPane.getSelected() == colorTab && startX >= minX) {
+            gradientEditor.render(nvgContext);
+        }
 
         nvgEndFrame(nvgContext);
     }
