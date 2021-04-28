@@ -33,10 +33,10 @@ public class Texture {
         initParameters(minMagFilter);
     }
 
-    public Texture(int type, int pixelFormat, int minMagFilter, String path) {
+    public Texture(int type, int pixelFormat, int minMagFilter, File file) {
         this.type = type;
         this.pixelFormat = pixelFormat;
-        this.ID = createTexture(path);
+        this.ID = createTexture(file);
 
         initParameters(minMagFilter);
     }
@@ -113,7 +113,7 @@ public class Texture {
         return id;
     }
 
-    private int createTexture(String path) {
+    private int createTexture(File file) {
         ByteBuffer buffer = null;
 
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -121,11 +121,9 @@ public class Texture {
             IntBuffer y = stack.mallocInt(1);
             IntBuffer channels = stack.mallocInt(1);
 
-            File file = new File(getClass().getClassLoader().getResource(path).getFile());
-
             buffer = stbi_load(file.getAbsolutePath(), x, y, channels, 4);
             if (buffer == null) {
-                throw new RuntimeException("Unable to load texture '" + path + "':\n" + stbi_failure_reason());
+                throw new RuntimeException("Unable to load texture '" + file.getAbsolutePath() + "':\n" + stbi_failure_reason());
             }
             resolution.set(x.get(), y.get());
         } catch (Exception e) {
