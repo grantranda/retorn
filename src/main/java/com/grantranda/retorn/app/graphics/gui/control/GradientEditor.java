@@ -82,16 +82,8 @@ public class GradientEditor extends VBox {
 
         Label stopColorLabel = new Label("Color");
         stopColorLabel.setMinWidth(50);
-        Label selectedStopLabel = new Label("Selected Stop");
-        selectedStopLabel.setFillToParentWidth(true);
-        selectedStopLabel.setAlignment(Pos.CENTER_LEFT);
-        selectedStopLabel.setFontStyle(FontStyle.BOLD);
-        selectedStopLabel.setPadding(new Insets(0, 0, 0, 0));
-        Label gradientLabel = new Label("Gradient");
-        gradientLabel.setFillToParentWidth(true);
-        gradientLabel.setAlignment(Pos.CENTER_LEFT);
-        gradientLabel.setFontStyle(FontStyle.BOLD);
-        gradientLabel.setPadding(new Insets(0, 0, 0, 0));
+        Heading selectedStopHeading = new Heading("Selected Stop");
+        Heading gradientHeading = new Heading("Gradient");
 
         colorSelector.setSupportsAlpha(false);
         deleteStopButton.setMinWidth(50);
@@ -113,9 +105,9 @@ public class GradientEditor extends VBox {
         buttonHBox.getChildren().addAll(saveGradientButton, loadGradientButton, randomGradientButton);
 
         getChildren().addAll(
-                gradientHBox, colorStopsHBox, selectedStopLabel,
+                gradientHBox, colorStopsHBox, selectedStopHeading,
                 new Separator(),
-                stopColorHBox, gradientLabel,
+                stopColorHBox, gradientHeading,
                 new Separator(),
                 buttonHBox, applyGradientButton
         );
