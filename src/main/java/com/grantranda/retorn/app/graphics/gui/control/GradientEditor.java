@@ -44,6 +44,7 @@ import static org.lwjgl.opengl.GL11.GL_TEXTURE_1D;
 
 public class GradientEditor extends VBox {
 
+    public static final int MAX_STOPS = 15;
     public static final int STOP_WIDTH = 10;
     public static final int STOP_HEIGHT = 10;
     public static final float HALF_STOP_WIDTH = STOP_WIDTH / 2.0f;
@@ -130,8 +131,10 @@ public class GradientEditor extends VBox {
             if (selectedStop != null) colorSelector.setColor(selectedStop.getColor());
         });
         colorStopsHBox.setOnMouseReleased(event -> {
-            Color stopColor = new Color(random.nextInt(254) + 1, random.nextInt(254) + 1, random.nextInt(254) + 1);
-            addStop((float) mouseInput.getCurrentPosition().x, stopColor);
+            if (gradient.getStops().size() < MAX_STOPS) {
+                Color stopColor = new Color(random.nextInt(254) + 1, random.nextInt(254) + 1, random.nextInt(254) + 1);
+                addStop((float) mouseInput.getCurrentPosition().x, stopColor);
+            }
         });
         colorStopsHBox.setOnMouseDragged(event -> {
             float minX = (float) gradientHBox.getX();
