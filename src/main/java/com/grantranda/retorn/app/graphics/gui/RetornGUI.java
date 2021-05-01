@@ -7,10 +7,12 @@ import com.grantranda.retorn.app.graphics.AbstractFractalRenderer;
 import com.grantranda.retorn.app.graphics.RetornRenderer;
 import com.grantranda.retorn.app.graphics.gui.control.ColorSelector;
 import com.grantranda.retorn.app.graphics.gui.control.GradientEditor;
+import com.grantranda.retorn.app.graphics.gui.control.Heading;
 import com.grantranda.retorn.app.graphics.gui.control.NumberFieldd;
 import com.grantranda.retorn.app.graphics.gui.control.NumberFieldi;
 import com.grantranda.retorn.app.graphics.gui.control.Parameter;
 import com.grantranda.retorn.app.graphics.gui.control.ResolutionSelection;
+import com.grantranda.retorn.app.graphics.gui.control.Separator;
 import com.grantranda.retorn.app.state.ApplicationState;
 import com.grantranda.retorn.app.state.DisplayState;
 import com.grantranda.retorn.app.state.RenderState;
@@ -296,6 +298,7 @@ public class RetornGUI implements GUI {
         saveButton = new Button("Save");
         loadButton = new Button("Load");
         applyButton = new Button("Apply");
+        applyButton.setMinWidth((MENU_CONTENT_WIDTH - 20) / 3.0f - 5);
         renderButton = new Button("Render");
         fullscreenToggle = new CheckBox("Fullscreen");
         vSyncToggle = new CheckBox("vSync");
@@ -313,11 +316,9 @@ public class RetornGUI implements GUI {
         fpsDisplay.setAlignment(Pos.CENTER_RIGHT);
         fpsDisplay.setFillToParentWidth(true);
         gradientEditor = new GradientEditor(guiWindow.getContext(), window.getMouseInput(), MENU_CONTENT_WIDTH - 20, 40);
-        gradientEditor.setPadding(new Insets(10, 0, 0, 0));
 
         HBox tabTopHBox = new HBox();
         tabTopHBox.setMinWidth(MENU_CONTENT_WIDTH);
-        tabTopHBox.setPadding(new Insets(0, 10, 0, 0));
         tabTopHBox.getChildren().addAll(hideMenuButton, fpsDisplay);
 
         // Fractal Tab
@@ -335,21 +336,41 @@ public class RetornGUI implements GUI {
         VBox colorTopVBox = createMenuBorderPaneTop(
                 tabTopHBox, gradientEditor
         );
+        colorTopVBox.setSpacing(10);
 
         colorBorderPane = createMenuBorderPane(colorTopVBox);
         colorContainer = createMenuContainer(colorBorderPane);
         colorScrollPane = createMenuScrollPane(colorContainer);
 
-        // Display Tab
+        Heading resolutionHeading = new Heading("Resolution");
+        Heading framerateLimitHeading = new Heading("Framerate Limit");
+
         HBox fpsLimitHBox = new HBox();
         fpsLimitHBox.setFillToParentWidth(true);
         fpsLimitHBox.setAlignment(Pos.CENTER);
         fpsLimitHBox.setPadding(new Insets(0, 0, 0, 10));
         fpsLimitHBox.getChildren().addAll(fpsLimitSlider, fpsLimitLabel);
 
+        VBox displayCheckboxesVBox = new VBox();
+        displayCheckboxesVBox.setFillToParentWidth(true);
+        displayCheckboxesVBox.setAlignment(Pos.CENTER_LEFT);
+        displayCheckboxesVBox.setSpacing(10);
+        displayCheckboxesVBox.getChildren().addAll(fullscreenToggle, vSyncToggle);
+
+        // Display Tab
         VBox displayTopVBox = createMenuBorderPaneTop(
-                tabTopHBox, windowResolutionSelection, fullscreenToggle, vSyncToggle, fpsLimitHBox, applyButton
+                tabTopHBox, resolutionHeading,
+                new Separator(),
+                windowResolutionSelection, framerateLimitHeading,
+                new Separator(),
+                fpsLimitHBox,
+                new Separator(),
+                displayCheckboxesVBox,
+                new Separator(),
+                applyButton
         );
+        displayTopVBox.setAlignment(Pos.CENTER);
+        displayTopVBox.setSpacing(10);
 
         displayBorderPane = createMenuBorderPane(displayTopVBox);
         displayContainer = createMenuContainer(displayBorderPane);
