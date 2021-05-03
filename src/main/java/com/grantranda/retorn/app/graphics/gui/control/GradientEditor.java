@@ -83,6 +83,7 @@ public class GradientEditor extends VBox {
         Label stopColorLabel = new Label("Color");
         stopColorLabel.setMinWidth(50);
         Heading selectedStopHeading = new Heading("Selected Stop");
+        selectedStopHeading.setPadding(new Insets(0));
         Heading gradientHeading = new Heading("Gradient");
 
         colorSelector.setSupportsAlpha(false);
@@ -109,7 +110,9 @@ public class GradientEditor extends VBox {
                 new Separator(),
                 stopColorHBox, gradientHeading,
                 new Separator(),
-                buttonHBox, applyGradientButton
+                buttonHBox,
+                new Separator(),
+                applyGradientButton
         );
 
         selectedStop = gradient.getStops().get(0);
