@@ -13,6 +13,6 @@ public class Heading extends Label {
         setFillToParentWidth(true);
         setAlignment(Pos.CENTER_LEFT);
         setFontStyle(FontStyle.BOLD);
-        setPadding(new Insets(0, 0, 0, 0));
+        setPadding(new Insets(10, 0, 0, 0));
     }
 }
