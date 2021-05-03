@@ -19,8 +19,7 @@ public class Parameter<T extends Control> extends HBox {
         this.control = control;
 
         setWidth(width);
-        setFillToParentWidth(true);
-        setAlignment(Pos.CENTER);
+        setAlignment(Pos.CENTER_LEFT);
 
         getChildren().addAll(this.label, this.control);
     }

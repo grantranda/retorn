@@ -43,8 +43,8 @@ public class Retorn implements Application {
     public static final String RENDER_STATE_PATH = "render_parameters.json";
     public static final String SAVE_PARAMETERS_PATH = "retorn_parameters.json";
     public static final String CURSOR_PATH = "textures/cursor.png";
-    public static final String MANDELBROT_SET = "Mandelbrot Set";
-    public static final String JULIA_SET = "Julia Set";
+    public static final String MANDELBROT_SET = "Mandelbrot";
+    public static final String JULIA_SET = "Julia";
 
     private final ApplicationState state = new ApplicationState();
     private final RetornRenderer renderer = new RetornRenderer();
