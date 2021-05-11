@@ -45,6 +45,8 @@ import lwjgui.theme.Theme;
 import lwjgui.theme.ThemeDark;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -60,13 +62,13 @@ public class RetornGUI implements GUI {
     public static final int MENU_CONTENT_WIDTH = 350;
     public static final int MENU_SCROLLBAR_WIDTH = 14;
     public static final int MENU_TOTAL_WIDTH = MENU_CONTENT_WIDTH + MENU_SCROLLBAR_WIDTH;
-    public static final int MENU_CONTENT_HEIGHT = 700; // TODO: Determine final menu height
     public static final int MAX_FPS_LIMIT = 260;
     public static final double BUTTON_WIDTH = (MENU_CONTENT_WIDTH - 20) / 3.0f - 5;
 
     public static final Color MENU_COLOR = new Color(0.9, 0.9, 0.9, 1.0);
 
     private long nvgContext;
+    private float scaleFactor = 0.008f;
     private boolean mouseOver = false;
     private boolean mousePressed = false;
     private boolean menuShown = true;
@@ -114,6 +116,8 @@ public class RetornGUI implements GUI {
     private ToggleGroup aspectRatioToggleGroup;
     private RadioButton monitorAspectRatioToggle;
     private RadioButton fractalAspectRatioToggle;
+    private Slider zoomSpeedSlider;
+    private Label zoomSpeedLabel;
     private Slider fpsLimitSlider;
     private Label fpsLimitLabel;
     private Label fpsDisplay;
@@ -127,6 +131,14 @@ public class RetornGUI implements GUI {
     public RetornGUI(RetornRenderer retornRenderer, ImageRenderer imageRenderer) {
         this.retornRenderer = retornRenderer;
         this.imageRenderer = imageRenderer;
+    }
+
+    public float getScaleFactor() {
+        return scaleFactor;
+    }
+
+    public void setScaleFactor(float scaleFactor) {
+        this.scaleFactor = scaleFactor;
     }
 
     public boolean isMouseOver() {
@@ -290,6 +302,11 @@ public class RetornGUI implements GUI {
         scaleParam = new Parameter<>(MENU_CONTENT_WIDTH, "Scale", new NumberFieldd(1.0));
         xParam = new Parameter<>(MENU_CONTENT_WIDTH, "X", new NumberFieldd(0.0));
         yParam = new Parameter<>(MENU_CONTENT_WIDTH, "Y", new NumberFieldd(0.0));
+        zoomSpeedSlider = new Slider(0.001f, 0.020f, scaleFactor, 0.001f);
+        zoomSpeedSlider.setFillToParentWidth(true);
+        zoomSpeedLabel = new Label(String.valueOf(scaleFactor));
+        zoomSpeedLabel.setPrefWidth(80);
+        zoomSpeedLabel.setAlignment(Pos.CENTER);
         hideMenuButton = new Button("X");
         showMenuButton = new Button("|||");
         applyFractalButton = new Button("Apply");
@@ -328,6 +345,7 @@ public class RetornGUI implements GUI {
         // Fractal Tab
         {
             Heading fractalParametersHeading = new Heading("Fractal Parameters");
+            Heading zoomSpeedHeading = new Heading("Zoom Speed");
             Heading renderResolutionHeading = new Heading("Render");
 
             Label fractalAlgorithmLabel = new Label("Algorithm");
@@ -344,6 +362,12 @@ public class RetornGUI implements GUI {
             fractalButtonHBox.setAlignment(Pos.CENTER);
             fractalButtonHBox.setSpacing(10);
             fractalButtonHBox.getChildren().addAll(resetButton, saveButton, loadButton);
+
+            HBox zoomSpeedHBox = new HBox();
+            zoomSpeedHBox.setFillToParentWidth(true);
+            zoomSpeedHBox.setAlignment(Pos.CENTER);
+            zoomSpeedHBox.setPadding(new Insets(0, 0, 0, 10));
+            zoomSpeedHBox.getChildren().addAll(zoomSpeedSlider, zoomSpeedLabel);
 
             VBox renderAspectRatioVBox = new VBox();
             renderAspectRatioVBox.setFillToParentWidth(true);
@@ -372,7 +396,9 @@ public class RetornGUI implements GUI {
             VBox fractalTopVBox = createMenuBorderPaneTop(
                     tabTopHBox, fractalParametersHeading,
                     new Separator(),
-                    fractalAlgorithmSelectionHBox, maxIterationsParam, scaleParam, xParam, yParam, fractalButtonHBox, renderResolutionHeading,
+                    fractalAlgorithmSelectionHBox, maxIterationsParam, scaleParam, xParam, yParam, fractalButtonHBox, zoomSpeedHeading,
+                    new Separator(),
+                    zoomSpeedHBox, renderResolutionHeading,
                     new Separator(),
                     renderAspectRatioVBox, renderAspectRatioToggleVBox, renderResolutionSelection, renderImageVBox,
                     new Separator(),
@@ -552,10 +578,6 @@ public class RetornGUI implements GUI {
 
     private void updateGuiSize(Window window) {
         int scrollPaneTopOffset = 45;
-        fractalBorderPane.setMinHeight(MENU_CONTENT_HEIGHT);
-        fractalBorderPane.setMaxHeight(MENU_CONTENT_HEIGHT);
-        fractalContainer.setMinHeight(MENU_CONTENT_HEIGHT);
-        menuCover.setMinHeight(MENU_CONTENT_HEIGHT);
         fractalScrollPane.setMinHeight(window.getHeight() - scrollPaneTopOffset);
         fractalScrollPane.setMaxHeight(window.getHeight() - scrollPaneTopOffset);
         colorScrollPane.setMinHeight(window.getHeight() - scrollPaneTopOffset);
@@ -644,6 +666,7 @@ public class RetornGUI implements GUI {
         scaleParam.getControl().validate();
         xParam.getControl().validate();
         yParam.getControl().validate();
+        setScaleFactor((float) -zoomSpeedSlider.getValue());
     }
 
     private void applyDisplayParameters(Window window) {
@@ -725,6 +748,10 @@ public class RetornGUI implements GUI {
         renderButton.setOnAction(event -> imageRenderer.render(window));
         monitorAspectRatioToggle.setOnAction(event -> selectAspectRatioToggle(monitorAspectRatioToggle, monitorRenderResolutions, true));
         fractalAspectRatioToggle.setOnAction(event -> selectAspectRatioToggle(fractalAspectRatioToggle, fractalRenderResolutions, true));
+        zoomSpeedSlider.setOnValueChangedEvent(event -> {
+            BigDecimal zoomSpeed = BigDecimal.valueOf(zoomSpeedSlider.getValue()).setScale(3, RoundingMode.HALF_UP);
+            zoomSpeedLabel.setText(String.valueOf(zoomSpeed));
+        });
         fpsLimitSlider.setOnValueChangedEvent(event -> {
             int fpsLimit = (int) fpsLimitSlider.getValue();
             if (fpsLimit >= MAX_FPS_LIMIT) {

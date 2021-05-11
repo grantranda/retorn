@@ -107,7 +107,7 @@ public class RetornInputHandler implements InputHandler {
 
         if ((mouseInput.isButtonPressed(GLFW_MOUSE_BUTTON_2) && (!gui.isMouseOver() || draggable))) {
             scalable = true;
-            scaleFactor = SCALE_FACTOR_BUTTON;
+            scaleFactor = gui.getScaleFactor();
         } else if (draggable || (mouseInput.isMouseInWindow() && !gui.isMouseOver())) {
             scalable = mouseInput.isScrolling();
             scaleFactor = SCALE_FACTOR_SCROLL;
