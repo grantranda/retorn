@@ -388,8 +388,6 @@ public class RetornGUI implements GUI {
 
         // Color Tab
         {
-            // TODO: Add option to switch between RGB and ARGB
-
             VBox colorTopVBox = createMenuBorderPaneTop(
                     tabTopHBox, gradientEditor
             );
