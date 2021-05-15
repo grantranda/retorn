@@ -195,7 +195,7 @@ public class GradientEditor extends VBox {
 
     public void saveGradient(int width, String defaultFilename) {
         File defaultPath = new File(System.getProperty("user.home") + "/" + defaultFilename);
-        File selectedFile = LWJGUIDialog.showSaveFileDialog("Save Gradient", defaultPath, "Image Files (*.png)", "png", false);
+        File selectedFile = LWJGUIDialog.showSaveFileDialog("Save Gradient", defaultPath, "Image Files (*.png)", "png", true);
 
         if (selectedFile == null) return;
 
