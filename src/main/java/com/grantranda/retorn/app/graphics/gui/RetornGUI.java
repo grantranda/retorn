@@ -96,8 +96,6 @@ public class RetornGUI implements GUI {
     private Tab displayTab;
     private TabPane menuTabPane;
 
-    private Button hideMenuButton;
-    private Button showMenuButton;
     private Button applyFractalButton;
     private Button resetButton;
     private Button saveButton;
@@ -168,13 +166,11 @@ public class RetornGUI implements GUI {
 
     public void hideMenu() {
         fractalBorderPane.setVisible(false);
-        root.setRight(showMenuButton);
-        showMenuButton.setVisible(true);
+        root.setRight(null);
         menuShown = false;
     }
 
     public void showMenu() {
-        showMenuButton.setVisible(false);
         root.setRight(menuTabPane);
         fractalBorderPane.setVisible(true);
         menuShown = true;
@@ -320,8 +316,6 @@ public class RetornGUI implements GUI {
         zoomSpeedLabel = new Label(String.valueOf(scaleFactor));
         zoomSpeedLabel.setPrefWidth(80);
         zoomSpeedLabel.setAlignment(Pos.CENTER);
-        hideMenuButton = new Button("X");
-        showMenuButton = new Button("|||");
         applyFractalButton = new Button("Apply");
         applyFractalButton.setMinWidth(BUTTON_WIDTH);
         resetButton = new Button("Reset");
@@ -353,7 +347,7 @@ public class RetornGUI implements GUI {
         HBox tabTopHBox = new HBox();
         tabTopHBox.setMinWidth(MENU_CONTENT_WIDTH);
         tabTopHBox.setPadding(new Insets(0, 10, 0, 0));
-        tabTopHBox.getChildren().addAll(hideMenuButton, fpsDisplay);
+        tabTopHBox.getChildren().addAll(fpsDisplay);
 
         // Fractal Tab
         {
@@ -730,8 +724,6 @@ public class RetornGUI implements GUI {
         DisplayState displayState = state.getDisplayState();
         RenderState renderState = state.getRenderState();
 
-        hideMenuButton.setOnAction(event -> hideMenu());
-        showMenuButton.setOnAction(event -> showMenu());
         applyFractalButton.setOnAction(event -> {
             applyRenderParameters();
             updateRenderResolutionParameters(renderResolutionSelection.getResolution(), renderResolutionSelection.isCustomResolution());
