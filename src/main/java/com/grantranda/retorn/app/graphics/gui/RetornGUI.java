@@ -44,6 +44,7 @@ import lwjgui.style.BorderStyle;
 import lwjgui.theme.Theme;
 import lwjgui.theme.ThemeDark;
 
+import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -758,7 +759,15 @@ public class RetornGUI implements GUI {
             updateWindowResolutionParameters(windowResolutionSelection.getResolution(), windowResolutionSelection.isCustomResolution());
             updateDisplayState(displayState, window);
         });
-        renderButton.setOnAction(event -> imageRenderer.render(window));
+        renderButton.setOnAction(event -> {
+            File defaultPath = new File(System.getProperty("user.home") + "/" + Retorn.DEFAULT_RENDER_FILENAME);
+            File selectedFile = LWJGUIDialog.showSaveFileDialog("Render Image", defaultPath, "Image Files (*.png)", "png", true);
+
+            if (selectedFile == null) return;
+
+            imageRenderer.setPath(selectedFile.getPath());
+            imageRenderer.render(window);
+        });
         monitorAspectRatioToggle.setOnAction(event -> selectAspectRatioToggle(monitorAspectRatioToggle, monitorRenderResolutions, true));
         fractalAspectRatioToggle.setOnAction(event -> selectAspectRatioToggle(fractalAspectRatioToggle, fractalRenderResolutions, true));
         zoomSpeedSlider.setOnValueChangedEvent(event -> {
