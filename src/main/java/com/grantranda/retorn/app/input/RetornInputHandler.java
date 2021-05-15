@@ -15,8 +15,8 @@ import static org.lwjgl.glfw.GLFW.GLFW_CURSOR;
 import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_DISABLED;
 import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_NORMAL;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_F1;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_1;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_2;
 import static org.lwjgl.glfw.GLFW.glfwSetInputMode;
@@ -66,7 +66,7 @@ public class RetornInputHandler implements InputHandler {
             glfwSetWindowShouldClose(window.getWindowID(), true);
         }
 
-        if (keyboardInput.isKeyPressed(GLFW_KEY_SPACE)) {
+        if (keyboardInput.isKeyPressed(GLFW_KEY_F1)) {
             if (!menuToggled) {
                 gui.toggleMenu();
                 menuToggled = true;
