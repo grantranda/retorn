@@ -193,12 +193,24 @@ public class RetornGUI implements GUI {
 
     public void setMenuDisabled(boolean menuDisabled) {
         if (menuDisabled == this.menuDisabled) return;
-
         this.menuDisabled = menuDisabled;
-        if (menuDisabled) {
-            fractalContainer.getChildren().add(menuCover);
+
+        StackPane container;
+        Tab selectedTab = menuTabPane.getSelected();
+        if (selectedTab == fractalTab) {
+            container = fractalContainer;
+        } else if (selectedTab == colorTab) {
+            container = colorContainer;
+        } else if (selectedTab == displayTab) {
+            container = displayContainer;
         } else {
-            fractalContainer.getChildren().remove(menuCover);
+            return;
+        }
+
+        if (menuDisabled) {
+            container.getChildren().add(menuCover);
+        } else {
+            container.getChildren().remove(menuCover);
         }
     }
 
@@ -483,6 +495,7 @@ public class RetornGUI implements GUI {
         menuTabPane.getTabs().addAll(fractalTab, colorTab, displayTab);
 
         menuCover = new StackPane();
+        menuCover.setFillToParentHeight(true);
         menuCover.setMinWidth(MENU_TOTAL_WIDTH);
         menuCover.setMaxWidth(MENU_TOTAL_WIDTH);
     }
