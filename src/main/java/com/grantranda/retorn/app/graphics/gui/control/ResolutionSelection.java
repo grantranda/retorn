@@ -1,7 +1,10 @@
 package com.grantranda.retorn.app.graphics.gui.control;
 
 import com.grantranda.retorn.engine.graphics.display.Resolution;
+import lwjgui.geometry.Pos;
 import lwjgui.scene.control.ComboBox;
+import lwjgui.scene.control.Label;
+import lwjgui.scene.layout.HBox;
 import lwjgui.scene.layout.VBox;
 
 import java.util.Collection;
@@ -15,8 +18,7 @@ public class ResolutionSelection extends VBox {
 
     private double parameterWidth;
     private boolean customResolution;
-    //private final ComboBox<String> resolutionComboBox = new ComboBox<>();
-    private final Parameter<ComboBox<String>> resolutionComboBox;
+    private final ComboBox<String> resolutionComboBox = new ComboBox<>();
     private final Parameter<NumberFieldi> widthParam;
     private final Parameter<NumberFieldi> heightParam;
     private final Resolution resolutionFromSelection = new Resolution(MIN_RESOLUTION, MIN_RESOLUTION);
@@ -29,15 +31,17 @@ public class ResolutionSelection extends VBox {
      * @param resolutions the resolutions to be used as options in the combo box
      */
     public ResolutionSelection(double parameterWidth, Collection<Resolution> resolutions) {
-        resolutionComboBox = new Parameter<>(parameterWidth, "Resolution", new ComboBox<>());
+        Label resolutionLabel = new Label("Resolution");
+        resolutionLabel.setPrefWidth(parameterWidth / 2.0f - 10);
+        resolutionLabel.setAlignment(Pos.CENTER_LEFT);
+        resolutionComboBox.setPrefWidth(parameterWidth / 2.0f - 10);
         widthParam = new Parameter<>(parameterWidth, "Width", new NumberFieldi(MIN_RESOLUTION, MIN_RESOLUTION, MAX_RESOLUTION));
         heightParam = new Parameter<>(parameterWidth, "Height", new NumberFieldi(MIN_RESOLUTION, MIN_RESOLUTION, MAX_RESOLUTION));
         this.parameterWidth = parameterWidth;
         setResolutions(resolutions);
 
-        //resolutionComboBox.setPrefWidth(200);
-        resolutionComboBox.getControl().setOnAction(event -> {
-            String value = resolutionComboBox.getControl().getValue();
+        resolutionComboBox.setOnAction(event -> {
+            String value = resolutionComboBox.getValue();
             if (value.equals(CUSTOM_OPTION)) {
                 customResolution = true;
                 setFieldsDisabled(false);
@@ -50,7 +54,13 @@ public class ResolutionSelection extends VBox {
             }
         });
 
-        getChildren().addAll(resolutionComboBox, widthParam, heightParam);
+        HBox resolutionComboBoxHBox = new HBox();
+        resolutionComboBoxHBox.setMaxWidth(parameterWidth - 20);
+        resolutionComboBoxHBox.setAlignment(Pos.CENTER);
+        resolutionComboBoxHBox.getChildren().addAll(resolutionLabel, resolutionComboBox);
+
+        setAlignment(Pos.CENTER);
+        getChildren().addAll(resolutionComboBoxHBox, widthParam, heightParam);
     }
 
     /***
@@ -78,7 +88,7 @@ public class ResolutionSelection extends VBox {
     }
 
     public ComboBox<String> getResolutionComboBox() {
-        return resolutionComboBox.getControl();
+        return resolutionComboBox;
     }
 
     public Parameter<NumberFieldi> getWidthParam() {
@@ -97,11 +107,11 @@ public class ResolutionSelection extends VBox {
         this.resolutions.clear();
         this.resolutions.addAll(resolutions);
 
-        resolutionComboBox.getControl().getItems().clear();
+        resolutionComboBox.getItems().clear();
         for (Resolution resolution : resolutions) {
-            resolutionComboBox.getControl().getItems().add(resolution.toString());
+            resolutionComboBox.getItems().add(resolution.toString());
         }
-        resolutionComboBox.getControl().getItems().add(CUSTOM_OPTION);
+        resolutionComboBox.getItems().add(CUSTOM_OPTION);
     }
 
     public void setResolutions(Collection<Resolution> resolutions, Resolution selectedResolution, boolean customResolution) {
@@ -125,7 +135,7 @@ public class ResolutionSelection extends VBox {
         if (customResolution) {
             setResolutionFields(width, height);
             setFieldsDisabled(false);
-            resolutionComboBox.getControl().setValue(CUSTOM_OPTION);
+            resolutionComboBox.setValue(CUSTOM_OPTION);
         } else {
             setResolutionSelection(width, height);
             setResolutionFields(width, height);
@@ -162,7 +172,7 @@ public class ResolutionSelection extends VBox {
 
     public void setResolutionSelection(int width, int height) {
         resolutionFromSelection.set(width, height);
-        resolutionComboBox.getControl().setValue(resolutionFromSelection.toString());
+        resolutionComboBox.setValue(resolutionFromSelection.toString());
     }
 
     public void setResolutionSelection(Resolution resolution) {
@@ -170,7 +180,7 @@ public class ResolutionSelection extends VBox {
     }
 
     public void setComboBoxDisabled(boolean comboBoxDisabled) {
-        resolutionComboBox.getControl().setDisabled(comboBoxDisabled);
+        resolutionComboBox.setDisabled(comboBoxDisabled);
     }
 
     public void setWidthFieldDisabled(boolean widthFieldDisabled) {
