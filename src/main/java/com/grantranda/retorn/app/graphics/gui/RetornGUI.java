@@ -96,8 +96,6 @@ public class RetornGUI implements GUI {
     private Tab displayTab;
     private TabPane menuTabPane;
 
-    private Button hideMenuButton;
-    private Button showMenuButton;
     private Button applyFractalButton;
     private Button resetButton;
     private Button saveButton;
@@ -168,13 +166,11 @@ public class RetornGUI implements GUI {
 
     public void hideMenu() {
         fractalBorderPane.setVisible(false);
-        root.setRight(showMenuButton);
-        showMenuButton.setVisible(true);
+        root.setRight(null);
         menuShown = false;
     }
 
     public void showMenu() {
-        showMenuButton.setVisible(false);
         root.setRight(menuTabPane);
         fractalBorderPane.setVisible(true);
         menuShown = true;
@@ -297,6 +293,8 @@ public class RetornGUI implements GUI {
         RenderState renderState = state.getRenderState();
 
         windowResolutionSelection = new ResolutionSelection(MENU_CONTENT_WIDTH, windowResolutions);
+        windowResolutionSelection.setSpacing(10);
+        windowResolutionSelection.setPadding(new Insets(10, 0, 0, 0));
         windowResolutionSelection.setResolution(displayState.getWindowResolution(), displayState.isCustomResolution());
 
         renderResolutionSelection = new ResolutionSelection(MENU_CONTENT_WIDTH, fractalRenderResolutions);
@@ -320,8 +318,6 @@ public class RetornGUI implements GUI {
         zoomSpeedLabel = new Label(String.valueOf(scaleFactor));
         zoomSpeedLabel.setPrefWidth(80);
         zoomSpeedLabel.setAlignment(Pos.CENTER);
-        hideMenuButton = new Button("X");
-        showMenuButton = new Button("|||");
         applyFractalButton = new Button("Apply");
         applyFractalButton.setMinWidth(BUTTON_WIDTH);
         resetButton = new Button("Reset");
@@ -342,6 +338,7 @@ public class RetornGUI implements GUI {
         fractalAspectRatioToggle = new RadioButton("Fractal " + fractalAspectRatio, aspectRatioToggleGroup);
         fpsLimitSlider = new Slider(10, MAX_FPS_LIMIT, 10, 10);
         fpsLimitSlider.setFillToParentWidth(true);
+        fpsLimitSlider.setPadding(new Insets(10, 0, 10, 0));
         fpsLimitLabel = new Label("10");
         fpsLimitLabel.setPrefWidth(80);
         fpsLimitLabel.setAlignment(Pos.CENTER);
@@ -353,11 +350,12 @@ public class RetornGUI implements GUI {
         HBox tabTopHBox = new HBox();
         tabTopHBox.setMinWidth(MENU_CONTENT_WIDTH);
         tabTopHBox.setPadding(new Insets(0, 10, 0, 0));
-        tabTopHBox.getChildren().addAll(hideMenuButton, fpsDisplay);
+        tabTopHBox.getChildren().addAll(fpsDisplay);
 
         // Fractal Tab
         {
             Heading fractalParametersHeading = new Heading("Fractal Parameters");
+            fractalParametersHeading.setPadding(new Insets(0));
             Heading zoomSpeedHeading = new Heading("Zoom Speed");
             Heading renderResolutionHeading = new Heading("Render");
 
@@ -441,7 +439,9 @@ public class RetornGUI implements GUI {
         // Display Tab
         {
             Heading resolutionHeading = new Heading("Window Resolution");
+            resolutionHeading.setPadding(new Insets(10, 0, 10, 0));
             Heading framerateLimitHeading = new Heading("Framerate Limit");
+            framerateLimitHeading.setPadding(new Insets(10, 0, 10, 0));
 
             HBox fpsLimitHBox = new HBox();
             fpsLimitHBox.setFillToParentWidth(true);
@@ -452,12 +452,13 @@ public class RetornGUI implements GUI {
             VBox displayCheckboxesVBox = new VBox();
             displayCheckboxesVBox.setFillToParentWidth(true);
             displayCheckboxesVBox.setAlignment(Pos.CENTER_LEFT);
-            displayCheckboxesVBox.setPadding(new Insets(0, 0, 0, 10));
+            displayCheckboxesVBox.setPadding(new Insets(10, 0, 10, 10));
             displayCheckboxesVBox.setSpacing(10);
             displayCheckboxesVBox.getChildren().addAll(fullscreenToggle, vSyncToggle);
 
             VBox displayApplyVBox = new VBox();
             displayApplyVBox.setFillToParentWidth(true);
+            displayApplyVBox.setPadding(new Insets(10, 0, 0, 0));
             displayApplyVBox.setAlignment(Pos.CENTER);
             displayApplyVBox.getChildren().add(applyDisplayButton);
 
@@ -473,7 +474,6 @@ public class RetornGUI implements GUI {
                     displayApplyVBox
             );
             displayTopVBox.setAlignment(Pos.CENTER);
-            displayTopVBox.setSpacing(10);
 
             displayBorderPane = createMenuBorderPane(displayTopVBox);
             displayContainer = createMenuContainer(displayBorderPane);
@@ -730,8 +730,6 @@ public class RetornGUI implements GUI {
         DisplayState displayState = state.getDisplayState();
         RenderState renderState = state.getRenderState();
 
-        hideMenuButton.setOnAction(event -> hideMenu());
-        showMenuButton.setOnAction(event -> showMenu());
         applyFractalButton.setOnAction(event -> {
             applyRenderParameters();
             updateRenderResolutionParameters(renderResolutionSelection.getResolution(), renderResolutionSelection.isCustomResolution());
