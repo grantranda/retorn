@@ -42,7 +42,7 @@ public class Retorn implements Application {
     public static final String DISPLAY_STATE_PATH = "display_parameters.json";
     public static final String RENDER_STATE_PATH = "render_parameters.json";
     public static final String SAVE_PARAMETERS_PATH = "retorn_parameters.json";
-    public static final String DEFAULT_RENDER_FILENAME = "retorn_render.png";
+    public static final String DEFAULT_RENDER_FILENAME = "fractal.png";
     public static final String CURSOR_PATH = "textures/cursor.png";
     public static final String MANDELBROT_SET = "Mandelbrot";
     public static final String JULIA_SET = "Julia";
