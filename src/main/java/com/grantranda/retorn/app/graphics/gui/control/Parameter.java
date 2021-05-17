@@ -36,12 +36,8 @@ public class Parameter<T extends Control> extends HBox {
         this.control.setPrefWidth(width / 2.0f - 10);
     }
 
-    public String getLabelText() {
-        return label.getText();
-    }
-
-    public void setLabelText(String label) {
-        this.label.setText(label);
+    public Label getLabel() {
+        return label;
     }
 
     public T getControl() {

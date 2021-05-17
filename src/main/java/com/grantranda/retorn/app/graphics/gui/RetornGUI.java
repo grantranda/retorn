@@ -312,11 +312,20 @@ public class RetornGUI implements GUI {
 
         // Menu Elements
         maxIterationsParam = new Parameter<>(MENU_CONTENT_WIDTH, "Max Iterations", new NumberFieldi(100, 0, 100000));
+        maxIterationsParam.getLabel().setPrefWidth(MENU_CONTENT_WIDTH / 2.0f - 10);
+        maxIterationsParam.getLabel().setPadding(new Insets(10, 0, 10, 0));
         scaleParam = new Parameter<>(MENU_CONTENT_WIDTH, "Scale", new NumberFieldd(1.0));
+        scaleParam.getLabel().setPrefWidth(MENU_CONTENT_WIDTH / 2.0f - 10);
+        scaleParam.getLabel().setPadding(new Insets(10, 0, 10, 0));
         xParam = new Parameter<>(MENU_CONTENT_WIDTH, "X", new NumberFieldd(0.0));
+        xParam.getLabel().setPrefWidth(MENU_CONTENT_WIDTH / 2.0f - 10);
+        xParam.getLabel().setPadding(new Insets(10, 0, 10, 0));
         yParam = new Parameter<>(MENU_CONTENT_WIDTH, "Y", new NumberFieldd(0.0));
+        yParam.getLabel().setPrefWidth(MENU_CONTENT_WIDTH / 2.0f - 10);
+        yParam.getLabel().setPadding(new Insets(10, 0, 10, 0));
         zoomSpeedSlider = new Slider(0.001f, 0.020f, scaleFactor, 0.001f);
         zoomSpeedSlider.setFillToParentWidth(true);
+        zoomSpeedSlider.setPadding(new Insets(10, 0, 5, 0));
         zoomSpeedLabel = new Label(String.valueOf(scaleFactor));
         zoomSpeedLabel.setPrefWidth(80);
         zoomSpeedLabel.setAlignment(Pos.CENTER);
@@ -347,19 +356,23 @@ public class RetornGUI implements GUI {
         fpsDisplay = new Label("FPS: " + window.getFpsCounter().getFps());
         fpsDisplay.setAlignment(Pos.CENTER_RIGHT);
         fpsDisplay.setFillToParentWidth(true);
-        gradientEditor = new GradientEditor(guiWindow.getContext(), window.getMouseInput(), MENU_CONTENT_WIDTH - 20, 40);
+        gradientEditor = new GradientEditor(guiWindow.getContext(), window.getMouseInput(), MENU_CONTENT_WIDTH - 20, 30);
+        gradientEditor.setPadding(new Insets(10, 0, 0, 0));
 
         HBox tabTopHBox = new HBox();
         tabTopHBox.setMinWidth(MENU_CONTENT_WIDTH);
+        tabTopHBox.setMaxHeight(5);
         tabTopHBox.setPadding(new Insets(0, 10, 0, 0));
         tabTopHBox.getChildren().addAll(fpsDisplay);
 
         // Fractal Tab
         {
             Heading fractalParametersHeading = new Heading("Fractal Parameters");
-            fractalParametersHeading.setPadding(new Insets(0));
+            fractalParametersHeading.setPadding(new Insets(10, 0, 5, 0));
             Heading zoomSpeedHeading = new Heading("Zoom Speed");
+            zoomSpeedHeading.setPadding(new Insets(10, 0, 5, 0));
             Heading renderResolutionHeading = new Heading("Render");
+            renderResolutionHeading.setPadding(new Insets(10, 0, 5, 0));
 
             Label fractalAlgorithmLabel = new Label("Algorithm");
             fractalAlgorithmLabel.setPrefWidth(MENU_CONTENT_WIDTH / 2.0f - 10);
@@ -368,12 +381,20 @@ public class RetornGUI implements GUI {
             HBox fractalAlgorithmSelectionHBox = new HBox();
             fractalAlgorithmSelectionHBox.setMaxWidth(MENU_CONTENT_WIDTH - 20);
             fractalAlgorithmSelectionHBox.setAlignment(Pos.CENTER);
+            fractalAlgorithmSelectionHBox.setPadding(new Insets(5, 0, 5, 0));
             fractalAlgorithmSelectionHBox.getChildren().addAll(fractalAlgorithmLabel, fractalAlgorithmSelection);
+
+            VBox fractalParametersVBox = new VBox();
+            fractalParametersVBox.setAlignment(Pos.CENTER_LEFT);
+            fractalParametersVBox.setSpacing(10);
+            fractalParametersVBox.setPadding(new Insets(10, 0, 0, 10));
+            fractalParametersVBox.getChildren().addAll(maxIterationsParam, scaleParam, xParam, yParam);
 
             HBox fractalButtonHBox = new HBox();
             fractalButtonHBox.setFillToParentWidth(true);
             fractalButtonHBox.setAlignment(Pos.CENTER);
             fractalButtonHBox.setSpacing(10);
+            fractalButtonHBox.setPadding(new Insets(5, 0, 10, 0));
             fractalButtonHBox.getChildren().addAll(resetButton, saveButton, loadButton);
 
             HBox zoomSpeedHBox = new HBox();
@@ -386,7 +407,7 @@ public class RetornGUI implements GUI {
             renderAspectRatioVBox.setFillToParentWidth(true);
             renderAspectRatioVBox.setAlignment(Pos.CENTER_LEFT);
             renderAspectRatioVBox.setSpacing(10);
-            renderAspectRatioVBox.setPadding(new Insets(0, 0, 0, 5));
+            renderAspectRatioVBox.setPadding(new Insets(5, 0, 5, 5));
             renderAspectRatioVBox.getChildren().addAll(aspectRatioToggleLabel);
 
             VBox renderAspectRatioToggleVBox = new VBox();
@@ -399,17 +420,19 @@ public class RetornGUI implements GUI {
             VBox renderImageVBox = new VBox();
             renderImageVBox.setFillToParentWidth(true);
             renderImageVBox.setAlignment(Pos.CENTER);
+            renderImageVBox.setPadding(new Insets(10, 0, 10, 0));
             renderImageVBox.getChildren().add(renderButton);
 
             VBox fractalApplyVBox = new VBox();
             fractalApplyVBox.setFillToParentWidth(true);
             fractalApplyVBox.setAlignment(Pos.CENTER);
+            fractalApplyVBox.setPadding(new Insets(10, 0, 0, 0));
             fractalApplyVBox.getChildren().add(applyFractalButton);
 
             VBox fractalTopVBox = createMenuBorderPaneTop(
                     tabTopHBox, fractalParametersHeading,
                     new Separator(),
-                    fractalAlgorithmSelectionHBox, maxIterationsParam, scaleParam, xParam, yParam, fractalButtonHBox, zoomSpeedHeading,
+                    fractalAlgorithmSelectionHBox, fractalParametersVBox, fractalButtonHBox, zoomSpeedHeading,
                     new Separator(),
                     zoomSpeedHBox, renderResolutionHeading,
                     new Separator(),
@@ -418,7 +441,6 @@ public class RetornGUI implements GUI {
                     fractalApplyVBox
             );
             fractalTopVBox.setAlignment(Pos.CENTER);
-            fractalTopVBox.setSpacing(10);
 
             fractalBorderPane = createMenuBorderPane(fractalTopVBox);
             fractalContainer = createMenuContainer(fractalBorderPane);
@@ -427,11 +449,15 @@ public class RetornGUI implements GUI {
 
         // Color Tab
         {
+            Heading gradientEditorHeading = new Heading("Gradient Editor");
+            gradientEditorHeading.setPadding(new Insets(10, 0, 5, 0));
+
             VBox colorTopVBox = createMenuBorderPaneTop(
-                    tabTopHBox, gradientEditor
+                    tabTopHBox, gradientEditorHeading,
+                    new Separator(),
+                    gradientEditor
             );
             colorTopVBox.setAlignment(Pos.CENTER);
-            colorTopVBox.setSpacing(10);
 
             colorBorderPane = createMenuBorderPane(colorTopVBox);
             colorContainer = createMenuContainer(colorBorderPane);
@@ -441,9 +467,9 @@ public class RetornGUI implements GUI {
         // Display Tab
         {
             Heading resolutionHeading = new Heading("Window Resolution");
-            resolutionHeading.setPadding(new Insets(10, 0, 10, 0));
+            resolutionHeading.setPadding(new Insets(10, 0, 5, 0));
             Heading framerateLimitHeading = new Heading("Framerate Limit");
-            framerateLimitHeading.setPadding(new Insets(10, 0, 10, 0));
+            framerateLimitHeading.setPadding(new Insets(10, 0, 5, 0));
 
             HBox fpsLimitHBox = new HBox();
             fpsLimitHBox.setFillToParentWidth(true);

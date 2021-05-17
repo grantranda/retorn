@@ -7,7 +7,6 @@ import com.grantranda.retorn.engine.graphics.paint.ColorStop;
 import com.grantranda.retorn.engine.input.MouseInput;
 import com.grantranda.retorn.engine.util.MathUtils;
 import lwjgui.LWJGUIDialog;
-import lwjgui.font.FontStyle;
 import lwjgui.geometry.Insets;
 import lwjgui.geometry.Pos;
 import lwjgui.paint.Color;
@@ -77,14 +76,7 @@ public class GradientEditor extends VBox {
         this.gradientHeight = gradientHeight;
         this.gradient = new ColorGradient(startColor, endColor);
 
-        setSpacing(10);
         setAlignment(Pos.CENTER);
-
-        Label stopColorLabel = new Label("Color");
-        stopColorLabel.setMinWidth(50);
-        Heading selectedStopHeading = new Heading("Selected Stop");
-        selectedStopHeading.setPadding(new Insets(0));
-        Heading gradientHeading = new Heading("Gradient");
 
         colorSelector.setSupportsAlpha(false);
         deleteStopButton.setMinWidth(50);
@@ -93,16 +85,32 @@ public class GradientEditor extends VBox {
         randomGradientButton.setMinWidth(gradientWidth / 3.0f - 5);
         applyGradientButton.setMinWidth(gradientWidth / 3.0f - 5);
 
+        Label stopColorLabel = new Label("Color");
+        stopColorLabel.setMinWidth(50);
+        Heading selectedStopHeading = new Heading("Selected Stop");
+        selectedStopHeading.setPadding(new Insets(10, 0, 5, 0));
+        Heading gradientHeading = new Heading("Gradient");
+        gradientHeading.setPadding(new Insets(10, 0, 5, 0));
+
+        VBox applyVBox = new VBox();
+        applyVBox.setFillToParentWidth(true);
+        applyVBox.setPadding(new Insets(10, 0, 0, 0));
+        applyVBox.setAlignment(Pos.CENTER);
+        applyVBox.getChildren().add(applyGradientButton);
+
         gradientHBox.setMinWidth(gradientWidth);
         gradientHBox.setMinHeight(gradientHeight);
         gradientHBox.setAlignment(Pos.CENTER);
+        gradientHBox.setPadding(new Insets(0, 0, 40, 0));
         colorStopsHBox.setMinWidth(gradientWidth + STOP_WIDTH);
         colorStopsHBox.setMinHeight(20);
         colorStopsHBox.setBackgroundLegacy(Color.DARK_GRAY);
         stopColorHBox.setAlignment(Pos.CENTER);
         stopColorHBox.setSpacing(40);
+        stopColorHBox.setPadding(new Insets(5, 0, 0, 0));
         stopColorHBox.getChildren().addAll(stopColorLabel, colorSelector, deleteStopButton);
         buttonHBox.setSpacing(10);
+        buttonHBox.setPadding(new Insets(10, 0, 10, 0));
         buttonHBox.getChildren().addAll(saveGradientButton, loadGradientButton, randomGradientButton);
 
         getChildren().addAll(
@@ -112,7 +120,7 @@ public class GradientEditor extends VBox {
                 new Separator(),
                 buttonHBox,
                 new Separator(),
-                applyGradientButton
+                applyVBox
         );
 
         selectedStop = gradient.getStops().get(0);
