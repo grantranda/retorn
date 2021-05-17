@@ -298,6 +298,8 @@ public class RetornGUI implements GUI {
         windowResolutionSelection.setResolution(displayState.getWindowResolution(), displayState.isCustomResolution());
 
         renderResolutionSelection = new ResolutionSelection(MENU_CONTENT_WIDTH, fractalRenderResolutions);
+        renderResolutionSelection.setSpacing(10);
+        renderResolutionSelection.setPadding(new Insets(10, 0, 0, 0));
         renderResolutionSelection.setResolution(renderState.getRenderResolution(), renderState.isCustomResolution());
     }
 
