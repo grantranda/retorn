@@ -162,6 +162,10 @@ public class GradientEditor extends VBox {
         loadGradientButton.setOnAction(event -> loadGradient());
         randomGradientButton.setOnAction(event -> {
             gradient.randomize();
+
+            // Set darker color for first stop to avoid washed-out look
+            gradient.getStops().getFirst().setColor(new Color(random.nextInt(49) + 1, random.nextInt(49) + 1, random.nextInt(49) + 1));
+
             if (selectedStop != null) colorSelector.setColor(selectedStop.getColor());
         });
         applyGradientButton.setOnAction(event -> {
