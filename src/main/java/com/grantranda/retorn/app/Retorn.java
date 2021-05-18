@@ -220,7 +220,7 @@ public class Retorn implements Application {
 
             GLFWImage cursorImage = GLFWImage.create();
             cursorImage.set(x.get(), y.get(), buffer);
-            cursorID = glfwCreateCursor(cursorImage, 7, 7);
+            cursorID = glfwCreateCursor(cursorImage, 15, 15);
 
             stbi_image_free(buffer);
         } catch (Exception e) {
