@@ -5,6 +5,8 @@ import com.google.gson.JsonSyntaxException;
 import com.grantranda.retorn.app.Retorn;
 import com.grantranda.retorn.app.graphics.AbstractFractalRenderer;
 import com.grantranda.retorn.app.graphics.ColoringAlgorithm;
+import com.grantranda.retorn.app.graphics.JuliaRenderer;
+import com.grantranda.retorn.app.graphics.MandelbrotRenderer;
 import com.grantranda.retorn.app.graphics.RetornRenderer;
 import com.grantranda.retorn.app.graphics.gui.control.GradientEditor;
 import com.grantranda.retorn.app.graphics.gui.control.Heading;
@@ -52,7 +54,6 @@ import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.TreeSet;
 
 import static org.lwjgl.nanovg.NanoVG.*;
@@ -66,8 +67,6 @@ public class RetornGUI implements GUI {
     public static final int MENU_TOTAL_WIDTH = MENU_CONTENT_WIDTH + MENU_SCROLLBAR_WIDTH;
     public static final int MAX_FPS_LIMIT = 260;
     public static final double BUTTON_WIDTH = (MENU_CONTENT_WIDTH - 20) / 3.0f - 5;
-
-    public static final Color MENU_COLOR = new Color(0.9, 0.9, 0.9, 1.0);
 
     private long nvgContext;
     private float scaleFactor = 0.008f;
@@ -95,15 +94,19 @@ public class RetornGUI implements GUI {
     private Tab colorTab;
     private Tab displayTab;
     private TabPane menuTabPane;
+    private VBox fractalTopVBox;
     private VBox colorTopVBox;
+    private VBox seedVBox;
     private VBox trappingPointOffsetVBox;
 
     private Button applyFractalButton;
-    private Button resetButton;
-    private Button saveButton;
-    private Button loadButton;
     private Button applyColorButton;
     private Button applyDisplayButton;
+    private Button resetSeedButton;
+    private Button resetTrappingPointOffsetButton;
+    private Button resetParametersButton;
+    private Button saveParametersButton;
+    private Button loadParametersButton;
     private Button renderButton;
     private Parameter<NumberFieldi> maxIterationsParam;
     private Parameter<NumberFieldd> scaleParam;
@@ -122,6 +125,10 @@ public class RetornGUI implements GUI {
     private RadioButton fractalAspectRatioToggle;
     private Slider zoomSpeedSlider;
     private Label zoomSpeedLabel;
+    private Slider seedXSlider;
+    private Label seedXLabel;
+    private Slider seedYSlider;
+    private Label seedYLabel;
     private Slider trappingPointOffsetXSlider;
     private Label trappingPointOffsetXLabel;
     private Slider trappingPointOffsetYSlider;
@@ -263,10 +270,8 @@ public class RetornGUI implements GUI {
     private void initFractalAlgorithmSelection(RenderState state) {
         fractalAlgorithmSelection = new ComboBox<>();
         fractalAlgorithmSelection.setPrefWidth(MENU_CONTENT_WIDTH / 2.0f - 10);
-
-        for (Entry<String, AbstractFractalRenderer> entry : fractalRenderers.entrySet()) {
-            fractalAlgorithmSelection.getItems().add(entry.getKey());
-        }
+        fractalAlgorithmSelection.getItems().add(0, Retorn.MANDELBROT_SET);
+        fractalAlgorithmSelection.getItems().add(1, Retorn.JULIA_SET);
         fractalAlgorithmSelection.setValue(state.getFractalAlgorithm());
     }
 
@@ -351,6 +356,18 @@ public class RetornGUI implements GUI {
         zoomSpeedLabel = new Label(String.valueOf(scaleFactor));
         zoomSpeedLabel.setPrefWidth(80);
         zoomSpeedLabel.setAlignment(Pos.CENTER);
+        seedXSlider = new Slider(-1.000, 1.000, -0.800, 0.001);
+        seedXSlider.setFillToParentWidth(true);
+        seedXSlider.setPadding(new Insets(10, 0, 5, 0));
+        seedXLabel = new Label("-0.800");
+        seedXLabel.setPrefWidth(80);
+        seedXLabel.setAlignment(Pos.CENTER);
+        seedYSlider = new Slider(-1.000, 1.000, 0.156, 0.001);
+        seedYSlider.setFillToParentWidth(true);
+        seedYSlider.setPadding(new Insets(10, 0, 10, 0));
+        seedYLabel = new Label("0.156");
+        seedYLabel.setPrefWidth(80);
+        seedYLabel.setAlignment(Pos.CENTER);
         trappingPointOffsetXSlider = new Slider(0.001, 1.000, 0.001, 0.001);
         trappingPointOffsetXSlider.setFillToParentWidth(true);
         trappingPointOffsetXSlider.setPadding(new Insets(10, 0, 5, 0));
@@ -359,22 +376,26 @@ public class RetornGUI implements GUI {
         trappingPointOffsetXLabel.setAlignment(Pos.CENTER);
         trappingPointOffsetYSlider = new Slider(0.001, 1.000, 0.001, 0.001);
         trappingPointOffsetYSlider.setFillToParentWidth(true);
-        trappingPointOffsetYSlider.setPadding(new Insets(10, 0, 5, 0));
+        trappingPointOffsetYSlider.setPadding(new Insets(10, 0, 10, 0));
         trappingPointOffsetYLabel = new Label("0.001");
         trappingPointOffsetYLabel.setPrefWidth(80);
         trappingPointOffsetYLabel.setAlignment(Pos.CENTER);
         applyFractalButton = new Button("Apply");
         applyFractalButton.setMinWidth(BUTTON_WIDTH);
-        resetButton = new Button("Reset");
-        resetButton.setMinWidth(BUTTON_WIDTH);
-        saveButton = new Button("Save");
-        saveButton.setMinWidth(BUTTON_WIDTH);
-        loadButton = new Button("Load");
-        loadButton.setMinWidth(BUTTON_WIDTH);
         applyColorButton = new Button("Apply");
         applyColorButton.setMinWidth(BUTTON_WIDTH);
         applyDisplayButton = new Button("Apply");
         applyDisplayButton.setMinWidth(BUTTON_WIDTH);
+        resetSeedButton = new Button("Reset");
+        resetSeedButton.setMinWidth(BUTTON_WIDTH);
+        resetTrappingPointOffsetButton = new Button("Reset");
+        resetTrappingPointOffsetButton.setMinWidth(BUTTON_WIDTH);
+        resetParametersButton = new Button("Reset");
+        resetParametersButton.setMinWidth(BUTTON_WIDTH);
+        saveParametersButton = new Button("Save");
+        saveParametersButton.setMinWidth(BUTTON_WIDTH);
+        loadParametersButton = new Button("Load");
+        loadParametersButton.setMinWidth(BUTTON_WIDTH);
         renderButton = new Button("Render Image");
         renderButton.setMinWidth(BUTTON_WIDTH);
         fullscreenToggle = new CheckBox("Fullscreen");
@@ -405,6 +426,8 @@ public class RetornGUI implements GUI {
         {
             Heading fractalParametersHeading = new Heading("Fractal Parameters");
             fractalParametersHeading.setPadding(new Insets(10, 0, 5, 0));
+            Heading seedHeading = new Heading("Julia Seed");
+            seedHeading.setPadding(new Insets(10, 0, 5, 0));
             Heading zoomSpeedHeading = new Heading("Zoom Speed");
             zoomSpeedHeading.setPadding(new Insets(10, 0, 5, 0));
             Heading renderResolutionHeading = new Heading("Render");
@@ -431,7 +454,35 @@ public class RetornGUI implements GUI {
             fractalButtonHBox.setAlignment(Pos.CENTER);
             fractalButtonHBox.setSpacing(10);
             fractalButtonHBox.setPadding(new Insets(5, 0, 10, 0));
-            fractalButtonHBox.getChildren().addAll(resetButton, saveButton, loadButton);
+            fractalButtonHBox.getChildren().addAll(resetParametersButton, saveParametersButton, loadParametersButton);
+
+            Label xLabel = new Label("X");
+            xLabel.setPadding(new Insets(0, 15, 0, 5));
+
+            HBox seedXHBox = new HBox();
+            seedXHBox.setFillToParentWidth(true);
+            seedXHBox.setAlignment(Pos.CENTER);
+            seedXHBox.setPadding(new Insets(0, 0, 0, 0));
+            seedXHBox.getChildren().addAll(xLabel, seedXSlider, seedXLabel);
+
+            Label yLabel = new Label("Y");
+            yLabel.setPadding(new Insets(0, 15, 0, 5));
+
+            HBox seedYHBox = new HBox();
+            seedYHBox.setFillToParentWidth(true);
+            seedYHBox.setAlignment(Pos.CENTER);
+            seedYHBox.setPadding(new Insets(0, 0, 5, 0));
+            seedYHBox.getChildren().addAll(yLabel, seedYSlider, seedYLabel);
+
+            seedVBox = new VBox();
+            seedVBox.setFillToParentWidth(true);
+            seedVBox.setAlignment(Pos.CENTER);
+            seedVBox.setPadding(new Insets(0, 0, 0, 0));
+            seedVBox.getChildren().addAll(
+                    seedHeading,
+                    new Separator(),
+                    seedXHBox, seedYHBox, resetSeedButton
+            );
 
             HBox zoomSpeedHBox = new HBox();
             zoomSpeedHBox.setFillToParentWidth(true);
@@ -465,7 +516,7 @@ public class RetornGUI implements GUI {
             fractalApplyVBox.setPadding(new Insets(10, 0, 0, 0));
             fractalApplyVBox.getChildren().add(applyFractalButton);
 
-            VBox fractalTopVBox = createMenuBorderPaneTop(
+            fractalTopVBox = createMenuBorderPaneTop(
                     tabTopHBox, fractalParametersHeading,
                     new Separator(),
                     fractalAlgorithmSelectionHBox, fractalParametersVBox, fractalButtonHBox, zoomSpeedHeading,
@@ -529,11 +580,11 @@ public class RetornGUI implements GUI {
             trappingPointOffsetVBox = new VBox();
             trappingPointOffsetVBox.setFillToParentWidth(true);
             trappingPointOffsetVBox.setAlignment(Pos.CENTER);
-            trappingPointOffsetVBox.setPadding(new Insets(0, 0, 0, 0));
+            trappingPointOffsetVBox.setPadding(new Insets(0, 0, 10, 0));
             trappingPointOffsetVBox.getChildren().addAll(
                     trappingPointOffsetHeading,
                     new Separator(),
-                    trappingPointOffsetXHBox, trappingPointOffsetYHBox
+                    trappingPointOffsetXHBox, trappingPointOffsetYHBox, resetTrappingPointOffsetButton
             );
 
             VBox colorApplyVBox = new VBox();
@@ -774,6 +825,16 @@ public class RetornGUI implements GUI {
         state.setOffset(xParam.getControl().getNumber(), yParam.getControl().getNumber(), 0.0f);
     }
 
+    private void updateSeed() {
+        BigDecimal seedX = BigDecimal.valueOf(seedXSlider.getValue()).setScale(3, RoundingMode.HALF_UP);
+        seedXLabel.setText(String.valueOf(seedX));
+        retornRenderer.getJuliaRenderer().setSeedX(seedXSlider.getValue());
+
+        BigDecimal seedY = BigDecimal.valueOf(seedYSlider.getValue()).setScale(3, RoundingMode.HALF_UP);
+        seedYLabel.setText(String.valueOf(seedY));
+        retornRenderer.getJuliaRenderer().setSeedY(seedYSlider.getValue());
+    }
+
     private void updateTrappingPointOffset() {
         BigDecimal trappingPointOffsetX = BigDecimal.valueOf(trappingPointOffsetXSlider.getValue()).setScale(3, RoundingMode.HALF_UP);
         trappingPointOffsetXLabel.setText(String.valueOf(trappingPointOffsetX));
@@ -873,23 +934,8 @@ public class RetornGUI implements GUI {
             updateRenderResolutionParameters(renderResolutionSelection.getResolution(), renderResolutionSelection.isCustomResolution());
             updateRenderState(renderState);
             retornRenderer.setActiveRenderer(fractalRenderers.get(fractalAlgorithmSelection.getValue()));
+            updateSeed();
             updateTrappingPointOffset();
-        });
-        resetButton.setOnAction(event -> resetPosition(renderState));
-        saveButton.setOnAction(event -> {
-            try {
-                StateUtils.saveStateDialog(renderState, Retorn.SAVE_PARAMETERS_PATH, "Save Parameters");
-            } catch (IOException | JsonIOException e) {
-                LWJGUIDialog.showMessageDialog("Error", "Error saving parameters.", DialogIcon.ERROR);
-            }
-        });
-        loadButton.setOnAction(event -> {
-            try {
-                StateUtils.loadStateDialog(state, RenderState.class, "Load Parameters");
-                updateFractalParameters(renderState);
-            } catch (IOException | JsonSyntaxException e) {
-                LWJGUIDialog.showMessageDialog("Error", "Error loading parameters.", DialogIcon.ERROR);
-            }
         });
         applyColorButton.setOnAction(event -> {
             applyColorParameters();
@@ -900,6 +946,32 @@ public class RetornGUI implements GUI {
             updateWindowResolutionParameters(windowResolutionSelection.getResolution(), windowResolutionSelection.isCustomResolution());
             updateDisplayState(displayState, window);
         });
+        resetSeedButton.setOnAction(event -> {
+            seedXSlider.setValue(JuliaRenderer.DEFAULT_SEED_X);
+            seedYSlider.setValue(JuliaRenderer.DEFAULT_SEED_Y);
+            updateSeed();
+        });
+        resetTrappingPointOffsetButton.setOnAction(event -> {
+            trappingPointOffsetXSlider.setValue(AbstractFractalRenderer.DEFAULT_TRAPPING_POINT_OFFSET);
+            trappingPointOffsetYSlider.setValue(AbstractFractalRenderer.DEFAULT_TRAPPING_POINT_OFFSET);
+            updateTrappingPointOffset();
+        });
+        resetParametersButton.setOnAction(event -> resetPosition(renderState));
+        saveParametersButton.setOnAction(event -> {
+            try {
+                StateUtils.saveStateDialog(renderState, Retorn.SAVE_PARAMETERS_PATH, "Save Parameters");
+            } catch (IOException | JsonIOException e) {
+                LWJGUIDialog.showMessageDialog("Error", "Error saving parameters.", DialogIcon.ERROR);
+            }
+        });
+        loadParametersButton.setOnAction(event -> {
+            try {
+                StateUtils.loadStateDialog(state, RenderState.class, "Load Parameters");
+                updateFractalParameters(renderState);
+            } catch (IOException | JsonSyntaxException e) {
+                LWJGUIDialog.showMessageDialog("Error", "Error loading parameters.", DialogIcon.ERROR);
+            }
+        });
         renderButton.setOnAction(event -> {
             File defaultPath = new File(System.getProperty("user.home") + "/" + Retorn.DEFAULT_RENDER_FILENAME);
             File selectedFile = LWJGUIDialog.showSaveFileDialog("Render Image", defaultPath, "Image Files (*.png)", "png", true);
@@ -908,6 +980,17 @@ public class RetornGUI implements GUI {
 
             imageRenderer.setPath(selectedFile.getPath());
             imageRenderer.render(window);
+        });
+        fractalAlgorithmSelection.setOnAction(event -> {
+            AbstractFractalRenderer fractalRenderer = fractalRenderers.get(fractalAlgorithmSelection.getValue());
+
+            if (fractalRenderer != null) {
+                if (fractalRenderer instanceof JuliaRenderer && !fractalTopVBox.getChildren().contains(seedVBox)) {
+                    fractalTopVBox.getChildren().add(6, seedVBox);
+                } else if (fractalRenderer instanceof MandelbrotRenderer) {
+                    fractalTopVBox.getChildren().remove(seedVBox);
+                }
+            }
         });
         coloringAlgorithmSelection.setOnAction(event -> {
             ColoringAlgorithm coloringAlgorithm = ColoringAlgorithm.fromName(coloringAlgorithmSelection.getValue());
@@ -928,6 +1011,8 @@ public class RetornGUI implements GUI {
             BigDecimal zoomSpeed = BigDecimal.valueOf(zoomSpeedSlider.getValue()).setScale(3, RoundingMode.HALF_UP);
             zoomSpeedLabel.setText(String.valueOf(zoomSpeed));
         });
+        seedXSlider.setOnValueChangedEvent(event -> updateSeed());
+        seedYSlider.setOnValueChangedEvent(event -> updateSeed());
         trappingPointOffsetXSlider.setOnValueChangedEvent(event -> updateTrappingPointOffset());
         trappingPointOffsetYSlider.setOnValueChangedEvent(event -> updateTrappingPointOffset());
         fpsLimitSlider.setOnValueChangedEvent(event -> {
