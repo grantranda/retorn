@@ -4,6 +4,7 @@ import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.grantranda.retorn.app.Retorn;
 import com.grantranda.retorn.app.graphics.AbstractFractalRenderer;
+import com.grantranda.retorn.app.graphics.ColoringAlgorithm;
 import com.grantranda.retorn.app.graphics.RetornRenderer;
 import com.grantranda.retorn.app.graphics.gui.control.GradientEditor;
 import com.grantranda.retorn.app.graphics.gui.control.Heading;
@@ -95,18 +96,23 @@ public class RetornGUI implements GUI {
     private Tab colorTab;
     private Tab displayTab;
     private TabPane menuTabPane;
+    private VBox colorTopVBox;
+    private VBox trappingPointOffsetVBox;
 
     private Button applyFractalButton;
     private Button resetButton;
     private Button saveButton;
     private Button loadButton;
+    private Button applyColorButton;
     private Button applyDisplayButton;
     private Button renderButton;
     private Parameter<NumberFieldi> maxIterationsParam;
     private Parameter<NumberFieldd> scaleParam;
     private Parameter<NumberFieldd> xParam;
     private Parameter<NumberFieldd> yParam;
+    private Parameter<NumberFieldi> escapeRadiusParam;
     private ComboBox<String> fractalAlgorithmSelection;
+    private ComboBox<String> coloringAlgorithmSelection;
     private ResolutionSelection windowResolutionSelection;
     private ResolutionSelection renderResolutionSelection;
     private CheckBox fullscreenToggle;
@@ -117,6 +123,10 @@ public class RetornGUI implements GUI {
     private RadioButton fractalAspectRatioToggle;
     private Slider zoomSpeedSlider;
     private Label zoomSpeedLabel;
+    private Slider trappingPointOffsetXSlider;
+    private Label trappingPointOffsetXLabel;
+    private Slider trappingPointOffsetYSlider;
+    private Label trappingPointOffsetYLabel;
     private Slider fpsLimitSlider;
     private Label fpsLimitLabel;
     private Label fpsDisplay;
@@ -262,6 +272,16 @@ public class RetornGUI implements GUI {
         fractalAlgorithmSelection.setValue(state.getFractalAlgorithm());
     }
 
+    private void initColoringAlgorithmSelection() {
+        coloringAlgorithmSelection = new ComboBox<>();
+        coloringAlgorithmSelection.setPrefWidth(MENU_CONTENT_WIDTH / 2.0f - 10);
+
+        for (ColoringAlgorithm coloringAlgorithm : ColoringAlgorithm.values()) {
+            coloringAlgorithmSelection.getItems().add(coloringAlgorithm.getName());
+        }
+        coloringAlgorithmSelection.setValue(ColoringAlgorithm.ESCAPE_TIME.getName());
+    }
+
     private void initWindowResolutions() {
         Resolution monitorResolution = DisplayUtils.getMonitorResolution();
         TreeSet<Resolution> monitorResolutions = DisplayUtils.getMonitorResolutions();
@@ -305,6 +325,7 @@ public class RetornGUI implements GUI {
 
     private void initMenu(Window window, ApplicationState state) {
         initFractalAlgorithmSelection(state.getRenderState());
+        initColoringAlgorithmSelection();
         initResolutionSelection(state);
 
         String monitorAspectRatio = "(" + DisplayUtils.getMonitorAspectRatio().toRatio() + ")";
@@ -323,12 +344,27 @@ public class RetornGUI implements GUI {
         yParam = new Parameter<>(MENU_CONTENT_WIDTH, "Y", new NumberFieldd(0.0));
         yParam.getLabel().setPrefWidth(MENU_CONTENT_WIDTH / 2.0f - 10);
         yParam.getLabel().setPadding(new Insets(10, 0, 10, 0));
+        escapeRadiusParam = new Parameter<>(MENU_CONTENT_WIDTH, "Escape Radius", new NumberFieldi(4, 0, 100));
+        escapeRadiusParam.getLabel().setPrefWidth(MENU_CONTENT_WIDTH / 2.0f - 10);
+        escapeRadiusParam.getLabel().setPadding(new Insets(10, 0, 10, 0));
         zoomSpeedSlider = new Slider(0.001f, 0.020f, scaleFactor, 0.001f);
         zoomSpeedSlider.setFillToParentWidth(true);
         zoomSpeedSlider.setPadding(new Insets(10, 0, 5, 0));
         zoomSpeedLabel = new Label(String.valueOf(scaleFactor));
         zoomSpeedLabel.setPrefWidth(80);
         zoomSpeedLabel.setAlignment(Pos.CENTER);
+        trappingPointOffsetXSlider = new Slider(0.001, 1.000, 0.001, 0.001);
+        trappingPointOffsetXSlider.setFillToParentWidth(true);
+        trappingPointOffsetXSlider.setPadding(new Insets(10, 0, 5, 0));
+        trappingPointOffsetXLabel = new Label("0.001");
+        trappingPointOffsetXLabel.setPrefWidth(80);
+        trappingPointOffsetXLabel.setAlignment(Pos.CENTER);
+        trappingPointOffsetYSlider = new Slider(0.001, 1.000, 0.001, 0.001);
+        trappingPointOffsetYSlider.setFillToParentWidth(true);
+        trappingPointOffsetYSlider.setPadding(new Insets(10, 0, 5, 0));
+        trappingPointOffsetYLabel = new Label("0.001");
+        trappingPointOffsetYLabel.setPrefWidth(80);
+        trappingPointOffsetYLabel.setAlignment(Pos.CENTER);
         applyFractalButton = new Button("Apply");
         applyFractalButton.setMinWidth(BUTTON_WIDTH);
         resetButton = new Button("Reset");
@@ -337,6 +373,8 @@ public class RetornGUI implements GUI {
         saveButton.setMinWidth(BUTTON_WIDTH);
         loadButton = new Button("Load");
         loadButton.setMinWidth(BUTTON_WIDTH);
+        applyColorButton = new Button("Apply");
+        applyColorButton.setMinWidth(BUTTON_WIDTH);
         applyDisplayButton = new Button("Apply");
         applyDisplayButton.setMinWidth(BUTTON_WIDTH);
         renderButton = new Button("Render Image");
@@ -357,7 +395,7 @@ public class RetornGUI implements GUI {
         fpsDisplay.setAlignment(Pos.CENTER_RIGHT);
         fpsDisplay.setFillToParentWidth(true);
         gradientEditor = new GradientEditor(guiWindow.getContext(), window.getMouseInput(), MENU_CONTENT_WIDTH - 20, 30);
-        gradientEditor.setPadding(new Insets(10, 0, 0, 0));
+        gradientEditor.setPadding(new Insets(10, 0, 5, 0));
 
         HBox tabTopHBox = new HBox();
         tabTopHBox.setMinWidth(MENU_CONTENT_WIDTH);
@@ -451,11 +489,69 @@ public class RetornGUI implements GUI {
         {
             Heading gradientEditorHeading = new Heading("Gradient Editor");
             gradientEditorHeading.setPadding(new Insets(10, 0, 5, 0));
+            Heading coloringHeading = new Heading("Coloring");
+            coloringHeading.setPadding(new Insets(10, 0, 5, 0));
+            Heading trappingPointOffsetHeading = new Heading("Trapping Point Offset");
+            trappingPointOffsetHeading.setPadding(new Insets(10, 0, 5, 0));
 
-            VBox colorTopVBox = createMenuBorderPaneTop(
+            Label coloringAlgorithmLabel = new Label("Algorithm");
+            coloringAlgorithmLabel.setPrefWidth(MENU_CONTENT_WIDTH / 2.0f - 10);
+            coloringAlgorithmLabel.setAlignment(Pos.CENTER_LEFT);
+
+            HBox coloringAlgorithmSelectionHBox = new HBox();
+            coloringAlgorithmSelectionHBox.setMaxWidth(MENU_CONTENT_WIDTH - 20);
+            coloringAlgorithmSelectionHBox.setAlignment(Pos.CENTER);
+            coloringAlgorithmSelectionHBox.setPadding(new Insets(5, 0, 10, 0));
+            coloringAlgorithmSelectionHBox.getChildren().addAll(coloringAlgorithmLabel, coloringAlgorithmSelection);
+
+            VBox coloringParametersVBox = new VBox();
+            coloringParametersVBox.setAlignment(Pos.CENTER_LEFT);
+            coloringParametersVBox.setSpacing(10);
+            coloringParametersVBox.setPadding(new Insets(10, 0, 5, 10));
+            coloringParametersVBox.getChildren().addAll(escapeRadiusParam);
+
+            Label xLabel = new Label("X");
+            xLabel.setPadding(new Insets(0, 15, 0, 5));
+
+            HBox trappingPointOffsetXHBox = new HBox();
+            trappingPointOffsetXHBox.setFillToParentWidth(true);
+            trappingPointOffsetXHBox.setAlignment(Pos.CENTER);
+            trappingPointOffsetXHBox.setPadding(new Insets(0, 0, 0, 0));
+            trappingPointOffsetXHBox.getChildren().addAll(xLabel, trappingPointOffsetXSlider, trappingPointOffsetXLabel);
+
+            Label yLabel = new Label("Y");
+            yLabel.setPadding(new Insets(0, 15, 0, 5));
+
+            HBox trappingPointOffsetYHBox = new HBox();
+            trappingPointOffsetYHBox.setFillToParentWidth(true);
+            trappingPointOffsetYHBox.setAlignment(Pos.CENTER);
+            trappingPointOffsetYHBox.setPadding(new Insets(0, 0, 5, 0));
+            trappingPointOffsetYHBox.getChildren().addAll(yLabel, trappingPointOffsetYSlider, trappingPointOffsetYLabel);
+
+            trappingPointOffsetVBox = new VBox();
+            trappingPointOffsetVBox.setFillToParentWidth(true);
+            trappingPointOffsetVBox.setAlignment(Pos.CENTER);
+            trappingPointOffsetVBox.setPadding(new Insets(0, 0, 0, 0));
+            trappingPointOffsetVBox.getChildren().addAll(
+                    trappingPointOffsetHeading,
+                    new Separator(),
+                    trappingPointOffsetXHBox, trappingPointOffsetYHBox
+            );
+
+            VBox colorApplyVBox = new VBox();
+            colorApplyVBox.setFillToParentWidth(true);
+            colorApplyVBox.setAlignment(Pos.CENTER);
+            colorApplyVBox.setPadding(new Insets(10, 0, 0, 0));
+            colorApplyVBox.getChildren().add(applyColorButton);
+
+            colorTopVBox = createMenuBorderPaneTop(
                     tabTopHBox, gradientEditorHeading,
                     new Separator(),
-                    gradientEditor
+                    gradientEditor, coloringHeading,
+                    new Separator(),
+                    coloringAlgorithmSelectionHBox, coloringParametersVBox,
+                    new Separator(),
+                    colorApplyVBox
             );
             colorTopVBox.setAlignment(Pos.CENTER);
 
@@ -674,9 +770,21 @@ public class RetornGUI implements GUI {
         state.setCustomResolution(renderResolutionSelection.isCustomResolution());
         state.setFractalAspectRatioMaintained(fractalAspectRatioToggle.isSelected());
         state.setFractalAlgorithm(fractalAlgorithmSelection.getValue());
+        state.setColoringAlgorithm(ColoringAlgorithm.fromName(coloringAlgorithmSelection.getValue()));
         state.setMaxIterations(maxIterationsParam.getControl().getNumber());
+        state.setEscapeRadius(escapeRadiusParam.getControl().getNumber());
         state.setScale(scaleParam.getControl().getNumber());
         state.setOffset(xParam.getControl().getNumber(), yParam.getControl().getNumber(), 0.0f);
+    }
+
+    private void updateTrappingPointOffset() {
+        BigDecimal trappingPointOffsetX = BigDecimal.valueOf(trappingPointOffsetXSlider.getValue()).setScale(3, RoundingMode.HALF_UP);
+        trappingPointOffsetXLabel.setText(String.valueOf(trappingPointOffsetX));
+        retornRenderer.getActiveRenderer().setTrappingPointOffsetX(trappingPointOffsetXSlider.getValue());
+
+        BigDecimal trappingPointOffsetY = BigDecimal.valueOf(trappingPointOffsetYSlider.getValue()).setScale(3, RoundingMode.HALF_UP);
+        trappingPointOffsetYLabel.setText(String.valueOf(trappingPointOffsetY));
+        retornRenderer.getActiveRenderer().setTrappingPointOffsetY(trappingPointOffsetYSlider.getValue());
     }
 
     @Override
@@ -703,12 +811,17 @@ public class RetornGUI implements GUI {
         nvgEndFrame(nvgContext);
     }
 
-    private void applyRenderParameters() {
+    private void applyFractalParameters() {
         maxIterationsParam.getControl().validate();
         scaleParam.getControl().validate();
         xParam.getControl().validate();
         yParam.getControl().validate();
         setScaleFactor((float) -zoomSpeedSlider.getValue());
+    }
+
+    private void applyColorParameters() {
+        gradientEditor.applyGradient();
+        escapeRadiusParam.getControl().validate();
     }
 
     private void applyDisplayParameters(Window window) {
@@ -759,10 +872,11 @@ public class RetornGUI implements GUI {
         RenderState renderState = state.getRenderState();
 
         applyFractalButton.setOnAction(event -> {
-            applyRenderParameters();
+            applyFractalParameters();
             updateRenderResolutionParameters(renderResolutionSelection.getResolution(), renderResolutionSelection.isCustomResolution());
             updateRenderState(renderState);
             retornRenderer.setActiveRenderer(fractalRenderers.get(fractalAlgorithmSelection.getValue()));
+            updateTrappingPointOffset();
         });
         resetButton.setOnAction(event -> resetPosition(renderState));
         saveButton.setOnAction(event -> {
@@ -780,6 +894,10 @@ public class RetornGUI implements GUI {
                 LWJGUIDialog.showMessageDialog("Error", "Error loading parameters.", DialogIcon.ERROR);
             }
         });
+        applyColorButton.setOnAction(event -> {
+            applyColorParameters();
+            updateRenderState(renderState);
+        });
         applyDisplayButton.setOnAction(event -> {
             applyDisplayParameters(window);
             updateWindowResolutionParameters(windowResolutionSelection.getResolution(), windowResolutionSelection.isCustomResolution());
@@ -794,12 +912,27 @@ public class RetornGUI implements GUI {
             imageRenderer.setPath(selectedFile.getPath());
             imageRenderer.render(window);
         });
+        coloringAlgorithmSelection.setOnAction(event -> {
+            ColoringAlgorithm coloringAlgorithm = ColoringAlgorithm.fromName(coloringAlgorithmSelection.getValue());
+
+            if (coloringAlgorithm != null) {
+                escapeRadiusParam.getControl().setNumber(coloringAlgorithm.getEscapeRadius());
+
+                if (coloringAlgorithm == ColoringAlgorithm.ORBIT_TRAP && !colorTopVBox.getChildren().contains(trappingPointOffsetVBox)) {
+                    colorTopVBox.getChildren().add(colorTopVBox.getChildren().size() - 2, trappingPointOffsetVBox);
+                } else if (coloringAlgorithm == ColoringAlgorithm.ESCAPE_TIME) {
+                    colorTopVBox.getChildren().remove(trappingPointOffsetVBox);
+                }
+            }
+        });
         monitorAspectRatioToggle.setOnAction(event -> selectAspectRatioToggle(monitorAspectRatioToggle, monitorRenderResolutions, true));
         fractalAspectRatioToggle.setOnAction(event -> selectAspectRatioToggle(fractalAspectRatioToggle, fractalRenderResolutions, true));
         zoomSpeedSlider.setOnValueChangedEvent(event -> {
             BigDecimal zoomSpeed = BigDecimal.valueOf(zoomSpeedSlider.getValue()).setScale(3, RoundingMode.HALF_UP);
             zoomSpeedLabel.setText(String.valueOf(zoomSpeed));
         });
+        trappingPointOffsetXSlider.setOnValueChangedEvent(event -> updateTrappingPointOffset());
+        trappingPointOffsetYSlider.setOnValueChangedEvent(event -> updateTrappingPointOffset());
         fpsLimitSlider.setOnValueChangedEvent(event -> {
             int fpsLimit = (int) fpsLimitSlider.getValue();
             if (fpsLimit >= MAX_FPS_LIMIT) {
