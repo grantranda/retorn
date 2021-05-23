@@ -54,6 +54,10 @@ public class RetornRenderer extends AbstractRenderer {
         return juliaRenderer;
     }
 
+    public AbstractFractalRenderer getActiveRenderer() {
+        return activeRenderer;
+    }
+
     public void setActiveRenderer(AbstractFractalRenderer activeRenderer) {
         this.activeRenderer = activeRenderer;
     }
@@ -101,7 +105,9 @@ public class RetornRenderer extends AbstractRenderer {
         double translatedOffsetY = renderState.getOffset().y * viewportPixelSize.y;
 
         Shader activeShader = activeRenderer.getActiveShader();
+        activeShader.setUniform1i("use_orbit_trap", renderState.getColoringAlgorithm() == ColoringAlgorithm.ORBIT_TRAP ? 1 : 0);
         activeShader.setUniform1i("max_iterations", renderState.getMaxIterations());
+        activeShader.setUniform1i("escape_radius", renderState.getEscapeRadius());
         activeShader.setUniform1d("scale", renderState.getScale());
         activeShader.setUniform2d("offset", translatedOffsetX, translatedOffsetY);
 
