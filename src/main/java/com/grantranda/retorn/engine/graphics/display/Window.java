@@ -241,7 +241,7 @@ public class Window {
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
         glEnable(GL_DEPTH_TEST);
-        glEnable(GL_STENCIL_TEST); // TODO: Possibly add window options class and check before enabling
+        glEnable(GL_STENCIL_TEST);
     }
 
     public void terminate() {
