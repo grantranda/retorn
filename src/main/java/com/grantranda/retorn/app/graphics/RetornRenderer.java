@@ -73,7 +73,7 @@ public class RetornRenderer extends AbstractRenderer {
         juliaRenderer.init(window);
         setTargetViewportResolution(window.getWidth(), window.getHeight());
         setFractalAspectRatio(7, 4); // TODO: Remove
-        useMandelbrotRenderer(); // TODO
+        setActiveRenderer(mandelbrotRenderer);
     }
 
     @Override
@@ -112,13 +112,5 @@ public class RetornRenderer extends AbstractRenderer {
         activeShader.setUniform2d("offset", translatedOffsetX, translatedOffsetY);
 
         activeRenderer.render(window, state, models, updateViewport);
-    }
-
-    public void useMandelbrotRenderer() {
-        setActiveRenderer(mandelbrotRenderer);
-    }
-
-    public void useJuliaRenderer() {
-        setActiveRenderer(juliaRenderer);
     }
 }
