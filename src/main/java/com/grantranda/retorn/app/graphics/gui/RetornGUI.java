@@ -236,7 +236,7 @@ public class RetornGUI implements GUI {
         guiWindow.getScene().setRoot(root);
 
         updateDisplayParameters(state.getDisplayState());
-        updateRenderParameters(state.getRenderState());
+        updateFractalParameters(state.getRenderState());
 
         EventHelper.fireEvent(applyDisplayButton.getOnAction(), new ActionEvent());
         EventHelper.fireEvent(applyFractalButton.getOnAction(), new ActionEvent());
@@ -644,7 +644,7 @@ public class RetornGUI implements GUI {
         state.setFpsLimit((int) fpsLimitSlider.getValue());
     }
 
-    public void updateRenderParameters(RenderState state) {
+    public void updateFractalParameters(RenderState state) {
         updateRenderResolutionParameters(state.getRenderResolution(), state.isCustomResolution());
         fractalAlgorithmSelection.setValue(state.getFractalAlgorithm());
         maxIterationsParam.getControl().setNumber(state.getMaxIterations());
@@ -775,7 +775,7 @@ public class RetornGUI implements GUI {
         loadButton.setOnAction(event -> {
             try {
                 StateUtils.loadStateDialog(state, RenderState.class, "Load Parameters");
-                updateRenderParameters(renderState);
+                updateFractalParameters(renderState);
             } catch (IOException | JsonSyntaxException e) {
                 LWJGUIDialog.showMessageDialog("Error", "Error loading parameters.", DialogIcon.ERROR);
             }
