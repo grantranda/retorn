@@ -68,8 +68,6 @@ public class RetornGUI implements GUI {
     public static final int MAX_FPS_LIMIT = 260;
     public static final double BUTTON_WIDTH = (MENU_CONTENT_WIDTH - 20) / 3.0f - 5;
 
-    public static final Color MENU_COLOR = new Color(0.9, 0.9, 0.9, 1.0);
-
     private long nvgContext;
     private float scaleFactor = 0.008f;
     private boolean mouseOver = false;
