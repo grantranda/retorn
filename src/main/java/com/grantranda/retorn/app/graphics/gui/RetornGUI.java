@@ -223,7 +223,7 @@ public class RetornGUI implements GUI {
     @Override
     public void init(Window window, State state) {
         initGui(window, (ApplicationState) state);
-        initNvg(window);
+        initNvg();
     }
 
     private void initGui(Window window, ApplicationState state) {
@@ -250,8 +250,8 @@ public class RetornGUI implements GUI {
         EventHelper.fireEvent(applyFractalButton.getOnAction(), new ActionEvent());
     }
 
-    private void initNvg(Window window) {
-        nvgContext = nvgCreate(0); // TODO: Change flags?
+    private void initNvg() {
+        nvgContext = nvgCreate(0);
         if (nvgContext == NULL) throw new RuntimeException("Failed to create a NanoVG context");
     }
 
@@ -697,7 +697,6 @@ public class RetornGUI implements GUI {
         DisplayState displayState = state.getDisplayState();
         fpsDisplay.setText("FPS: " + window.getFpsCounter().getFps());
 
-        // TODO: This condition might have unintended consequences
         if (window.isResized()) {
             updateGuiSize(window);
 
