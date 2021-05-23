@@ -27,8 +27,6 @@ public class RenderState implements State {
     private boolean customResolution = false;
     private boolean fractalAspectRatioMaintained = true;
 
-    // TODO: Palette class?
-
     public RenderState() {
 
     }
