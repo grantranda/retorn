@@ -12,10 +12,6 @@ public class Model {
     private final Vector3f scale; // Axis scaling factors
     private final Matrix4f modelMatrix;
 
-    public Model(Mesh mesh) {
-        this(mesh, null);
-    }
-
     public Model(Mesh mesh, Texture texture) {
         this(mesh, texture, new Vector3f(), new Vector3f(), new Vector3f());
     }
@@ -74,14 +70,9 @@ public class Model {
     }
 
     public void render() {
-        // TODO: Refactor without null check
-        if (texture != null) {
-            texture.bind();
-            mesh.render();
-            texture.unbind();
-        } else {
-            mesh.render();
-        }
+        texture.bind();
+        mesh.render();
+        texture.unbind();
     }
 
     public void delete() {
