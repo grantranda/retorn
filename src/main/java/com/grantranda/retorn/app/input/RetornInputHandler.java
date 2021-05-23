@@ -54,7 +54,7 @@ public class RetornInputHandler implements InputHandler {
         updateState(window, (ApplicationState) state);
 
         if (stateChanged) {
-            gui.updateRenderParameters(((ApplicationState) state).getRenderState());
+            gui.updateFractalParameters(((ApplicationState) state).getRenderState());
             stateChanged = false;
         }
     }

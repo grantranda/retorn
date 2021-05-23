@@ -57,15 +57,8 @@ public class GradientEditor extends VBox {
     private final Random random = new Random();
 
     private final ColorSelector colorSelector = new ColorSelector();
-    private final Button deleteStopButton = new Button("Delete");
-    private final Button saveGradientButton = new Button("Save");
-    private final Button loadGradientButton = new Button("Load");
-    private final Button randomGradientButton = new Button("Random");
-    private final Button applyGradientButton = new Button("Apply");
     private final HBox gradientHBox = new HBox();
     private final HBox colorStopsHBox = new HBox();
-    private final HBox stopColorHBox = new HBox();
-    private final HBox buttonHBox = new HBox();
 
     public GradientEditor(Context context, MouseInput mouseInput, int gradientWidth, int gradientHeight) {
         this(context, mouseInput, gradientWidth, gradientHeight, Color.BLACK, Color.WHITE);
@@ -79,11 +72,14 @@ public class GradientEditor extends VBox {
         setAlignment(Pos.CENTER);
 
         colorSelector.setSupportsAlpha(false);
+        Button deleteStopButton = new Button("Delete");
         deleteStopButton.setMinWidth(50);
+        Button saveGradientButton = new Button("Save");
         saveGradientButton.setMinWidth(gradientWidth / 3.0f - 5);
+        Button loadGradientButton = new Button("Load");
         loadGradientButton.setMinWidth(gradientWidth / 3.0f - 5);
+        Button randomGradientButton = new Button("Random");
         randomGradientButton.setMinWidth(gradientWidth / 3.0f - 5);
-        applyGradientButton.setMinWidth(gradientWidth / 3.0f - 5);
 
         Label stopColorLabel = new Label("Color");
         stopColorLabel.setMinWidth(50);
@@ -92,12 +88,6 @@ public class GradientEditor extends VBox {
         Heading gradientHeading = new Heading("Gradient");
         gradientHeading.setPadding(new Insets(10, 0, 5, 0));
 
-        VBox applyVBox = new VBox();
-        applyVBox.setFillToParentWidth(true);
-        applyVBox.setPadding(new Insets(10, 0, 0, 0));
-        applyVBox.setAlignment(Pos.CENTER);
-        applyVBox.getChildren().add(applyGradientButton);
-
         gradientHBox.setMinWidth(gradientWidth);
         gradientHBox.setMinHeight(gradientHeight);
         gradientHBox.setAlignment(Pos.CENTER);
@@ -105,12 +95,14 @@ public class GradientEditor extends VBox {
         colorStopsHBox.setMinWidth(gradientWidth + STOP_WIDTH);
         colorStopsHBox.setMinHeight(20);
         colorStopsHBox.setBackgroundLegacy(Color.DARK_GRAY);
+        HBox stopColorHBox = new HBox();
         stopColorHBox.setAlignment(Pos.CENTER);
         stopColorHBox.setSpacing(40);
         stopColorHBox.setPadding(new Insets(5, 0, 0, 0));
         stopColorHBox.getChildren().addAll(stopColorLabel, colorSelector, deleteStopButton);
+        HBox buttonHBox = new HBox();
         buttonHBox.setSpacing(10);
-        buttonHBox.setPadding(new Insets(10, 0, 10, 0));
+        buttonHBox.setPadding(new Insets(10, 0, 0, 0));
         buttonHBox.getChildren().addAll(saveGradientButton, loadGradientButton, randomGradientButton);
 
         getChildren().addAll(
@@ -118,9 +110,7 @@ public class GradientEditor extends VBox {
                 new Separator(),
                 stopColorHBox, gradientHeading,
                 new Separator(),
-                buttonHBox,
-                new Separator(),
-                applyVBox
+                buttonHBox
         );
 
         selectedStop = gradient.getStops().get(0);
@@ -167,9 +157,6 @@ public class GradientEditor extends VBox {
             gradient.getStops().getFirst().setColor(new Color(random.nextInt(49) + 1, random.nextInt(49) + 1, random.nextInt(49) + 1));
 
             if (selectedStop != null) colorSelector.setColor(selectedStop.getColor());
-        });
-        applyGradientButton.setOnAction(event -> {
-            applyGradient();
         });
     }
 

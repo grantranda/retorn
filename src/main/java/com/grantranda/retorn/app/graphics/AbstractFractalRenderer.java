@@ -4,6 +4,7 @@ import com.grantranda.retorn.engine.graphics.Model;
 import com.grantranda.retorn.engine.graphics.Shader;
 import com.grantranda.retorn.engine.graphics.display.Window;
 import com.grantranda.retorn.engine.math.Matrix4f;
+import com.grantranda.retorn.engine.math.Vector2d;
 import com.grantranda.retorn.engine.state.State;
 
 public abstract class AbstractFractalRenderer extends AbstractRenderer {
@@ -13,6 +14,8 @@ public abstract class AbstractFractalRenderer extends AbstractRenderer {
 
     protected Shader shader;
     protected Matrix4f projectionMatrix;
+
+    protected final Vector2d trappingPointOffset = new Vector2d(.001, .001);
 
     public AbstractFractalRenderer(String vertexShaderPath, String fragmentShaderPath) {
         super();
@@ -26,6 +29,18 @@ public abstract class AbstractFractalRenderer extends AbstractRenderer {
 
     public String getFragmentShaderPath() {
         return fragmentShaderPath;
+    }
+
+    public Vector2d getTrappingPointOffset() {
+        return trappingPointOffset;
+    }
+
+    public void setTrappingPointOffsetX(double x) {
+        trappingPointOffset.x = x;
+    }
+
+    public void setTrappingPointOffsetY(double y) {
+        trappingPointOffset.y = y;
     }
 
     @Override
