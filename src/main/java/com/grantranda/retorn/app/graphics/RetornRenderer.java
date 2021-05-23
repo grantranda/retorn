@@ -72,7 +72,7 @@ public class RetornRenderer extends AbstractRenderer {
         mandelbrotRenderer.init(window);
         juliaRenderer.init(window);
         setTargetViewportResolution(window.getWidth(), window.getHeight());
-        setFractalAspectRatio(7, 4); // TODO: Remove
+        setFractalAspectRatio(7, 4);
         setActiveRenderer(mandelbrotRenderer);
     }
 
@@ -94,7 +94,6 @@ public class RetornRenderer extends AbstractRenderer {
         if (updateViewport) {
             updateViewport(targetViewportResolution, fractalAspectRatio.getRatio());
 
-            // TODO: Potentially remove division by 2.0 and find alternate solution
             viewportPixelSize.set(
                     (fractalAspectRatio.getNumerator() / 2.0) / VIEWPORT_RESOLUTION.getWidth(),
                     (fractalAspectRatio.getDenominator() / 2.0) / VIEWPORT_RESOLUTION.getHeight()
