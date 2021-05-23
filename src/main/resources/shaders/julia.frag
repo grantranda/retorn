@@ -4,6 +4,7 @@ layout (location = 0) out vec4 frag_color;
 in vec4 pos;
 
 const double PI = 3.14159265359;
+const float X_OFFSET = 0.8f;
 
 uniform int use_orbit_trap;
 uniform int max_iterations;
@@ -39,7 +40,7 @@ vec4 julia(int max_iterations, dvec2 c) {
 
 int escape_time(int max_iterations, dvec2 c) {
     int iterations = 0;
-    double x0 = pos.x * scale + offset.x + 0.8; // TODO: Remove constant
+    double x0 = pos.x * scale + offset.x + X_OFFSET;
     double y0 = pos.y * scale + offset.y;
     double x1 = 0.0;
     double x2 = 0.0, y2 = 0.0;
@@ -57,7 +58,7 @@ int escape_time(int max_iterations, dvec2 c) {
 
 double orbit_trap(int max_iterations, dvec2 c) {
     double distance = 1e20;
-    double x0 = pos.x * scale + offset.x + 0.8; // TODO: Remove constant
+    double x0 = pos.x * scale + offset.x + X_OFFSET;
     double y0 = pos.y * scale + offset.y;
     double x1 = 0.0;
     double x2 = 0.0, y2 = 0.0;
