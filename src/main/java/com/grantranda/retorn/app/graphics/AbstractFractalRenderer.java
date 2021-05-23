@@ -9,13 +9,15 @@ import com.grantranda.retorn.engine.state.State;
 
 public abstract class AbstractFractalRenderer extends AbstractRenderer {
 
+    public static final double DEFAULT_TRAPPING_POINT_OFFSET = .001;
+
     protected final String vertexShaderPath;
     protected final String fragmentShaderPath;
 
     protected Shader shader;
     protected Matrix4f projectionMatrix;
 
-    protected final Vector2d trappingPointOffset = new Vector2d(.001, .001);
+    protected final Vector2d trappingPointOffset = new Vector2d(DEFAULT_TRAPPING_POINT_OFFSET, DEFAULT_TRAPPING_POINT_OFFSET);
 
     public AbstractFractalRenderer(String vertexShaderPath, String fragmentShaderPath) {
         super();
