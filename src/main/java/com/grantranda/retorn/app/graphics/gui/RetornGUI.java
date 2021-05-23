@@ -79,7 +79,6 @@ public class RetornGUI implements GUI {
     private final RetornRenderer retornRenderer;
     private final ImageRenderer imageRenderer;
     private lwjgui.scene.Window guiWindow;
-    private ThemeDark themeDark;
 
     private BorderPane root;
     private BorderPane fractalBorderPane;
@@ -232,8 +231,7 @@ public class RetornGUI implements GUI {
         guiWindow.setWindowAutoClear(false);
         guiWindow.show();
 
-        themeDark = new ThemeDark();
-        Theme.setTheme(themeDark);
+        Theme.setTheme(new ThemeDark());
 
         initFractalAlgorithms();
         initWindowResolutions();
