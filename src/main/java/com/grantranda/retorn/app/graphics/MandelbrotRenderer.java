@@ -8,6 +8,6 @@ public class MandelbrotRenderer extends AbstractFractalRenderer {
 
     @Override
     protected void setUniforms() {
-
+        super.shader.setUniform2d("trappingPointOffset", trappingPointOffset.x, trappingPointOffset.y);
     }
 }

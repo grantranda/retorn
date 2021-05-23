@@ -9,5 +9,6 @@ public class JuliaRenderer extends AbstractFractalRenderer {
     @Override
     protected void setUniforms() {
         super.shader.setUniform2d("seed", -0.8, 0.156);
+        super.shader.setUniform2d("trappingPointOffset", trappingPointOffset.x, trappingPointOffset.y);
     }
 }
