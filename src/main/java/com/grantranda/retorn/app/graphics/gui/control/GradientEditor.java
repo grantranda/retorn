@@ -15,7 +15,6 @@ import lwjgui.scene.control.Button;
 import lwjgui.scene.control.Label;
 import lwjgui.scene.layout.HBox;
 import lwjgui.scene.layout.VBox;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.nanovg.NVGColor;
 import org.lwjgl.nanovg.NVGPaint;
 import org.lwjgl.system.MemoryStack;
@@ -24,8 +23,6 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -148,8 +145,23 @@ public class GradientEditor extends VBox {
             if (selectedStop != null) selectedStop.setColor(colorSelector.getColor());
         });
         deleteStopButton.setOnAction(event -> deleteSelectedStop());
-        saveGradientButton.setOnAction(event -> saveGradient(gradientImageWidth, "pal.png"));
-        loadGradientButton.setOnAction(event -> loadGradient());
+        saveGradientButton.setOnAction(event -> {
+            File defaultPath = new File(System.getProperty("user.home") + "/" + "pal.png");
+            File selectedFile = LWJGUIDialog.showSaveFileDialog("Save Gradient", defaultPath, "Image Files (*.png)", "png", true);
+
+            if (selectedFile == null) return;
+
+            saveGradient(gradientImageWidth, selectedFile);
+        });
+        loadGradientButton.setOnAction(event -> {
+            File defaultPath = new File(System.getProperty("user.home"));
+            File selectedFile = LWJGUIDialog.showOpenFileDialog("Load Gradient", defaultPath, "Image Files (*.png, *.jpg)", "png", "jpg");
+
+            if (selectedFile == null || !selectedFile.exists()) return;
+
+            loadGradient(selectedFile);
+            resetStops();
+        });
         randomGradientButton.setOnAction(event -> {
             gradient.randomize();
 
@@ -192,12 +204,7 @@ public class GradientEditor extends VBox {
         this.gradient = gradient;
     }
 
-    public void saveGradient(int width, String defaultFilename) {
-        File defaultPath = new File(System.getProperty("user.home") + "/" + defaultFilename);
-        File selectedFile = LWJGUIDialog.showSaveFileDialog("Save Gradient", defaultPath, "Image Files (*.png)", "png", true);
-
-        if (selectedFile == null) return;
-
+    public void saveGradient(int width, File file) {
         BufferedImage image = new BufferedImage(width, 1, BufferedImage.TYPE_INT_ARGB);
         Color[] colors = gradient.toArray(width);
 
@@ -206,57 +213,25 @@ public class GradientEditor extends VBox {
         }
 
         try {
-            ImageIO.write(image, "PNG", selectedFile);
+            ImageIO.write(image, "PNG", file);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void loadGradient() {
-        File defaultPath = new File(System.getProperty("user.home"));
-        File selectedFile = LWJGUIDialog.showOpenFileDialog("Load Gradient", defaultPath, "Image Files (*.png, *.jpg)", "png", "jpg");
-
-        if (selectedFile == null || !selectedFile.exists()) return;
-
-        try {
-            BufferedImage image = ImageIO.read(selectedFile);
-
-            int bytesPerPixel = 4;
-            int[] rgbArray = new int[image.getWidth()];
-            ByteBuffer buffer = BufferUtils.createByteBuffer(image.getWidth() * bytesPerPixel);
-            buffer.order(ByteOrder.nativeOrder());
-
-            for (int i = 0; i < image.getWidth(); i++) {
-                rgbArray[i] = new Color(image.getRGB(i, 0)).getRGBA();
-            }
-
-            buffer.asIntBuffer().put(rgbArray);
-            Retorn.INSTANCE.setTexture(new Texture(GL_TEXTURE_1D, GL_RGBA, GL_NEAREST, image.getWidth(), 1, buffer));
-
-            gradient.getStops().clear();
-            gradient.addStop(0.0f, Color.BLACK);
-            gradient.addStop(1.0f, Color.WHITE);
-
-            selectedStop = gradient.getStops().get(0);
-            colorSelector.setColor(selectedStop.getColor());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void loadGradient(File file) {
+        Retorn.INSTANCE.setTexture(new Texture(GL_TEXTURE_1D, GL_RGBA, GL_NEAREST, file));
     }
 
     public void applyGradient() {
-        int bytesPerPixel = 4;
-        int[] rgbArray = new int[gradientImageWidth];
-        Color[] colors = gradient.toArray(gradientImageWidth);
-        ByteBuffer buffer = BufferUtils.createByteBuffer(gradientImageWidth * bytesPerPixel);
-        buffer.order(ByteOrder.nativeOrder());
-
-        for (int i = 0; i < colors.length; i++) {
-            rgbArray[i] = colors[i].getRGBA();
+        try {
+            File file = File.createTempFile("retorn-gradient", ".png");
+            saveGradient(gradientImageWidth, file);
+            loadGradient(file);
+            file.delete();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-        buffer.asIntBuffer().put(rgbArray);
-        Retorn.INSTANCE.setTexture(new Texture(GL_TEXTURE_1D, GL_RGBA, GL_NEAREST, gradientImageWidth, 1, buffer));
     }
 
     public void addStop(float x, Color color) {
@@ -288,6 +263,15 @@ public class GradientEditor extends VBox {
             if (x >= stopX - HALF_STOP_WIDTH && x <= stopX + HALF_STOP_WIDTH) return stop;
         }
         return null;
+    }
+
+    public void resetStops() {
+        gradient.getStops().clear();
+        gradient.addStop(0.0f, Color.BLACK);
+        gradient.addStop(1.0f, Color.WHITE);
+
+        selectedStop = gradient.getStops().get(0);
+        colorSelector.setColor(selectedStop.getColor());
     }
 
     public void render(long nvgContext) {
