@@ -146,7 +146,7 @@ public class GradientEditor extends VBox {
         });
         deleteStopButton.setOnAction(event -> deleteSelectedStop());
         saveGradientButton.setOnAction(event -> {
-            File defaultPath = new File(System.getProperty("user.home") + "/" + "pal.png");
+            File defaultPath = new File(System.getProperty("user.home") + "/" + "gradient.png");
             File selectedFile = LWJGUIDialog.showSaveFileDialog("Save Gradient", defaultPath, "Image Files (*.png)", "png", true);
 
             if (selectedFile == null) return;
