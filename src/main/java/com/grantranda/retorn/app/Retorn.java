@@ -18,6 +18,7 @@ import com.grantranda.retorn.engine.graphics.Texture;
 import com.grantranda.retorn.engine.graphics.display.Resolution;
 import com.grantranda.retorn.engine.graphics.display.Window;
 import com.grantranda.retorn.engine.graphics.gui.GUI;
+import com.grantranda.retorn.engine.util.FileUtils;
 import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
@@ -119,7 +120,7 @@ public class Retorn implements Application {
 
         mesh = new Mesh(vertices, textureCoordinates, indices);
 
-        File defaultPaletteFile = new File(getClass().getClassLoader().getResource(GRADIENT_PATH).getFile());
+        File defaultPaletteFile = FileUtils.getResource(GRADIENT_PATH);
         setTexture(new Texture(GL_TEXTURE_1D, GL_RGBA, GL_NEAREST, defaultPaletteFile));
     }
 
@@ -159,7 +160,7 @@ public class Retorn implements Application {
 
     public void loadDisplayState(ApplicationState state) {
         try {
-            File file = new File(getClass().getClassLoader().getResource(DISPLAY_STATE_PATH).getFile());
+            File file = FileUtils.getResource(DISPLAY_STATE_PATH);
             StateUtils.loadState(state, DisplayState.class, file);
         } catch (IOException | JsonSyntaxException e) {
             Main.logger.error("Error loading display state");
@@ -168,7 +169,7 @@ public class Retorn implements Application {
 
     public void saveDisplayState(ApplicationState state) {
         try {
-            File file = new File(getClass().getClassLoader().getResource(DISPLAY_STATE_PATH).getFile());
+            File file = FileUtils.getResource(DISPLAY_STATE_PATH);
             StateUtils.saveState(state.getDisplayState(), file);
         } catch (IOException | JsonIOException e) {
             Main.logger.error("Error saving display state");
@@ -177,7 +178,7 @@ public class Retorn implements Application {
 
     public void loadRenderState(ApplicationState state) {
         try {
-            File file = new File(getClass().getClassLoader().getResource(RENDER_STATE_PATH).getFile());
+            File file = FileUtils.getResource(RENDER_STATE_PATH);
             StateUtils.loadState(state, RenderState.class, file);
 
             // Reset nonpersistent fields
@@ -201,7 +202,7 @@ public class Retorn implements Application {
 
     public void saveRenderState(ApplicationState state) {
         try {
-            File file = new File(getClass().getClassLoader().getResource(RENDER_STATE_PATH).getFile());
+            File file = FileUtils.getResource(RENDER_STATE_PATH);
             StateUtils.saveState(state.getRenderState(), file);
         } catch (IOException | JsonIOException e) {
             Main.logger.error("Error saving render state");
@@ -216,7 +217,7 @@ public class Retorn implements Application {
             IntBuffer y = stack.mallocInt(1);
             IntBuffer channels = stack.mallocInt(1);
 
-            File file = new File(getClass().getClassLoader().getResource(path).getFile());
+            File file = FileUtils.getResource(path);
             ByteBuffer buffer = stbi_load(file.getAbsolutePath(), x, y, channels, 0);
 
             if (buffer == null) {
