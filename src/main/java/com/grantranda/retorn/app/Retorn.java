@@ -39,8 +39,8 @@ public class Retorn implements Application {
 
     public static Retorn INSTANCE;
 
-    public static final String DISPLAY_STATE_PATH = "display_parameters.json";
-    public static final String RENDER_STATE_PATH = "render_parameters.json";
+    public static final String DISPLAY_STATE_PATH = "states/display_parameters.json";
+    public static final String RENDER_STATE_PATH = "states/render_parameters.json";
     public static final String SAVE_PARAMETERS_PATH = "retorn_parameters.json";
     public static final String DEFAULT_RENDER_FILENAME = "fractal.png";
     public static final String GRADIENT_PATH = "textures/gradient.png";
@@ -159,7 +159,8 @@ public class Retorn implements Application {
 
     public void loadDisplayState(ApplicationState state) {
         try {
-            StateUtils.loadState(state, DisplayState.class, new File(DISPLAY_STATE_PATH));
+            File file = new File(getClass().getClassLoader().getResource(DISPLAY_STATE_PATH).getFile());
+            StateUtils.loadState(state, DisplayState.class, file);
         } catch (IOException | JsonSyntaxException e) {
             Main.logger.error("Error loading display state");
         }
@@ -167,7 +168,8 @@ public class Retorn implements Application {
 
     public void saveDisplayState(ApplicationState state) {
         try {
-            StateUtils.saveState(state.getDisplayState(), new File(DISPLAY_STATE_PATH));
+            File file = new File(getClass().getClassLoader().getResource(DISPLAY_STATE_PATH).getFile());
+            StateUtils.saveState(state.getDisplayState(), file);
         } catch (IOException | JsonIOException e) {
             Main.logger.error("Error saving display state");
         }
@@ -175,7 +177,8 @@ public class Retorn implements Application {
 
     public void loadRenderState(ApplicationState state) {
         try {
-            StateUtils.loadState(state, RenderState.class, new File(RENDER_STATE_PATH));
+            File file = new File(getClass().getClassLoader().getResource(RENDER_STATE_PATH).getFile());
+            StateUtils.loadState(state, RenderState.class, file);
 
             // Reset nonpersistent fields
             RenderState renderState = state.getRenderState();
@@ -198,7 +201,8 @@ public class Retorn implements Application {
 
     public void saveRenderState(ApplicationState state) {
         try {
-            StateUtils.saveState(state.getRenderState(), new File(RENDER_STATE_PATH));
+            File file = new File(getClass().getClassLoader().getResource(RENDER_STATE_PATH).getFile());
+            StateUtils.saveState(state.getRenderState(), file);
         } catch (IOException | JsonIOException e) {
             Main.logger.error("Error saving render state");
         }
