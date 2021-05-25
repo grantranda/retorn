@@ -23,9 +23,11 @@ import com.grantranda.retorn.engine.graphics.ImageRenderer;
 import com.grantranda.retorn.engine.graphics.display.Resolution;
 import com.grantranda.retorn.engine.graphics.display.Window;
 import com.grantranda.retorn.engine.graphics.gui.GUI;
+import com.grantranda.retorn.engine.graphics.paint.ColorGradient;
 import com.grantranda.retorn.engine.input.MouseInput;
 import com.grantranda.retorn.engine.math.Vector3d;
 import com.grantranda.retorn.engine.state.State;
+import com.grantranda.retorn.engine.util.ColorUtils;
 import com.grantranda.retorn.engine.util.DisplayUtils;
 import lwjgui.LWJGUIDialog;
 import lwjgui.LWJGUIDialog.DialogIcon;
@@ -326,16 +328,33 @@ public class RetornGUI implements GUI {
         renderResolutionSelection.setResolution(renderState.getRenderResolution(), renderState.isCustomResolution());
     }
 
+    private void initGradientEditor(Window window) {
+        gradientEditor = new GradientEditor(guiWindow.getContext(), window.getMouseInput(), MENU_CONTENT_WIDTH - 20, 30);
+        gradientEditor.setPadding(new Insets(10, 0, 5, 0));
+
+        ColorGradient gradient = gradientEditor.getGradient();
+        gradient.addStop(20.0f / 100.0f, Color.BLACK);
+        gradient.addStop(35.0f / 100.0f, Color.BLACK);
+        gradient.addStop(50.0f / 100.0f, Color.BLACK);
+        gradient.addStop(65.0f / 100.0f, Color.BLACK);
+        gradient.addStop(80.0f / 100.0f, Color.BLACK);
+        gradient.randomize();
+        gradient.setStopColor(0, ColorUtils.getRandomColor(49));
+
+        gradientEditor.applyGradient();
+    }
+
     private void initMenu(Window window, ApplicationState state) {
         initFractalAlgorithmSelection(state.getRenderState());
         initColoringAlgorithmSelection();
         initResolutionSelection(state);
+        initGradientEditor(window);
 
         String monitorAspectRatio = "(" + DisplayUtils.getMonitorAspectRatio().toRatio() + ")";
         String fractalAspectRatio = "(" + retornRenderer.getFractalAspectRatio().toRatio() + ")";
 
         // Menu Elements
-        maxIterationsParam = new Parameter<>(MENU_CONTENT_WIDTH, "Max Iterations", new NumberFieldi(100, 0, 100000));
+        maxIterationsParam = new Parameter<>(MENU_CONTENT_WIDTH, "Max Iterations", new NumberFieldi(150, 0, 100000));
         maxIterationsParam.getLabel().setPrefWidth(MENU_CONTENT_WIDTH / 2.0f - 10);
         maxIterationsParam.getLabel().setPadding(new Insets(10, 0, 10, 0));
         scaleParam = new Parameter<>(MENU_CONTENT_WIDTH, "Scale", new NumberFieldd(1.0));
@@ -413,8 +432,6 @@ public class RetornGUI implements GUI {
         fpsDisplay = new Label("FPS: " + window.getFpsCounter().getFps());
         fpsDisplay.setAlignment(Pos.CENTER_RIGHT);
         fpsDisplay.setFillToParentWidth(true);
-        gradientEditor = new GradientEditor(guiWindow.getContext(), window.getMouseInput(), MENU_CONTENT_WIDTH - 20, 30);
-        gradientEditor.setPadding(new Insets(10, 0, 5, 0));
 
         HBox tabTopHBox = new HBox();
         tabTopHBox.setMinWidth(MENU_CONTENT_WIDTH);

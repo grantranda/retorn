@@ -87,21 +87,12 @@ public class Retorn implements Application {
         window.setFpsLimit(state.getDisplayState().getFpsLimit());
         window.setCursor(createCursor(CURSOR_PATH));
 
-        Resolution renderResolution = state.getRenderState().getRenderResolution();
-        Framebuffer framebuffer = new Framebuffer(renderResolution);
-        imageRenderer = new ImageRenderer(renderer, framebuffer, renderResolution, DEFAULT_RENDER_FILENAME, "PNG");
-        gui = new RetornGUI(renderer, imageRenderer);
-        inputHandler = new RetornInputHandler(gui, window.getCursor());
-
-        renderer.init(window);
-        gui.init(window, state);
-
         // Vertices of mesh corners
         float[] vertices = new float[]{
                 -2.5f,  1.0f, 0.0f, // TL
                 -2.5f, -1.0f, 0.0f, // BL
-                 1.0f, -1.0f, 0.0f, // BR
-                 1.0f,  1.0f, 0.0f, // TR
+                1.0f, -1.0f, 0.0f,  // BR
+                1.0f,  1.0f, 0.0f,  // TR
         };
 
         // Vertices of texture corners
@@ -122,6 +113,15 @@ public class Retorn implements Application {
 
         File defaultPaletteFile = FileUtils.getResource(GRADIENT_PATH);
         setTexture(new Texture(GL_TEXTURE_1D, GL_RGBA, GL_NEAREST, defaultPaletteFile));
+
+        Resolution renderResolution = state.getRenderState().getRenderResolution();
+        Framebuffer framebuffer = new Framebuffer(renderResolution);
+        imageRenderer = new ImageRenderer(renderer, framebuffer, renderResolution, DEFAULT_RENDER_FILENAME, "PNG");
+        gui = new RetornGUI(renderer, imageRenderer);
+        inputHandler = new RetornInputHandler(gui, window.getCursor());
+
+        renderer.init(window);
+        gui.init(window, state);
     }
 
     @Override
