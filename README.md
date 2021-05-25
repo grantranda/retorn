@@ -2,16 +2,16 @@
 ...
 
 ## Images
+![Julia](images/julia.png)
+![Mandelbrot](images/mandelbrot.png)
 
 ## Technology
-
   - [LWJGL 3](https://github.com/LWJGL/lwjgl3)
   - [LWJGUI](https://github.com/orange451/LWJGUI)
   - [Log4j](https://github.com/apache/log4j)
   - [Gson](https://github.com/google/gson)
 
 ## Running
-
 1. Download the latest release.
 2. Place the jar file and resources folder in the same directory.
 3. Run the application:
