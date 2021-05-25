@@ -5,6 +5,7 @@ import com.grantranda.retorn.engine.graphics.Texture;
 import com.grantranda.retorn.engine.graphics.paint.ColorGradient;
 import com.grantranda.retorn.engine.graphics.paint.ColorStop;
 import com.grantranda.retorn.engine.input.MouseInput;
+import com.grantranda.retorn.engine.util.ColorUtils;
 import com.grantranda.retorn.engine.util.MathUtils;
 import lwjgui.LWJGUIDialog;
 import lwjgui.geometry.Insets;
@@ -24,7 +25,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
-import java.util.Random;
 
 import static org.lwjgl.nanovg.NanoVG.nvgBeginPath;
 import static org.lwjgl.nanovg.NanoVG.nvgClosePath;
@@ -50,8 +50,6 @@ public class GradientEditor extends VBox {
     private int gradientHeight;
     private ColorGradient gradient;
     private ColorStop selectedStop;
-
-    private final Random random = new Random();
 
     private final ColorSelector colorSelector = new ColorSelector();
     private final HBox gradientHBox = new HBox();
@@ -122,7 +120,7 @@ public class GradientEditor extends VBox {
         });
         colorStopsHBox.setOnMouseReleased(event -> {
             if (gradient.getStops().size() < MAX_STOPS) {
-                Color stopColor = new Color(random.nextInt(254) + 1, random.nextInt(254) + 1, random.nextInt(254) + 1);
+                Color stopColor = ColorUtils.getRandomColor();
                 addStop((float) mouseInput.getCurrentPosition().x, stopColor);
             }
         });
@@ -166,7 +164,7 @@ public class GradientEditor extends VBox {
             gradient.randomize();
 
             // Set darker color for first stop to avoid washed-out look
-            gradient.getStops().getFirst().setColor(new Color(random.nextInt(49) + 1, random.nextInt(49) + 1, random.nextInt(49) + 1));
+            gradient.getStops().getFirst().setColor(ColorUtils.getRandomColor(49));
 
             if (selectedStop != null) colorSelector.setColor(selectedStop.getColor());
         });
