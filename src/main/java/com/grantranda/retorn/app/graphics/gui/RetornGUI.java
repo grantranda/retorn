@@ -375,13 +375,13 @@ public class RetornGUI implements GUI {
         zoomSpeedLabel = new Label(String.valueOf(scaleFactor));
         zoomSpeedLabel.setPrefWidth(80);
         zoomSpeedLabel.setAlignment(Pos.CENTER);
-        seedXSlider = new Slider(-1.000, 1.000, -0.800, 0.001);
+        seedXSlider = new Slider(-1.000, 1.000, -0.800, 0.0001);
         seedXSlider.setFillToParentWidth(true);
         seedXSlider.setPadding(new Insets(10, 0, 5, 0));
         seedXLabel = new Label("-0.800");
         seedXLabel.setPrefWidth(80);
         seedXLabel.setAlignment(Pos.CENTER);
-        seedYSlider = new Slider(-1.000, 1.000, 0.156, 0.001);
+        seedYSlider = new Slider(-1.000, 1.000, 0.156, 0.0001);
         seedYSlider.setFillToParentWidth(true);
         seedYSlider.setPadding(new Insets(10, 0, 10, 0));
         seedYLabel = new Label("0.156");
