@@ -12,7 +12,7 @@ public class RenderState implements State {
     public static final ColoringAlgorithm DEFAULT_COLORING_ALGORITHM = ColoringAlgorithm.ESCAPE_TIME;
     public static final int DEFAULT_WIDTH = 1280;
     public static final int DEFAULT_HEIGHT = 720;
-    public static final int DEFAULT_MAX_ITERATIONS = 100;
+    public static final int DEFAULT_MAX_ITERATIONS = 150;
     public static final int DEFAULT_ESCAPE_RADIUS = ColoringAlgorithm.ESCAPE_TIME.getEscapeRadius();
     public static final double DEFAULT_OFFSET = 0.0;
     public static final double DEFAULT_SCALE = 1.0;
