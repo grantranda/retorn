@@ -4,8 +4,8 @@
 ## Images
 ![Julia](images/julia.png) ![Mandelbrot](images/mandelbrot.png)
 <p align="center">
-  <img src="/images/example_1.png" width="48%" />
-  <img src="/images/example_2.png" width="48%" /> 
+  <img src="/images/example_1.png" width="49%" />
+  <img src="/images/example_2.png" width="49%" /> 
 </p>
 
 ## Technology
