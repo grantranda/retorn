@@ -18,8 +18,6 @@ public class Engine implements Runnable {
 
     @Override
     public void run() {
-        logger.info("Engine running\n");
-
         init();
         loop();
         terminate();
@@ -53,8 +51,5 @@ public class Engine implements Runnable {
     private void terminate() {
         application.terminate();
         window.terminate();
-
-        System.out.println();
-        logger.info("Engine terminated");
     }
 }
