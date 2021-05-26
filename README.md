@@ -21,7 +21,7 @@ Retorn is a fractal renderer built with LWJGL that can generate interactive Mand
 3. Run the application:
 
 ```
-java -jar retorn.jar
+java -jar retorn-1.0.jar
 ```
 
 ## Key Bindings
