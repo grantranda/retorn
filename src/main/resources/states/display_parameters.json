@@ -1,0 +1,10 @@
+{
+  "windowResolution": {
+    "width": 1920,
+    "height": 1080
+  },
+  "fpsLimit": 260,
+  "customResolution": false,
+  "fullscreen": false,
+  "vSync": true
+}

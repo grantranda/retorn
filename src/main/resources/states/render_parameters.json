@@ -1,0 +1,18 @@
+{
+  "renderResolution": {
+    "width": 1920,
+    "height": 1097
+  },
+  "offset": {
+    "x": 0.0,
+    "y": 0.0,
+    "z": 0.0
+  },
+  "fractalAlgorithm": "Mandelbrot",
+  "coloringAlgorithm": "ESCAPE_TIME",
+  "maxIterations": 150,
+  "escapeRadius": 4,
+  "scale": 1.0,
+  "customResolution": false,
+  "fractalAspectRatioMaintained": true
+}
