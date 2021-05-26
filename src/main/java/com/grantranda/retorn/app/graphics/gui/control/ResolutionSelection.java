@@ -16,7 +16,7 @@ public class ResolutionSelection extends VBox {
     public static final int MAX_RESOLUTION = 10000;
     public static final String CUSTOM_OPTION = "Custom";
 
-    private double parameterWidth;
+    private double parameterWidth; // the width of the width and height fields
     private boolean customResolution;
     private final ComboBox<String> resolutionComboBox = new ComboBox<>();
     private final Parameter<NumberFieldi> widthParam;
@@ -25,11 +25,6 @@ public class ResolutionSelection extends VBox {
     private final Resolution resolutionFromFields = new Resolution(MIN_RESOLUTION, MIN_RESOLUTION);
     private final LinkedList<Resolution> resolutions = new LinkedList<>();
 
-    /***
-     *
-     * @param parameterWidth the width of the width and height fields
-     * @param resolutions the resolutions to be used as options in the combo box
-     */
     public ResolutionSelection(double parameterWidth, Collection<Resolution> resolutions) {
         Label resolutionLabel = new Label("Resolution");
         resolutionLabel.setPrefWidth(parameterWidth / 2.0f - 10);
@@ -63,20 +58,10 @@ public class ResolutionSelection extends VBox {
         getChildren().addAll(resolutionComboBoxHBox, widthParam, heightParam);
     }
 
-    /***
-     * Returns the width of the resolution fields.
-     *
-     * @return the width of the width and height fields
-     */
     public double getParameterWidth() {
         return parameterWidth;
     }
 
-    /***
-     * Sets the width of the resolution fields.
-     *
-     * @param parameterWidth the width of the width and height fields
-     */
     public void setParameterWidth(double parameterWidth) {
         this.parameterWidth = parameterWidth;
         widthParam.setWidth(parameterWidth);
