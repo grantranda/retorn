@@ -7,11 +7,6 @@ import java.util.Arrays;
 
 public class Matrix4f {
 
-    public enum Projection {
-        ORTHOGRAPHIC,
-        PERSPECTIVE
-    }
-
     public float[] elements = new float[4 * 4];
 
     public Matrix4f() {
