@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
+import static com.grantranda.retorn.app.Main.logger;
 import static org.lwjgl.glfw.GLFW.glfwCreateCursor;
 import static org.lwjgl.opengl.GL11.GL_NEAREST;
 import static org.lwjgl.opengl.GL11.GL_RGBA;
@@ -122,6 +123,8 @@ public class Retorn implements Application {
 
         renderer.init(window);
         gui.init(window, state);
+
+        logger.info("Retorn running\n");
     }
 
     @Override
@@ -134,6 +137,9 @@ public class Retorn implements Application {
         renderer.terminate();
         imageRenderer.terminate();
         gui.terminate();
+
+        System.out.println();
+        logger.info("Retorn terminated");
     }
 
     @Override
