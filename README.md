@@ -3,9 +3,9 @@
 
 ## Images
 ![Julia](images/julia.png) ![Mandelbrot](images/mandelbrot.png)
-<p float="left">
-  <img src="/images/example_1.png" width="480" />
-  <img src="/images/example_2.png" width="480" /> 
+<p align="center">
+  <img src="/images/example_1.png" width="45%" />
+  <img src="/images/example_2.png" width="45%" /> 
 </p>
 
 ## Technology
