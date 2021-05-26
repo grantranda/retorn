@@ -16,8 +16,8 @@ Retorn is a fractal renderer built with LWJGL that can generate interactive Mand
   - [Gson](https://github.com/google/gson)
 
 ## Running
-1. Download the latest release.
-2. Place the jar file and resources folder in the same directory.
+1. Download *Retorn.zip* from the latest release.
+2. Extract the jar file and resources folder to the same directory.
 3. Run the application:
 
 ```
