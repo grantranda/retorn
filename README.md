@@ -2,8 +2,11 @@
 ...
 
 ## Images
-![Julia](images/julia.png)
-![Mandelbrot](images/mandelbrot.png)
+![Julia](images/julia.png) ![Mandelbrot](images/mandelbrot.png)
+<p float="left">
+  <img src="/images/example_1.png" width="481" />
+  <img src="/images/example_2.png" width="481" /> 
+</p>
 
 ## Technology
   - [LWJGL 3](https://github.com/LWJGL/lwjgl3)
