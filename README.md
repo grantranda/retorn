@@ -1,5 +1,5 @@
 # Retorn
-Retorn is a fractal renderer built with LWJGL that can generate interactive Mandelbrot and Julia set fractals. It features a GUI with customizable rendering parameters, coloring algorithm selection (escape time and orbit trap), and a gradient editor to modify fractal colors and generate random color palettes.
+Retorn is a fractal renderer built with LWJGL that can generate interactive Mandelbrot and Julia set fractals. It features a GUI with adjustable rendering parameters, coloring algorithm selection (escape time and orbit trap), and a gradient editor to modify fractal colors and generate random color palettes.
 
  ## Images
 ![Julia](images/julia.png) ![Mandelbrot](images/mandelbrot.png)
